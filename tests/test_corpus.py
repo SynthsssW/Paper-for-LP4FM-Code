@@ -10,9 +10,13 @@ enforces it actually fails when handed a bad span -- a validator that never
 rejects anything is worse than no validator.
 
 Also checked:
-  * ground truth is COMPUTED, and the Python rewrite really returns it
+  * ground truth is COMPUTED from the template's own `#answer:` expression
+  * `formal` is givens + goal with NO derivation (prereg/DEVIATIONS.md
+    Amendment 4): every literal equals the value it claims and the goal is the
+    template's own question
   * nl_break changes the answer and changes nothing else that surfaces
-  * nl_para is an honest empty placeholder, not a fake paraphrase
+  * nl_para is answer-preserving, anchors every quantity with the same surface
+    form nl_base used, and varies its surface operation across the corpus
   * the FINAL sentinel is present in every realization, as [-1, -1], which is
     the encoding `ling.hooks.resolve_anchor_positions` expects
   * same seed -> byte-identical corpus; different seed -> different corpus
@@ -198,15 +202,72 @@ class TestFinalSentinel(_Corpus):
 
 
 class TestGroundTruthIsComputed(_Corpus):
-    def test_formal_rewrite_executes_and_returns_ground_truth(self):
-        # DESIGN.md B.8: the formal condition is input notation and is NEVER
-        # executed during the experiment. It is executed HERE so that "the
-        # Python says the same thing as the prose" is a checked fact.
+    def test_formal_is_givens_and_goal_with_no_derivation(self):
+        # prereg/DEVIATIONS.md Amendment 4. The earlier build emitted the full
+        # program, `answer = <the template's answer expression>`; under that,
+        # H3 compared a prompt containing the derivation against a prompt
+        # containing a word problem. The replacement checks are: every literal
+        # equals the value it claims, and nothing binds an expression.
+        by_id = {t.template_id: t for t in self.tmpls}
         for r in self.recs:
-            ns = {}
-            exec(r["realizations"]["formal"]["text"], ns)  # noqa: S102
-            self.assertIn("answer", ns)
-            self.assertEqual(T.normalise_answer(ns["answer"]), r["ground_truth"])
+            text = r["realizations"]["formal"]["text"]
+            self.assertTrue(text.endswith("answer = ?"), r["problem_id"])
+            self.assertNotIn("answer =", text[: -len("answer = ?")])
+            expr = by_id[r["template_id"]].answer_expr
+            if re.search(r"[-+*/%()]", expr):
+                self.assertNotIn(
+                    re.sub(r"\s+", "", expr), re.sub(r"\s+", "", text), r["problem_id"]
+                )
+            for line in text.splitlines():
+                if not line.strip() or line.lstrip().startswith("#"):
+                    continue
+                name, _, rhs = line.partition(" = ")
+                if name == "answer":
+                    continue
+                self.assertRegex(
+                    rhs, r"^(-?\d+(\.\d+)?|Fraction\(-?\d+, -?\d+\))$",
+                    "%s: given %r is not a bare literal" % (r["problem_id"], line),
+                )
+
+    def test_formal_literals_equal_the_sampled_values(self):
+        for r in self.recs:
+            for q in r["quantities"]:
+                lit = q["formal_literal"]
+                m = re.match(r"^Fraction\((-?\d+), (-?\d+)\)$", lit)
+                got = Fraction(int(m.group(1)), int(m.group(2))) if m else Fraction(lit)
+                val = q["value"]
+                if isinstance(val, dict):
+                    want = Fraction(val["num"], val["den"])
+                    self.assertEqual(got, want, r["problem_id"])
+                else:
+                    self.assertAlmostEqual(float(got), float(val), places=9)
+
+    def test_formal_goal_is_the_templates_own_question(self):
+        for r in self.recs:
+            fm = r["realizations"]["formal"]
+            goal_nl = fm["goal_nl"]
+            base = r["realizations"]["nl_base"]["text"]
+            self.assertTrue(base.endswith(goal_nl), r["problem_id"])
+            head = base[: len(base) - len(goal_nl)]
+            if head:
+                self.assertRegex(head, r"[.!?]\s+$", r["problem_id"])
+            self.assertTrue(
+                "?" in goal_nl
+                or re.search(r"\b(calculate|find|determine|compute)\b", goal_nl.lower()),
+                r["problem_id"],
+            )
+            # the goal block carries identifiers, not values: the quantity's
+            # literal appears once, in the givens block
+            self.assertIn(fm["goal"], fm["text"])
+
+    def test_formal_never_binds_a_solved_for_scratch_variable(self):
+        # Three templates write `#answer: ans`, where `ans` IS the answer.
+        # Binding it in the givens would hand the model the result.
+        by_id = {t.template_id: t for t in self.tmpls}
+        for r in self.recs:
+            t = by_id[r["template_id"]]
+            bound = set(r["realizations"]["formal"]["given"])
+            self.assertEqual(bound & set(t.free_vars), set(), r["problem_id"])
 
     def test_ground_truth_is_a_positive_clean_number(self):
         for r in self.recs:
@@ -277,14 +338,65 @@ class TestBreakCondition(_Corpus):
             self.assertTrue(r["answer_preserving"]["formal"])
 
 
-class TestParaPlaceholder(_Corpus):
-    def test_para_is_an_honest_empty_placeholder(self):
+class TestParaphrase(_Corpus):
+    """`nl_para` is authored prose, so it gets the strictest anchoring checks."""
+
+    def test_every_paraphrase_is_written_and_answer_preserving(self):
         for r in self.recs:
             para = r["realizations"]["nl_para"]
-            self.assertEqual(para["text"], "")
-            self.assertEqual(para["anchors"], {})
-            self.assertEqual(para["status"], "pending")
+            self.assertEqual(para["status"], "written", r["problem_id"])
+            self.assertTrue(para["text"])
             self.assertEqual(para["answer"], r["ground_truth"])
+            self.assertTrue(r["answer_preserving"]["nl_para"])
+
+    def test_paraphrase_anchors_every_quantity_at_its_nl_base_surface(self):
+        # The whole point of the schema representation: the paraphrase carries
+        # the SAME emitted surface form, so the two conditions anchor the same
+        # quantity introduction and the span can be verified exactly.
+        checked = 0
+        for r in self.recs:
+            para = r["realizations"]["nl_para"]
+            for q in r["quantities"]:
+                self.assertIn(q["name"], para["anchors"], r["problem_id"])
+                s, e = para["anchors"][q["name"]]
+                self.assertEqual(para["text"][s:e], q["surface"], r["problem_id"])
+                checked += 1
+        self.assertEqual(checked, sum(len(r["quantities"]) for r in self.recs))
+
+    def test_paraphrase_differs_from_nl_base(self):
+        for r in self.recs:
+            self.assertNotEqual(
+                r["realizations"]["nl_para"]["text"],
+                r["realizations"]["nl_base"]["text"],
+                r["problem_id"],
+            )
+
+    def test_paraphrase_operations_vary(self):
+        # H2's surface-dissimilarity covariates are lexical AND syntactic. A
+        # corpus where every paraphrase applies the same transformation gives
+        # them no variance, and nothing else in the pipeline would report that.
+        ops = [r["realizations"]["nl_para"]["paraphrase_op"] for r in self.recs]
+        self.assertGreaterEqual(len(set(ops)), 8, sorted(set(ops)))
+        self.assertLess(max(ops.count(o) for o in set(ops)), 0.4 * len(self.recs))
+
+    def test_paraphrase_surface_dissimilarity_has_spread(self):
+        def toks(t):
+            return set(re.findall(r"[a-z0-9']+", t.lower()))
+
+        jac = []
+        for r in self.recs:
+            a = toks(r["realizations"]["nl_base"]["text"])
+            b = toks(r["realizations"]["nl_para"]["text"])
+            jac.append(len(a & b) / len(a | b))
+        self.assertLess(min(jac), 0.7, "no lexically distant paraphrase")
+        self.assertGreater(max(jac), 0.9, "no syntax-only paraphrase")
+
+    def test_validator_rejects_a_paraphrase_missing_a_quantity(self):
+        rec = json.loads(json.dumps(self.recs[0]))
+        name = rec["quantities"][0]["name"]
+        del rec["realizations"]["nl_para"]["anchors"][name]
+        with self.assertRaises(T.SpanError):
+            C.validate_record(rec)
 
     def test_all_four_condition_keys_exist(self):
         for r in self.recs:
@@ -425,7 +537,7 @@ class TestWrittenCorpusFile(unittest.TestCase):
         self.assertEqual(len(recs), 100)
         for r in recs:
             C.validate_record(r)
-            for cond in C.GENERATED_CONDITIONS:
+            for cond in C.CONDITIONS:
                 real = r["realizations"][cond]
                 for q in r["quantities"]:
                     s, e = real["anchors"][q["name"]]

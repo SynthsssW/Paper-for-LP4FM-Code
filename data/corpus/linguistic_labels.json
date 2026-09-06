@@ -1,0 +1,3002 @@
+{
+  "gsms_0000": {
+    "formal": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "x": "nummod",
+      "y": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "x": "nummod",
+      "y": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "x": "nummod",
+      "y": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "x": "nummod",
+      "y": "nummod"
+    }
+  },
+  "gsms_0001": {
+    "formal": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "t": "nummod",
+      "y": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "t": "nummod",
+      "y": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "t": "nummod",
+      "y": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "t": "nummod",
+      "y": "nummod"
+    }
+  },
+  "gsms_0002": {
+    "formal": {
+      "FINAL": "punct",
+      "sides": "nummod",
+      "target": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "sides": "advmod",
+      "target": "pobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "sides": "advmod",
+      "target": "pobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "sides": "advmod",
+      "target": "pobj"
+    }
+  },
+  "gsms_0003": {
+    "formal": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "n_1": "nummod",
+      "n_2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "n_1": "nsubj",
+      "n_2": "nsubj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "n_1": "nsubj",
+      "n_2": "nsubj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "n_1": "nsubj",
+      "n_2": "nsubj"
+    }
+  },
+  "gsms_0004": {
+    "formal": {
+      "FINAL": "punct",
+      "k_2": "nummod",
+      "k_3": "nummod",
+      "n": "nummod",
+      "s": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "k_2": "nummod",
+      "k_3": "nummod",
+      "n": "nummod",
+      "s": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "k_2": "nummod",
+      "k_3": "nummod",
+      "n": "nummod",
+      "s": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "k_2": "nummod",
+      "k_3": "nummod",
+      "n": "nummod",
+      "s": "nummod"
+    }
+  },
+  "gsms_0005": {
+    "formal": {
+      "FINAL": "punct",
+      "m": "nummod",
+      "n": "prep",
+      "x": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "m": "pobj",
+      "n": "pobj",
+      "x": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "m": "pobj",
+      "n": "pobj",
+      "x": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "m": "npadvmod",
+      "n": "npadvmod",
+      "x": "nummod"
+    }
+  },
+  "gsms_0006": {
+    "formal": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod",
+      "x": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod",
+      "x": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod",
+      "x": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod",
+      "x": "nummod"
+    }
+  },
+  "gsms_0007": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "n4": "nummod",
+      "total": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "nummod",
+      "w4": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "compound",
+      "n2": "nummod",
+      "n3": "nummod",
+      "n4": "nummod",
+      "total": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "nummod",
+      "w4": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "compound",
+      "n2": "nummod",
+      "n3": "nummod",
+      "n4": "nummod",
+      "total": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "nummod",
+      "w4": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "compound",
+      "n2": "nummod",
+      "n3": "nummod",
+      "n4": "nummod",
+      "total": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "nummod",
+      "w4": "nummod"
+    }
+  },
+  "gsms_0008": {
+    "formal": {
+      "FINAL": "punct",
+      "frac_1": "nsubj",
+      "frac_2": "appos",
+      "n": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac_1": "det",
+      "frac_2": "nsubj",
+      "n": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac_1": "det",
+      "frac_2": "nsubj",
+      "n": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac_1": "det",
+      "frac_2": "nsubj",
+      "n": "nummod"
+    }
+  },
+  "gsms_0009": {
+    "formal": {
+      "FINAL": "punct",
+      "total": "nummod",
+      "x": "punct",
+      "y": "nummod",
+      "z": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "total": "pobj",
+      "x": "nummod",
+      "y": "nummod",
+      "z": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "total": "pobj",
+      "x": "nummod",
+      "y": "nummod",
+      "z": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "total": "dobj",
+      "x": "nummod",
+      "y": "nummod",
+      "z": "nummod"
+    }
+  },
+  "gsms_0010": {
+    "formal": {
+      "FINAL": "punct",
+      "frac1": "appos",
+      "frac2": "appos",
+      "t": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac1": "dobj",
+      "frac2": "pobj",
+      "t": "nummod",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac1": "dobj",
+      "frac2": "pobj",
+      "t": "nummod",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac1": "dobj",
+      "frac2": "pobj",
+      "t": "nummod",
+      "total": "nummod"
+    }
+  },
+  "gsms_0011": {
+    "formal": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "appos"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "dobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "dobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "dobj"
+    }
+  },
+  "gsms_0012": {
+    "formal": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod",
+      "x": "dep"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod",
+      "x": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod",
+      "x": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod",
+      "x": "nummod"
+    }
+  },
+  "gsms_0013": {
+    "formal": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "r": "prep",
+      "w": "prep",
+      "x": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "r": "nummod",
+      "w": "nummod",
+      "x": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "r": "nummod",
+      "w": "nummod",
+      "x": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "r": "nummod",
+      "w": "nummod",
+      "x": "nummod"
+    }
+  },
+  "gsms_0014": {
+    "formal": {
+      "FINAL": "punct",
+      "t": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "t": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "t": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "t": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    }
+  },
+  "gsms_0015": {
+    "formal": {
+      "FINAL": "punct",
+      "k1": "nummod",
+      "k2": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "k1": "nsubj",
+      "k2": "nsubj",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "k1": "nsubj",
+      "k2": "nsubj",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "k1": "nsubj",
+      "k2": "nsubj",
+      "n1": "nummod",
+      "n2": "pobj"
+    }
+  },
+  "gsms_0016": {
+    "formal": {
+      "FINAL": "punct",
+      "cm": "nummod",
+      "cn": "nummod",
+      "m1": "nummod",
+      "m2": "dep",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "cm": "dobj",
+      "cn": "dobj",
+      "m1": "nummod",
+      "m2": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "cm": "dobj",
+      "cn": "dobj",
+      "m1": "nummod",
+      "m2": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "cm": "pobj",
+      "cn": "pobj",
+      "m1": "nummod",
+      "m2": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    }
+  },
+  "gsms_0017": {
+    "formal": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "mult": "nummod",
+      "n": "nummod",
+      "t": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "mult": "nummod",
+      "n": "nummod",
+      "t": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "mult": "advmod",
+      "n": "nummod",
+      "t": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "mult": "nummod",
+      "n": "nummod",
+      "t": "nummod"
+    }
+  },
+  "gsms_0018": {
+    "formal": {
+      "FINAL": "punct",
+      "c1": "nummod",
+      "c2": "nummod",
+      "c3": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "c1": "dobj",
+      "c2": "dobj",
+      "c3": "dobj",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "c1": "dobj",
+      "c2": "dobj",
+      "c3": "dobj",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "c1": "pobj",
+      "c2": "pobj",
+      "c3": "pobj",
+      "n1": "nummod",
+      "n2": "nummod"
+    }
+  },
+  "gsms_0019": {
+    "formal": {
+      "FINAL": "punct",
+      "frac": "appos",
+      "n": "nummod",
+      "p1": "nummod",
+      "r1": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "nummod",
+      "p1": "nummod",
+      "r1": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "nummod",
+      "p1": "nummod",
+      "r1": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "nummod",
+      "p1": "nummod",
+      "r1": "nummod"
+    }
+  },
+  "gsms_0020": {
+    "formal": {
+      "FINAL": "punct",
+      "mult": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "mult": "predet",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "mult": "predet",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "mult": "amod",
+      "n1": "nummod",
+      "n2": "dobj"
+    }
+  },
+  "gsms_0021": {
+    "formal": {
+      "FINAL": "punct",
+      "h1": "nummod",
+      "h2": "nummod",
+      "h3": "nummod",
+      "m1": "nummod",
+      "m2": "nummod",
+      "n2": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "h1": "nummod",
+      "h2": "nummod",
+      "h3": "nummod",
+      "m1": "nummod",
+      "m2": "nummod",
+      "n2": "nummod",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "h1": "nummod",
+      "h2": "nummod",
+      "h3": "nummod",
+      "m1": "nummod",
+      "m2": "nummod",
+      "n2": "nummod",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "h1": "nummod",
+      "h2": "nummod",
+      "h3": "nummod",
+      "m1": "nummod",
+      "m2": "nummod",
+      "n2": "nummod",
+      "total": "nummod"
+    }
+  },
+  "gsms_0022": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "dobj",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "dobj",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "dobj",
+      "total": "nummod"
+    }
+  },
+  "gsms_0023": {
+    "formal": {
+      "FINAL": "punct",
+      "children": "nummod",
+      "count": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "n4": "nummod",
+      "n5": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "children": "attr",
+      "count": "nummod",
+      "n1": "nummod",
+      "n2": "npadvmod",
+      "n3": "conj",
+      "n4": "conj",
+      "n5": "conj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "children": "attr",
+      "count": "nummod",
+      "n1": "nummod",
+      "n2": "npadvmod",
+      "n3": "conj",
+      "n4": "conj",
+      "n5": "conj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "children": "attr",
+      "count": "nummod",
+      "n1": "nummod",
+      "n2": "dobj",
+      "n3": "dobj",
+      "n4": "dobj",
+      "n5": "dobj"
+    }
+  },
+  "gsms_0024": {
+    "formal": {
+      "FINAL": "punct",
+      "cal": "nummod",
+      "n": "nummod",
+      "size": "nummod",
+      "spent": "nummod",
+      "total": "appos"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "cal": "nummod",
+      "n": "nummod",
+      "size": "nummod",
+      "spent": "nummod",
+      "total": "attr"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "cal": "nummod",
+      "n": "nummod",
+      "size": "nummod",
+      "spent": "nummod",
+      "total": "attr"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "cal": "nummod",
+      "n": "nummod",
+      "size": "nummod",
+      "spent": "nummod",
+      "total": "attr"
+    }
+  },
+  "gsms_0025": {
+    "formal": {
+      "FINAL": "punct",
+      "p1": "nummod",
+      "p2": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "p1": "nummod",
+      "p2": "nummod",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "p1": "nummod",
+      "p2": "nummod",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "p1": "nummod",
+      "p2": "nummod",
+      "total": "nummod"
+    }
+  },
+  "gsms_0026": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "pobj",
+      "n3": "pobj"
+    }
+  },
+  "gsms_0027": {
+    "formal": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "n": "nummod",
+      "p": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "n": "nummod",
+      "p": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "n": "nummod",
+      "p": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "n": "nummod",
+      "p": "nummod"
+    }
+  },
+  "gsms_0028": {
+    "formal": {
+      "FINAL": "punct",
+      "daily": "nummod",
+      "frac": "nsubj",
+      "period": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "daily": "nummod",
+      "frac": "pobj",
+      "period": "nummod",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "daily": "nummod",
+      "frac": "pobj",
+      "period": "nummod",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "daily": "nummod",
+      "frac": "nsubjpass",
+      "period": "nummod",
+      "total": "nummod"
+    }
+  },
+  "gsms_0029": {
+    "formal": {
+      "FINAL": "punct",
+      "age1": "nummod",
+      "mult": "nummod",
+      "years": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "age1": "nummod",
+      "mult": "attr",
+      "years": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "age1": "nummod",
+      "mult": "attr",
+      "years": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "age1": "nummod",
+      "mult": "attr",
+      "years": "nummod"
+    }
+  },
+  "gsms_0030": {
+    "formal": {
+      "FINAL": "punct",
+      "initial_amount": "nummod",
+      "quantity": "nummod",
+      "unit_price": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "initial_amount": "dobj",
+      "quantity": "nummod",
+      "unit_price": "dobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "initial_amount": "dobj",
+      "quantity": "nummod",
+      "unit_price": "dobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "initial_amount": "dobj",
+      "quantity": "nummod",
+      "unit_price": "dobj"
+    }
+  },
+  "gsms_0031": {
+    "formal": {
+      "FINAL": "punct",
+      "age1": "nummod",
+      "age_diff": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "age1": "nummod",
+      "age_diff": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "age1": "nummod",
+      "age_diff": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "age1": "nummod",
+      "age_diff": "nummod"
+    }
+  },
+  "gsms_0032": {
+    "formal": {
+      "FINAL": "punct",
+      "brokerage_fee": "nummod",
+      "budget": "nummod",
+      "price": "nummod",
+      "transfer_fee": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "brokerage_fee": "nummod",
+      "budget": "nummod",
+      "price": "pobj",
+      "transfer_fee": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "brokerage_fee": "nummod",
+      "budget": "nummod",
+      "price": "pobj",
+      "transfer_fee": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "brokerage_fee": "nummod",
+      "budget": "attr",
+      "price": "pobj",
+      "transfer_fee": "nummod"
+    }
+  },
+  "gsms_0033": {
+    "formal": {
+      "FINAL": "punct",
+      "goal": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "s1": "nummod",
+      "s2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "goal": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "s1": "nummod",
+      "s2": "dobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "goal": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "s1": "nummod",
+      "s2": "dobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "goal": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "s1": "nummod",
+      "s2": "dobj"
+    }
+  },
+  "gsms_0034": {
+    "formal": {
+      "FINAL": "punct",
+      "fee1_percent": "nummod",
+      "fee2_percent": "nummod",
+      "loan": "nummod",
+      "price": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "fee1_percent": "nummod",
+      "fee2_percent": "nummod",
+      "loan": "dobj",
+      "price": "pobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "fee1_percent": "nummod",
+      "fee2_percent": "nummod",
+      "loan": "dobj",
+      "price": "pobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "fee1_percent": "nummod",
+      "fee2_percent": "nummod",
+      "loan": "nsubj",
+      "price": "pobj"
+    }
+  },
+  "gsms_0035": {
+    "formal": {
+      "FINAL": "punct",
+      "current": "nummod",
+      "fraction": "pobj",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "current": "dobj",
+      "fraction": "det",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "current": "dobj",
+      "fraction": "det",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "current": "dobj",
+      "fraction": "det",
+      "total": "dobj"
+    }
+  },
+  "gsms_0036": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "compound",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "nummod",
+      "p2": "compound",
+      "p3": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "dobj",
+      "p2": "dobj",
+      "p3": "pobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "dobj",
+      "p2": "dobj",
+      "p3": "pobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "pobj",
+      "p2": "pobj",
+      "p3": "pobj"
+    }
+  },
+  "gsms_0037": {
+    "formal": {
+      "FINAL": "punct",
+      "mult": "nummod",
+      "n": "nummod",
+      "x": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "mult": "advmod",
+      "n": "nummod",
+      "x": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "mult": "advmod",
+      "n": "nummod",
+      "x": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "mult": "advmod",
+      "n": "nummod",
+      "x": "nummod"
+    }
+  },
+  "gsms_0038": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "price1": "nummod",
+      "price2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "price1": "appos",
+      "price2": "dobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "price1": "appos",
+      "price2": "dobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "price1": "appos",
+      "price2": "dobj"
+    }
+  },
+  "gsms_0039": {
+    "formal": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "h": "nummod",
+      "n": "nummod",
+      "t": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "h": "nummod",
+      "n": "nummod",
+      "t": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "h": "nummod",
+      "n": "nummod",
+      "t": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "h": "nummod",
+      "n": "nummod",
+      "t": "nummod"
+    }
+  },
+  "gsms_0040": {
+    "formal": {
+      "FINAL": "punct",
+      "discount": "appos",
+      "n1": "nummod",
+      "n12": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "nummod",
+      "p2": "nummod",
+      "p3": "nummod",
+      "total": "pobj"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "discount": "nummod",
+      "n1": "nummod",
+      "n12": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "pobj",
+      "p2": "pobj",
+      "p3": "attr",
+      "total": "dobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "discount": "nummod",
+      "n1": "nummod",
+      "n12": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "pobj",
+      "p2": "pobj",
+      "p3": "attr",
+      "total": "dobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "discount": "nummod",
+      "n1": "nummod",
+      "n12": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "pobj",
+      "p2": "pobj",
+      "p3": "pobj",
+      "total": "dobj"
+    }
+  },
+  "gsms_0041": {
+    "formal": {
+      "FINAL": "punct",
+      "mult": "nummod",
+      "n1": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "mult": "amod",
+      "n1": "nummod",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "mult": "amod",
+      "n1": "nummod",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "mult": "amod",
+      "n1": "nummod",
+      "total": "nummod"
+    }
+  },
+  "gsms_0042": {
+    "formal": {
+      "FINAL": "punct",
+      "extra_price": "nummod",
+      "percent": "nummod",
+      "price": "nummod",
+      "usage": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "extra_price": "pobj",
+      "percent": "nummod",
+      "price": "dobj",
+      "usage": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "extra_price": "pobj",
+      "percent": "nummod",
+      "price": "dobj",
+      "usage": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "extra_price": "pobj",
+      "percent": "nummod",
+      "price": "pobj",
+      "usage": "nummod"
+    }
+  },
+  "gsms_0043": {
+    "formal": {
+      "FINAL": "punct",
+      "frac": "pobj",
+      "n": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac": "dobj",
+      "n": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac": "dobj",
+      "n": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac": "dobj",
+      "n": "nummod"
+    }
+  },
+  "gsms_0044": {
+    "formal": {
+      "FINAL": "punct",
+      "mult": "nummod",
+      "n": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "mult": "predet",
+      "n": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "mult": "predet",
+      "n": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "mult": "predet",
+      "n": "nummod"
+    }
+  },
+  "gsms_0045": {
+    "formal": {
+      "FINAL": "punct",
+      "cost": "nummod",
+      "length": "nummod",
+      "owned": "nummod",
+      "plant_width": "nummod",
+      "space": "dep"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "cost": "dobj",
+      "length": "nummod",
+      "owned": "nummod",
+      "plant_width": "nummod",
+      "space": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "cost": "dobj",
+      "length": "nummod",
+      "owned": "nummod",
+      "plant_width": "nummod",
+      "space": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "cost": "dobj",
+      "length": "nummod",
+      "owned": "nummod",
+      "plant_width": "nummod",
+      "space": "nummod"
+    }
+  },
+  "gsms_0046": {
+    "formal": {
+      "FINAL": "punct",
+      "faculty": "nummod",
+      "graduates": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "faculty": "nummod",
+      "graduates": "nummod",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "faculty": "nummod",
+      "graduates": "nummod",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "faculty": "nummod",
+      "graduates": "nummod",
+      "total": "nummod"
+    }
+  },
+  "gsms_0047": {
+    "formal": {
+      "FINAL": "punct",
+      "frac": "appos",
+      "mult1": "nummod",
+      "n": "nummod",
+      "x": "nummod",
+      "y": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac": "det",
+      "mult1": "nummod",
+      "n": "nummod",
+      "x": "nummod",
+      "y": "dobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac": "det",
+      "mult1": "nummod",
+      "n": "nummod",
+      "x": "nummod",
+      "y": "dobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac": "det",
+      "mult1": "nummod",
+      "n": "nummod",
+      "x": "nummod",
+      "y": "dobj"
+    }
+  },
+  "gsms_0048": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t": "nummod",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t": "nummod",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "dobj",
+      "n2": "dobj",
+      "t": "nummod",
+      "total": "nummod"
+    }
+  },
+  "gsms_0049": {
+    "formal": {
+      "FINAL": "punct",
+      "a": "nummod",
+      "f": "nummod",
+      "n": "dep",
+      "n_first": "nummod",
+      "p": "nummod",
+      "r": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "a": "nummod",
+      "f": "nummod",
+      "n": "nummod",
+      "n_first": "nsubj",
+      "p": "nummod",
+      "r": "dobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "a": "nummod",
+      "f": "nummod",
+      "n": "nummod",
+      "n_first": "nsubj",
+      "p": "nummod",
+      "r": "dobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "a": "nummod",
+      "f": "nummod",
+      "n": "nummod",
+      "n_first": "pobj",
+      "p": "nummod",
+      "r": "dobj"
+    }
+  },
+  "gsms_0050": {
+    "formal": {
+      "FINAL": "punct",
+      "area": "nummod",
+      "length": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "area": "nummod",
+      "length": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "area": "nummod",
+      "length": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "area": "nummod",
+      "length": "nummod"
+    }
+  },
+  "gsms_0051": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "nummod",
+      "p2": "nummod",
+      "p3": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "pobj",
+      "p2": "pobj",
+      "p3": "pobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "pobj",
+      "p2": "pobj",
+      "p3": "pobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "attr",
+      "p2": "conj",
+      "p3": "conj"
+    }
+  },
+  "gsms_0052": {
+    "formal": {
+      "FINAL": "punct",
+      "bill": "nummod",
+      "k": "nummod",
+      "m": "compound",
+      "n": "nummod",
+      "p1": "nummod",
+      "p2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "bill": "nummod",
+      "k": "nummod",
+      "m": "nummod",
+      "n": "quantmod",
+      "p1": "pobj",
+      "p2": "pobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "bill": "nummod",
+      "k": "nummod",
+      "m": "nummod",
+      "n": "quantmod",
+      "p1": "pobj",
+      "p2": "pobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "bill": "nummod",
+      "k": "nummod",
+      "m": "nummod",
+      "n": "quantmod",
+      "p1": "nummod",
+      "p2": "nummod"
+    }
+  },
+  "gsms_0053": {
+    "formal": {
+      "FINAL": "punct",
+      "frac": "nmod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac": "advmod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac": "advmod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac": "advmod",
+      "n1": "nummod",
+      "n2": "nummod"
+    }
+  },
+  "gsms_0054": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "dobj",
+      "n3": "dobj",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "dobj",
+      "n3": "dobj",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "dobj",
+      "n3": "dobj",
+      "total": "nummod"
+    }
+  },
+  "gsms_0055": {
+    "formal": {
+      "FINAL": "punct",
+      "alphabets": "nummod",
+      "frac": "appos",
+      "n1": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "alphabets": "compound",
+      "frac": "det",
+      "n1": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "alphabets": "compound",
+      "frac": "det",
+      "n1": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "alphabets": "compound",
+      "frac": "det",
+      "n1": "nummod"
+    }
+  },
+  "gsms_0056": {
+    "formal": {
+      "FINAL": "punct",
+      "cal": "nummod",
+      "num": "nummod",
+      "vol": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "cal": "nummod",
+      "num": "nummod",
+      "vol": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "cal": "nummod",
+      "num": "nummod",
+      "vol": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "cal": "nummod",
+      "num": "nummod",
+      "vol": "nummod"
+    }
+  },
+  "gsms_0057": {
+    "formal": {
+      "FINAL": "punct",
+      "frac1": "nsubj",
+      "mult1": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac1": "nmod",
+      "mult1": "amod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac1": "nmod",
+      "mult1": "amod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac1": "nmod",
+      "mult1": "amod",
+      "n1": "nummod",
+      "n2": "nummod"
+    }
+  },
+  "gsms_0058": {
+    "formal": {
+      "FINAL": "punct",
+      "base": "nummod",
+      "days": "nummod",
+      "mult1": "nummod",
+      "mult2": "conj",
+      "n": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "base": "nummod",
+      "days": "nummod",
+      "mult1": "amod",
+      "mult2": "nummod",
+      "n": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "base": "nummod",
+      "days": "nummod",
+      "mult1": "amod",
+      "mult2": "nummod",
+      "n": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "base": "nummod",
+      "days": "nummod",
+      "mult1": "amod",
+      "mult2": "nummod",
+      "n": "nummod"
+    }
+  },
+  "gsms_0059": {
+    "formal": {
+      "FINAL": "punct",
+      "frac1": "appos",
+      "frac2": "appos",
+      "n1": "nummod",
+      "n2": "nummod",
+      "spill": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac1": "det",
+      "frac2": "amod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "spill": "nummod",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac1": "nummod",
+      "frac2": "amod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "spill": "nummod",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac1": "nsubj",
+      "frac2": "nsubj",
+      "n1": "nummod",
+      "n2": "nummod",
+      "spill": "nummod",
+      "total": "nummod"
+    }
+  },
+  "gsms_0060": {
+    "formal": {
+      "FINAL": "punct",
+      "b": "nummod",
+      "d": "nummod",
+      "h": "nummod",
+      "r": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "b": "nummod",
+      "d": "nummod",
+      "h": "nummod",
+      "r": "dobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "b": "nummod",
+      "d": "nummod",
+      "h": "nummod",
+      "r": "dobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "b": "nummod",
+      "d": "nummod",
+      "h": "nummod",
+      "r": "dobj"
+    }
+  },
+  "gsms_0061": {
+    "formal": {
+      "FINAL": "punct",
+      "fake_num": "nummod",
+      "frac": "pobj",
+      "k": "punct",
+      "n": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "fake_num": "npadvmod",
+      "frac": "dobj",
+      "k": "pobj",
+      "n": "pobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "fake_num": "npadvmod",
+      "frac": "dobj",
+      "k": "pobj",
+      "n": "pobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "fake_num": "nsubj",
+      "frac": "dobj",
+      "k": "pobj",
+      "n": "nummod"
+    }
+  },
+  "gsms_0062": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "p": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "p": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "p": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "p": "nummod"
+    }
+  },
+  "gsms_0063": {
+    "formal": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "k": "dobj",
+      "n": "nummod"
+    }
+  },
+  "gsms_0064": {
+    "formal": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "n": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "n": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "n": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "n": "nummod"
+    }
+  },
+  "gsms_0065": {
+    "formal": {
+      "FINAL": "punct",
+      "fee": "nummod",
+      "n": "nummod",
+      "rate": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "fee": "dobj",
+      "n": "nummod",
+      "rate": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "fee": "dobj",
+      "n": "nummod",
+      "rate": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "fee": "dobj",
+      "n": "nummod",
+      "rate": "nummod"
+    }
+  },
+  "gsms_0066": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "n4": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "n4": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "n4": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "n4": "nummod"
+    }
+  },
+  "gsms_0067": {
+    "formal": {
+      "FINAL": "punct",
+      "force_percent": "nummod",
+      "num_passengers": "appos",
+      "weight_item": "nummod",
+      "weight_passenger": "nummod",
+      "weight_vehicle": "conj"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "force_percent": "nummod",
+      "num_passengers": "nummod",
+      "weight_item": "nummod",
+      "weight_passenger": "nummod",
+      "weight_vehicle": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "force_percent": "nummod",
+      "num_passengers": "nummod",
+      "weight_item": "nummod",
+      "weight_passenger": "nummod",
+      "weight_vehicle": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "force_percent": "nummod",
+      "num_passengers": "nummod",
+      "weight_item": "nummod",
+      "weight_passenger": "nummod",
+      "weight_vehicle": "nummod"
+    }
+  },
+  "gsms_0068": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    }
+  },
+  "gsms_0069": {
+    "formal": {
+      "FINAL": "punct",
+      "mult": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "mult": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "mult": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "mult": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    }
+  },
+  "gsms_0070": {
+    "formal": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "p": "nummod",
+      "w": "compound"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "p": "nummod",
+      "w": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "p": "nummod",
+      "w": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "p": "nummod",
+      "w": "nummod"
+    }
+  },
+  "gsms_0071": {
+    "formal": {
+      "FINAL": "punct",
+      "k1": "nummod",
+      "k2": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "k1": "nummod",
+      "k2": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "k1": "nummod",
+      "k2": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "k1": "nummod",
+      "k2": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    }
+  },
+  "gsms_0072": {
+    "formal": {
+      "FINAL": "punct",
+      "l": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "p": "nummod",
+      "t": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "l": "nummod",
+      "n1": "nummod",
+      "n2": "pobj",
+      "p": "nummod",
+      "t": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "l": "nummod",
+      "n1": "nummod",
+      "n2": "pobj",
+      "p": "nummod",
+      "t": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "l": "nummod",
+      "n1": "nummod",
+      "n2": "appos",
+      "p": "nummod",
+      "t": "nummod"
+    }
+  },
+  "gsms_0073": {
+    "formal": {
+      "FINAL": "punct",
+      "multiple": "nummod",
+      "orbit_period": "nummod",
+      "relative_age": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "multiple": "nummod",
+      "orbit_period": "nummod",
+      "relative_age": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "multiple": "nummod",
+      "orbit_period": "nummod",
+      "relative_age": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "multiple": "nummod",
+      "orbit_period": "nummod",
+      "relative_age": "nummod"
+    }
+  },
+  "gsms_0074": {
+    "formal": {
+      "FINAL": "punct",
+      "absent_boys": "nummod",
+      "absent_girls": "prep",
+      "num_girls": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "absent_boys": "nummod",
+      "absent_girls": "nummod",
+      "num_girls": "nsubj",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "absent_boys": "nummod",
+      "absent_girls": "nummod",
+      "num_girls": "nsubj",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "absent_boys": "nummod",
+      "absent_girls": "nummod",
+      "num_girls": "nsubj",
+      "total": "nummod"
+    }
+  },
+  "gsms_0075": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "nummod",
+      "p2": "nummod",
+      "p3": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "dobj",
+      "p2": "dobj",
+      "p3": "dobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "dobj",
+      "p2": "dobj",
+      "p3": "dobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "dobj",
+      "p2": "dobj",
+      "p3": "dobj"
+    }
+  },
+  "gsms_0076": {
+    "formal": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "price": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "price": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "price": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "price": "pobj",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "nummod"
+    }
+  },
+  "gsms_0077": {
+    "formal": {
+      "FINAL": "punct",
+      "frac": "ROOT",
+      "n": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "nummod"
+    }
+  },
+  "gsms_0078": {
+    "formal": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "frac": "pobj",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "frac": "dobj",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "frac": "dobj",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "frac": "dobj",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t": "nummod"
+    }
+  },
+  "gsms_0079": {
+    "formal": {
+      "FINAL": "punct",
+      "frac": "pobj",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac": "dobj",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac": "dobj",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac": "dobj",
+      "n1": "nummod",
+      "n2": "nummod"
+    }
+  },
+  "gsms_0080": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "p": "nummod",
+      "price1": "nummod",
+      "price2": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "p": "nummod",
+      "price1": "nummod",
+      "price2": "nummod",
+      "total": "dobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "p": "nummod",
+      "price1": "nummod",
+      "price2": "nummod",
+      "total": "dobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "p": "nummod",
+      "price1": "nummod",
+      "price2": "nummod",
+      "total": "nummod"
+    }
+  },
+  "gsms_0081": {
+    "formal": {
+      "FINAL": "punct",
+      "m": "nummod",
+      "n": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "m": "pobj",
+      "n": "nummod",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "m": "pobj",
+      "n": "nummod",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "m": "pobj",
+      "n": "nummod",
+      "total": "nummod"
+    }
+  },
+  "gsms_0082": {
+    "formal": {
+      "FINAL": "punct",
+      "frac": "nsubj",
+      "m": "nummod",
+      "m_left": "nummod",
+      "w": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac": "nsubj",
+      "m": "nummod",
+      "m_left": "nummod",
+      "w": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac": "nsubj",
+      "m": "nummod",
+      "m_left": "nummod",
+      "w": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac": "ROOT",
+      "m": "nummod",
+      "m_left": "nummod",
+      "w": "nummod"
+    }
+  },
+  "gsms_0083": {
+    "formal": {
+      "FINAL": "punct",
+      "n1": "pobj",
+      "n2": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "total": "dobj"
+    }
+  },
+  "gsms_0084": {
+    "formal": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "p": "nummod",
+      "r1": "nummod",
+      "r2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "p": "pobj",
+      "r1": "nummod",
+      "r2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "p": "pobj",
+      "r1": "nummod",
+      "r2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "p": "pobj",
+      "r1": "nummod",
+      "r2": "nummod"
+    }
+  },
+  "gsms_0085": {
+    "formal": {
+      "FINAL": "punct",
+      "diff": "nummod",
+      "total": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "diff": "nummod",
+      "total": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "diff": "nummod",
+      "total": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "diff": "nummod",
+      "total": "nummod"
+    }
+  },
+  "gsms_0086": {
+    "formal": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "frac": "appos",
+      "p1": "nummod",
+      "p2": "nummod",
+      "p3": "nummod",
+      "p4": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "d": "pobj",
+      "frac": "amod",
+      "p1": "pobj",
+      "p2": "npadvmod",
+      "p3": "attr",
+      "p4": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "d": "pobj",
+      "frac": "amod",
+      "p1": "pobj",
+      "p2": "npadvmod",
+      "p3": "attr",
+      "p4": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "d": "pobj",
+      "frac": "amod",
+      "p1": "pobj",
+      "p2": "npadvmod",
+      "p3": "pobj",
+      "p4": "nummod"
+    }
+  },
+  "gsms_0087": {
+    "formal": {
+      "FINAL": "punct",
+      "l1": "nummod",
+      "l2": "nummod",
+      "s1": "nummod",
+      "s2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "l1": "nummod",
+      "l2": "nummod",
+      "s1": "nummod",
+      "s2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "l1": "nummod",
+      "l2": "nummod",
+      "s1": "nummod",
+      "s2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "l1": "nummod",
+      "l2": "nummod",
+      "s1": "nummod",
+      "s2": "nummod"
+    }
+  },
+  "gsms_0088": {
+    "formal": {
+      "FINAL": "punct",
+      "frac_run": "npadvmod",
+      "frac_skip": "nsubj",
+      "frac_walk": "appos",
+      "mult_run": "compound",
+      "skip_speed": "nummod",
+      "total_time": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac_run": "dobj",
+      "frac_skip": "advmod",
+      "frac_walk": "conj",
+      "mult_run": "nummod",
+      "skip_speed": "nummod",
+      "total_time": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac_run": "dobj",
+      "frac_skip": "advmod",
+      "frac_walk": "conj",
+      "mult_run": "nummod",
+      "skip_speed": "nummod",
+      "total_time": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac_run": "dobj",
+      "frac_skip": "advmod",
+      "frac_walk": "nsubj",
+      "mult_run": "nummod",
+      "skip_speed": "nummod",
+      "total_time": "nummod"
+    }
+  },
+  "gsms_0089": {
+    "formal": {
+      "FINAL": "punct",
+      "end_time": "nummod",
+      "first_hour_cost": "npadvmod",
+      "free_hours": "quantmod",
+      "multiplier": "nummod",
+      "start_time": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "end_time": "nummod",
+      "first_hour_cost": "attr",
+      "free_hours": "nummod",
+      "multiplier": "predet",
+      "start_time": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "end_time": "nummod",
+      "first_hour_cost": "attr",
+      "free_hours": "nummod",
+      "multiplier": "predet",
+      "start_time": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "end_time": "nummod",
+      "first_hour_cost": "attr",
+      "free_hours": "nummod",
+      "multiplier": "predet",
+      "start_time": "nummod"
+    }
+  },
+  "gsms_0090": {
+    "formal": {
+      "FINAL": "punct",
+      "mult1": "nummod",
+      "mult2": "appos",
+      "n": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "mult1": "nummod",
+      "mult2": "amod",
+      "n": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "mult1": "nummod",
+      "mult2": "amod",
+      "n": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "mult1": "nummod",
+      "mult2": "amod",
+      "n": "nummod"
+    }
+  },
+  "gsms_0091": {
+    "formal": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "mult": "nummod",
+      "n": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "mult": "nummod",
+      "n": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "mult": "nummod",
+      "n": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "mult": "nummod",
+      "n": "nummod"
+    }
+  },
+  "gsms_0092": {
+    "formal": {
+      "FINAL": "punct",
+      "frac1": "appos",
+      "frac2": "appos",
+      "mult1": "nummod",
+      "n1": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac1": "npadvmod",
+      "frac2": "det",
+      "mult1": "nummod",
+      "n1": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac1": "nummod",
+      "frac2": "det",
+      "mult1": "nummod",
+      "n1": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac1": "dobj",
+      "frac2": "det",
+      "mult1": "nummod",
+      "n1": "nummod"
+    }
+  },
+  "gsms_0093": {
+    "formal": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "mult": "nummod",
+      "n": "nummod",
+      "t1": "conj"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "mult": "amod",
+      "n": "nummod",
+      "t1": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "mult": "amod",
+      "n": "nummod",
+      "t1": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "mult": "advmod",
+      "n": "nummod",
+      "t1": "nummod"
+    }
+  },
+  "gsms_0094": {
+    "formal": {
+      "FINAL": "punct",
+      "frac": "appos",
+      "n": "nummod",
+      "p1": "nummod",
+      "p2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "nummod",
+      "p1": "nummod",
+      "p2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "nummod",
+      "p1": "nummod",
+      "p2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "nummod",
+      "p1": "nummod",
+      "p2": "nummod"
+    }
+  },
+  "gsms_0095": {
+    "formal": {
+      "FINAL": "punct",
+      "mult": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "mult": "amod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "mult": "amod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "mult": "amod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod"
+    }
+  },
+  "gsms_0096": {
+    "formal": {
+      "FINAL": "punct",
+      "budget": "nummod",
+      "cost1": "nummod",
+      "cost2": "nummod",
+      "times": "nummod",
+      "tokens": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "budget": "dobj",
+      "cost1": "attr",
+      "cost2": "dobj",
+      "times": "nummod",
+      "tokens": "dobj"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "budget": "dobj",
+      "cost1": "attr",
+      "cost2": "dobj",
+      "times": "nummod",
+      "tokens": "dobj"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "budget": "nsubjpass",
+      "cost1": "npadvmod",
+      "cost2": "dobj",
+      "times": "nummod",
+      "tokens": "npadvmod"
+    }
+  },
+  "gsms_0097": {
+    "formal": {
+      "FINAL": "punct",
+      "mult": "nummod",
+      "n": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "mult": "npadvmod",
+      "n": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "mult": "npadvmod",
+      "n": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "mult": "npadvmod",
+      "n": "nummod"
+    }
+  },
+  "gsms_0098": {
+    "formal": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "n0": "nummod",
+      "r": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "n0": "nummod",
+      "r": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "n0": "nummod",
+      "r": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "n0": "nummod",
+      "r": "nummod"
+    }
+  },
+  "gsms_0099": {
+    "formal": {
+      "FINAL": "punct",
+      "d1": "nummod",
+      "d2": "nummod",
+      "d3": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_base": {
+      "FINAL": "punct",
+      "d1": "nummod",
+      "d2": "nummod",
+      "d3": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_break": {
+      "FINAL": "punct",
+      "d1": "nummod",
+      "d2": "nummod",
+      "d3": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_para": {
+      "FINAL": "punct",
+      "d1": "nummod",
+      "d2": "nummod",
+      "d3": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    }
+  }
+}

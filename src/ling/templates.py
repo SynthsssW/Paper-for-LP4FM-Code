@@ -45,10 +45,16 @@ hallucinate.
 
 DESIGN NOTES THAT MATTER DOWNSTREAM
 -----------------------------------
-* **Spans are emitted, never searched.** `render_nl` / `render_python` build the
-  output string by appending chunks and record `[start, end)` at the moment each
-  quantity's surface form is appended. `str.find` is never used to recover a
-  span. `Rendered.validate()` re-asserts `text[start:end] == literal`.
+* **Spans are emitted, never searched.** `render_nl` / `render_paraphrase` /
+  `render_formal` build the output string by appending chunks and record
+  `[start, end)` at the moment each quantity's surface form is appended.
+  `str.find` is never used to recover a span. `Rendered.validate()` re-asserts
+  `text[start:end] == literal`.
+* **`formal` is givens + goal, never a program.** prereg/DEVIATIONS.md
+  Amendment 4: `render_formal` emits the value bindings, the situation
+  statements with quantities lifted to their identifiers, and the template's own
+  question with the unknown declared as `answer = ?`. No derivation, no answer
+  expression, not executable.
 * **A "quantity"** is a template variable that (a) appears as a placeholder in
   the question body and (b) carries a numeric value. Lexical variables (names,
   colours, units) are not quantities. Solved-for internal variables that never
@@ -444,6 +450,13 @@ def normalise_answer(value: Any) -> Optional[float]:
 
 
 _SENTENCE_END_RE = re.compile(r"(?:^|[.!?:]|\n)\s*$")
+#: A full stop after one of these is an abbreviation, not a sentence boundary.
+#: Three templates say "Mr./Mrs./Ms. <name>", and naive splitting there makes
+#: the "final sentence" be "Johnson's budget?" -- which would silently give the
+#: formal rendering a truncated goal.
+_ABBREV_BEFORE_RE = re.compile(
+    r"(?:^|[\s(\"'])(?:Mr|Mrs|Ms|Dr|Prof|St|Mt|Jr|Sr|vs|etc|No|Inc|Ltd|[A-Z])\.$"
+)
 _ARTICLE_RE = re.compile(r"(?<![A-Za-z])([Aa])n?(\s+)$")
 #: Words whose written initial letter disagrees with their initial sound.
 _AN_DESPITE_CONSONANT = ("hour", "honest", "honou", "honor", "heir")
@@ -497,6 +510,10 @@ class Segment:
 
 
 _PLACEHOLDER_RE = re.compile(r"\{\s*([A-Za-z_]\w*)\s*,([^{}]*)\}")
+#: Paraphrase schemas (data/corpus/paraphrases.json) carry no defaults -- the
+#: value comes from the same bindings the NL rendering used -- so their
+#: placeholders are just `{var}`.
+_PARA_PLACEHOLDER_RE = re.compile(r"\{([A-Za-z_]\w*)\}")
 _SECTION_RE = re.compile(r"\n\s*#\s*(init|conditions|answer)\s*[:=]", re.IGNORECASE)
 
 
@@ -522,6 +539,10 @@ class Rendered:
     text: str
     anchors: Dict[str, List[int]]
     literals: Dict[str, str]
+    #: Rendering-specific facts the record builder verifies (`render_formal`
+    #: records the goal it emitted, in both notations, so `corpus.py` can check
+    #: it against the NL rendering's question sentence).
+    meta: Dict[str, Any] = field(default_factory=dict)
 
     def validate(self, required: Sequence[str]) -> None:
         """Re-assert every span. Crash loudly rather than emit a bad record."""
@@ -546,6 +567,40 @@ class Rendered:
         missing = [q for q in required if q not in self.anchors]
         if missing:
             raise SpanError("quantities missing from anchors: %r" % (missing,))
+
+
+def _emit(
+    segments: Sequence[Segment], chunks: Sequence[str], quantities: Sequence[str]
+) -> Rendered:
+    """Build the string and record spans AS EACH CHUNK IS APPENDED.
+
+    `start` is the length of the text emitted so far, `end` is that plus the
+    length of the surface form just appended. Nothing is ever located by
+    searching the finished string, so a quantity whose surface happens to repeat
+    elsewhere in the prose cannot be mis-anchored. Shared by every realisation
+    that has prose in it (`render_nl`, `render_paraphrase`) so that all of them
+    anchor by the same mechanism rather than by three lookalike copies of it.
+    """
+    parts: List[str] = []
+    pos = 0
+    anchors: Dict[str, List[int]] = {}
+    literals: Dict[str, str] = {}
+    wanted = set(quantities)
+
+    for seg, chunk in zip(segments, chunks):
+        start = pos
+        parts.append(chunk)
+        pos += len(chunk)
+        if seg.kind == "ph" and seg.var in wanted and seg.var not in anchors:
+            anchors[seg.var] = [start, pos]
+            literals[seg.var] = chunk
+
+    text = "".join(parts)
+    assert pos == len(text)  # emitted-length bookkeeping must match reality
+    anchors["FINAL"] = [-1, -1]
+    r = Rendered(text=text, anchors=anchors, literals=literals)
+    r.validate(quantities)
+    return r
 
 
 @dataclass
@@ -865,6 +920,46 @@ class Template:
 
     # -- surface forms ------------------------------------------------------
 
+    def _chunks(
+        self,
+        bindings: Dict[str, Any],
+        symbolic: "frozenset[str]" = frozenset(),
+        segments: Optional[Sequence[Segment]] = None,
+    ) -> List[str]:
+        """Resolve every segment of the question body into its final chunk.
+
+        Placeholder surfaces depend on whether the prose so far ends a sentence;
+        literals may need their trailing indefinite article adjusted to the
+        surface that follows. Neither depends on the other, so one pass settles
+        both.
+
+        `symbolic` names the variables to emit as their *identifier* rather than
+        their sampled surface. That is what turns the body into the symbolic
+        schema `render_formal` states the givens against; with the default empty
+        set this is exactly the natural-language rendering.
+        """
+        segments = self.segments if segments is None else segments
+        chunks: List[str] = []
+        for seg in segments:
+            if seg.kind == "lit":
+                chunks.append(seg.text)
+            elif seg.var in symbolic:
+                # An identifier, never capitalised: `n_1` and `N_1` are
+                # different names, and the givens block binds the lowercase one.
+                chunks.append(seg.var)
+            else:
+                chunks.append(
+                    self._surface(
+                        bindings[seg.var],
+                        seg.default,
+                        sentence_initial=_starts_sentence(chunks),
+                    )
+                )
+        for i, seg in enumerate(segments):
+            if seg.kind == "lit" and i + 1 < len(chunks):
+                chunks[i] = _fix_article(chunks[i], chunks[i + 1])
+        return chunks
+
     def render_nl(self, bindings: Dict[str, Any], quantities: Sequence[str]) -> Rendered:
         """Natural-language surface form.
 
@@ -874,47 +969,7 @@ class Template:
         so a quantity whose surface happens to repeat elsewhere in the prose
         cannot be mis-anchored.
         """
-        # Pass 1: resolve every chunk. Placeholder surfaces depend on whether
-        # the prose so far ends a sentence; literals may need their trailing
-        # indefinite article adjusted to the surface that follows. Neither
-        # depends on the other, so one pass settles both.
-        chunks: List[str] = []
-        for i, seg in enumerate(self.segments):
-            if seg.kind == "lit":
-                chunks.append(seg.text)
-            else:
-                chunks.append(
-                    self._surface(
-                        bindings[seg.var],
-                        seg.default,
-                        sentence_initial=_starts_sentence(chunks),
-                    )
-                )
-        for i, seg in enumerate(self.segments):
-            if seg.kind == "lit" and i + 1 < len(chunks):
-                chunks[i] = _fix_article(chunks[i], chunks[i + 1])
-
-        # Pass 2: build the string and record spans AS EACH CHUNK IS APPENDED.
-        parts: List[str] = []
-        pos = 0
-        anchors: Dict[str, List[int]] = {}
-        literals: Dict[str, str] = {}
-        wanted = set(quantities)
-
-        for seg, chunk in zip(self.segments, chunks):
-            start = pos
-            parts.append(chunk)
-            pos += len(chunk)
-            if seg.kind == "ph" and seg.var in wanted and seg.var not in anchors:
-                anchors[seg.var] = [start, pos]
-                literals[seg.var] = chunk
-
-        text = "".join(parts)
-        assert pos == len(text)  # emitted-length bookkeeping must match reality
-        anchors["FINAL"] = [-1, -1]
-        r = Rendered(text=text, anchors=anchors, literals=literals)
-        r.validate(quantities)
-        return r
+        return _emit(self.segments, self._chunks(bindings), quantities)
 
     @staticmethod
     def _surface(value: Any, default: str, sentence_initial: bool = False) -> str:
@@ -939,64 +994,193 @@ class Template:
             s = s[:1].upper() + s[1:]
         return s
 
-    def render_python(
+    def render_paraphrase(
+        self, bindings: Dict[str, Any], quantities: Sequence[str], schema: str
+    ) -> Rendered:
+        """Answer-preserving paraphrase of the SAME instance, from a schema.
+
+        `schema` is vendored prose (data/corpus/paraphrases.json) written once
+        per problem, with `{var}` placeholders naming this template's own
+        variables. It is NOT free text: the values are substituted from the same
+        bindings that produced `nl_base`, so
+
+          * every quantity necessarily appears, with the same surface form the
+            NL rendering used for it (both go through `_surface`), and
+          * its span is EMITTED at substitution time by the same `_emit` the NL
+            rendering uses -- never recovered by searching the finished string.
+
+        A paraphrase that omits a quantity cannot be anchored, so `Rendered
+        .validate` raises `SpanError` and the problem fails the build rather
+        than being written with a missing anchor.
+        """
+        segments, order = self._segment_paraphrase(schema)
+        unknown = [v for v in order if v not in bindings]
+        if unknown:
+            raise TemplateError(
+                "%s: paraphrase references unbound variables %r"
+                % (self.template_id, unknown)
+            )
+        return _emit(segments, self._chunks(bindings, segments=segments), quantities)
+
+    @staticmethod
+    def _segment_paraphrase(schema: str) -> Tuple[List[Segment], List[str]]:
+        """Split a paraphrase schema into literal / `{var}` segments."""
+        segs: List[Segment] = []
+        order: List[str] = []
+        pos = 0
+        for m in _PARA_PLACEHOLDER_RE.finditer(schema):
+            if m.start() > pos:
+                segs.append(Segment("lit", text=schema[pos : m.start()]))
+            var = m.group(1)
+            segs.append(Segment("ph", var=var))
+            if var not in order:
+                order.append(var)
+            pos = m.end()
+        if pos < len(schema):
+            segs.append(Segment("lit", text=schema[pos:]))
+        # A stray brace means a mistyped placeholder, which would otherwise be
+        # emitted verbatim into a prompt and leave a quantity unsubstituted.
+        for seg in segs:
+            if seg.kind == "lit" and ("{" in seg.text or "}" in seg.text):
+                raise TemplateError("malformed paraphrase placeholder in %r" % schema)
+        return segs, order
+
+    def render_formal(
         self, bindings: Dict[str, Any], quantities: Sequence[str]
     ) -> Rendered:
-        """Python surface form of the SAME problem instance.
+        """Formal surface form of the SAME problem instance: GIVENS + GOAL.
 
-        Emitted, per DESIGN.md B.8, as *input notation with no execution*: this
-        string is a prompt, and nothing in the experiment ever runs it. It is
-        nevertheless a valid, self-contained program whose `answer` binding
-        equals the ground truth -- `corpus.py` executes it at BUILD time as a
-        verification of the rendering, never at experiment time.
+        prereg/DEVIATIONS.md Amendment 4. This rendering contains **no
+        derivation and no answer expression**. It states, in formal notation:
 
-        Only quantities and the variables the answer expression actually reads
-        are bound. Names, colours and units are dropped, which is what makes
-        this a formal rather than a mixed rendering.
+          * `GIVEN`  -- one assignment per quantity, binding the identifier the
+            template uses to the sampled value as a bare literal;
+          * `WHERE`  -- the problem's own situation statements, with every
+            quantity replaced by its identifier, so each bound symbol has a
+            referent and the problem stays well posed;
+          * `FIND`   -- the template's own question, and the unknown declared as
+            `answer = ?`.
+
+        The earlier version of this method emitted the full program including
+        `answer = <the template's answer expression>`. That is the solution, not
+        a re-notation: under it H3 would compare a prompt containing the
+        derivation against a prompt containing a word problem, and any lambda2
+        difference would be attributable to one prompt containing the answer.
+        Amendment 4 removes it. The model must still do the reasoning; only the
+        notation changes, which is the intervention H3 is about.
+
+        Consequences, both deliberate:
+
+        * The text is NOT executable (`answer = ?` is not Python, and no
+          derivation is emitted), so the old build-time "the formal program
+          returns ground truth" check is gone. Ground truth comes from the
+          template's `#answer:` expression, as it always did; the program was
+          only ever a redundant confirmation. `corpus.py` replaces the check
+          with: every emitted literal equals the value it claims, and the goal
+          is the template's own question.
+        * Only *quantities* are bound. Solved-for scratch variables (`ans`, `x`
+          in a few templates) are deliberately NOT emitted even when the answer
+          expression reads them -- in those templates the scratch variable IS
+          the answer, so binding it would hand over the result.
         """
-        emit: List[str] = list(quantities)
-        for name in self.answer_refs():
-            if name not in emit and name in bindings:
-                emit.append(name)
+        quants = list(quantities)
+        nl_chunks = self._chunks(bindings)
+        sym_chunks = self._chunks(bindings, symbolic=frozenset(quants))
+        nl_text = "".join(nl_chunks)
 
-        needs_fraction = any(isinstance(bindings[n], Fraction) for n in emit) or (
-            "Fraction" in self.answer_expr
-        )
+        where_sym, goal_sym, goal_nl = self._split_goal(nl_chunks, sym_chunks, nl_text)
 
         parts: List[str] = []
         pos = 0
         anchors: Dict[str, List[int]] = {}
         literals: Dict[str, str] = {}
-        wanted = set(quantities)
 
         def put(s: str) -> None:
             nonlocal pos
             parts.append(s)
             pos += len(s)
 
-        put("# %s\n" % self.template_id)
-        if needs_fraction:
-            put("from fractions import Fraction\n")
-        put("\n")
-
-        for name in emit:
+        put("# GIVEN\n")
+        for name in quants:
             put("%s = " % name)
             lit = self._py_literal(bindings[name])
             start = pos
             put(lit)
-            if name in wanted and name not in anchors:
+            # Spans are recorded at the instant the literal is appended; the
+            # literal appears exactly once, in this block, because the WHERE
+            # and FIND blocks carry identifiers rather than values.
+            if name not in anchors:
                 anchors[name] = [start, pos]
                 literals[name] = lit
             put("\n")
 
-        put("\nanswer = %s" % self.answer_expr)
+        if where_sym:
+            put("\n# WHERE\n# %s\n" % where_sym)
+        put("\n# FIND\n# %s\nanswer = ?" % goal_sym)
 
         text = "".join(parts)
         assert pos == len(text)
         anchors["FINAL"] = [-1, -1]
-        r = Rendered(text=text, anchors=anchors, literals=literals)
+        r = Rendered(
+            text=text,
+            anchors=anchors,
+            literals=literals,
+            meta={
+                "goal": goal_sym,
+                # The same goal in the NL rendering's own words. `corpus.py`
+                # asserts this is verbatim the final sentence of `nl_base`,
+                # which is what "the goal names the quantity the template asks
+                # for" means operationally.
+                "goal_nl": goal_nl,
+                "where": where_sym,
+                "given": list(quants),
+                "unknown": "answer",
+            },
+        )
         r.validate(quantities)
         return r
+
+    @staticmethod
+    def _split_goal(
+        nl_chunks: Sequence[str], sym_chunks: Sequence[str], nl_text: str
+    ) -> Tuple[str, str, str]:
+        """Split the body into (situation statements, question) in both notations.
+
+        The split point is found in the NATURAL-LANGUAGE rendering -- the last
+        sentence boundary -- and then applied to the symbolic chunk list at the
+        same position. Literal chunks are byte-identical between the two
+        renderings (only placeholders differ), so a boundary that falls inside a
+        literal chunk transfers exactly. That is why this is a split of the
+        template's own segment list rather than a re-parse of the formal string:
+        the formal goal is the same span of the template as the NL question, by
+        construction.
+
+        All 100 templates put the question in the final sentence; a body with no
+        sentence boundary at all (a single-sentence problem) is all goal.
+        """
+        boundaries = [
+            m
+            for m in re.finditer(r"(?<=[.!?])\s+", nl_text)
+            if not _ABBREV_BEFORE_RE.search(nl_text[: m.start()])
+        ]
+        if not boundaries:
+            return "", "".join(sym_chunks).strip(), nl_text.strip()
+        b = boundaries[-1].end()
+
+        pos = 0
+        for i, chunk in enumerate(nl_chunks):
+            if pos <= b < pos + len(chunk) or (b == pos and chunk == ""):
+                off = b - pos
+                if chunk != sym_chunks[i][: len(chunk)] and off:
+                    # boundary lands inside a chunk that differs between the two
+                    # renderings: refuse rather than transfer a bogus offset
+                    raise SpanError("goal split falls inside a substituted chunk")
+                where = "".join(sym_chunks[:i]) + sym_chunks[i][:off]
+                goal = sym_chunks[i][off:] + "".join(sym_chunks[i + 1 :])
+                return where.strip(), goal.strip(), nl_text[b:].strip()
+            pos += len(chunk)
+        # b == len(nl_text): trailing whitespace only, no question left
+        raise SpanError("goal split ran off the end of the rendering")
 
     @staticmethod
     def _py_literal(value: Any) -> str:

@@ -6,22 +6,33 @@ symbolic templates in `ling.templates`:
   * ``nl_base``  -- natural-language rendering, freshly sampled values, ground
                     truth COMPUTED by executing the template's own `#answer:`
                     expression. No model in the loop.
-  * ``formal``   -- Python rewrite of the SAME instance. Never executed as part
-                    of the experiment (DESIGN.md B.8: our formal condition is
-                    input notation with no execution); executed once HERE, at
-                    build time, as a check that it really does return ground
-                    truth.
+  * ``formal``   -- GIVENS + GOAL rewrite of the SAME instance, in formal
+                    notation, with NO derivation and no answer expression
+                    (prereg/DEVIATIONS.md Amendment 4; DESIGN.md B.8: our formal
+                    condition is input notation with no execution). It is
+                    therefore not executable, and the old build-time "the formal
+                    program returns ground truth" check is gone. In its place:
+                    every literal in the givens block must equal the value it
+                    claims, and the goal must be the template's own question.
+                    Ground truth comes from the template's `#answer:` expression
+                    and always did.
   * ``nl_break`` -- exactly ONE quantity perturbed so the computed answer
                     changes, chosen to keep the surface as close to `nl_base`
                     as the template allows. Both answers are recorded and the
                     change is asserted.
 
-The fourth, ``nl_para``, is left as an explicit empty placeholder with anchors
-NOT yet determined; a separate pass writes it. See `PARA_PLACEHOLDER`.
+  * ``nl_para``  -- answer-preserving paraphrase, rendered from the authored
+                    schemas in ``data/corpus/paraphrases.json`` against the SAME
+                    bindings as ``nl_base``. The schemas carry ``{var}``
+                    placeholders rather than finished prose, which is what makes
+                    every quantity appear with the surface form ``nl_base``
+                    emitted for it and makes its span emitted rather than
+                    searched. If the bundle is absent the slot falls back to the
+                    honest empty placeholder (`PARA_PLACEHOLDER`).
 
 WHY THE ANCHOR SPANS ARE TRUSTWORTHY
 ------------------------------------
-Spans are *emitted*, never recovered. `Template.render_nl` / `render_python`
+Spans are *emitted*, never recovered. `Template.render_nl` / `render_formal`
 build the string chunk by chunk and record `[start, end)` at the instant the
 quantity's surface form is appended; `str.find` never runs. Every record is then
 re-validated with `text[start:end] == literal` before it is written, and a
@@ -47,6 +58,7 @@ from __future__ import annotations
 import hashlib
 import itertools
 import json
+import os
 import random
 import re
 from dataclasses import dataclass
@@ -61,7 +73,6 @@ from .templates import (
     TemplateError,
     _wrap,
     is_numeric,
-    normalise_answer,
 )
 
 __all__ = [
@@ -69,8 +80,12 @@ __all__ = [
     "GENERATED_CONDITIONS",
     "PARA_PLACEHOLDER",
     "CorpusError",
+    "assert_formal_givens",
+    "assert_formal_goal",
     "build_problem",
     "build_corpus",
+    "load_paraphrases",
+    "DEFAULT_PARAPHRASE_BUNDLE",
     "linguistic_profile",
     "validate_record",
 ]
@@ -404,30 +419,29 @@ def build_problem(
     seed: int,
     problem_id: Optional[str] = None,
     provenance: Optional[Dict[str, Any]] = None,
+    paraphrase: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """Build one corpus record: three generated realizations plus the para slot."""
+    """Build one corpus record: all four realizations.
+
+    `paraphrase` is this problem's entry from data/corpus/paraphrases.json (see
+    `load_paraphrases`). If it is None the `nl_para` slot is left as the honest
+    empty placeholder; if it is present the paraphrase is rendered from the SAME
+    bindings as `nl_base`, so its quantity spans are emitted rather than
+    searched, and every span is re-asserted before the record is written.
+    """
     inst = template.sample(rng)
     quantities = inst.quantities
     if not quantities:
         raise CorpusError("%s: instance has no anchorable quantity" % template.template_id)
 
     nl = template.render_nl(inst.bindings, quantities)
-    formal = template.render_python(inst.bindings, quantities)
+    formal = template.render_formal(inst.bindings, quantities)
 
-    # formal is NEVER executed during the experiment (DESIGN.md B.8). Executing
-    # it once here is the verification that the rewrite is faithful.
-    ns: Dict[str, Any] = {}
-    try:
-        exec(compile(formal.text, "<formal:%s>" % template.template_id, "exec"), ns)  # noqa: S102
-    except Exception as exc:  # pragma: no cover - build-time gate
-        raise CorpusError(
-            "%s: formal rewrite is not executable: %r" % (template.template_id, exc)
-        )
-    if "answer" not in ns or normalise_answer(ns["answer"]) != inst.answer:
-        raise CorpusError(
-            "%s: formal rewrite returns %r, ground truth is %r"
-            % (template.template_id, ns.get("answer"), inst.answer)
-        )
+    # Amendment 4: `formal` is givens + goal, so it is NOT executable and there
+    # is no "the program returns ground truth" check to run. These two are what
+    # replace it.
+    assert_formal_givens(template, formal, inst.bindings, quantities)
+    assert_formal_goal(template, formal, nl)
 
     pert = find_perturbation(inst)
     if pert.answer == inst.answer:  # belt and braces
@@ -438,6 +452,14 @@ def build_problem(
     # placed. Checked structurally against the segment list, not by diffing the
     # finished strings.
     _assert_single_quantity_edit(template, inst.bindings, pert, nl.text, brk.text)
+
+    para = None
+    if paraphrase is not None:
+        schema = paraphrase.get("schema", "")
+        if not schema:
+            raise CorpusError("%s: paraphrase entry has no schema" % template.template_id)
+        para = template.render_paraphrase(inst.bindings, quantities, schema)
+        _assert_paraphrase(template, nl, para, quantities, paraphrase)
 
     pid = problem_id or template.template_id
     record: Dict[str, Any] = {
@@ -459,8 +481,33 @@ def build_problem(
         ],
         "realizations": {
             "nl_base": _realization(nl, inst.answer),
-            "nl_para": PARA_PLACEHOLDER(inst.answer),
-            "formal": _realization(formal, inst.answer, notation="python"),
+            "nl_para": (
+                PARA_PLACEHOLDER(inst.answer)
+                if para is None
+                else _realization(
+                    para,
+                    inst.answer,
+                    status="written",
+                    # Which surface operation this paraphrase applies. H2's
+                    # surface-dissimilarity covariates are lexical AND
+                    # syntactic, so a corpus of 100 paraphrases that all apply
+                    # the same transformation gives those covariates no variance
+                    # to work with (configs/corpus_schema.md).
+                    paraphrase_op=paraphrase.get("op", "unspecified"),
+                    source="data/corpus/paraphrases.json",
+                )
+            ),
+            "formal": _realization(
+                formal,
+                inst.answer,
+                # Amendment 4: givens + goal, no derivation. Not executable and
+                # not meant to be -- it is input notation (DESIGN.md B.8).
+                notation="givens_goal",
+                goal=formal.meta["goal"],
+                goal_nl=formal.meta["goal_nl"],
+                given=formal.meta["given"],
+                unknown=formal.meta["unknown"],
+            ),
             "nl_break": _realization(
                 brk,
                 pert.answer,
@@ -503,15 +550,49 @@ def build_problem(
     # .validate() already did this at render time; this repeats it after the
     # record has been assembled, so a bug in record assembly cannot slip a bad
     # span through.
-    assert_span_literals(
-        record,
-        {
-            "nl_base": nl.literals,
-            "formal": formal.literals,
-            "nl_break": brk.literals,
-        },
-    )
+    literals = {
+        "nl_base": nl.literals,
+        "formal": formal.literals,
+        "nl_break": brk.literals,
+    }
+    if para is not None:
+        literals["nl_para"] = para.literals
+    assert_span_literals(record, literals)
     return record
+
+
+def _assert_paraphrase(
+    template: Template,
+    nl: Rendered,
+    para: Rendered,
+    quantities: Sequence[str],
+    entry: Dict[str, Any],
+) -> None:
+    """Hold a paraphrase to the same standard as the generated realizations.
+
+    Failing here is a BUILD FAILURE, not a warning: a paraphrase whose spans
+    cannot be verified would put the wrong token into the aligned-position set
+    for one condition of one problem, and nothing downstream would report it.
+
+    What is checked:
+      * every quantity is anchored (already fatal inside `Rendered.validate`);
+      * the anchored literal is the same surface form the NL rendering used, so
+        the two conditions really do anchor the same quantity introduction;
+      * the paraphrase is not the NL rendering with the punctuation moved --
+        some actual rewriting happened;
+      * a paraphrase operation is declared, for the H2 covariate spread.
+    """
+    tid = template.template_id
+    for name in quantities:
+        if para.literals[name] != nl.literals[name]:
+            raise SpanError(
+                "%s/nl_para: quantity %r reads %r but nl_base emitted %r"
+                % (tid, name, para.literals[name], nl.literals[name])
+            )
+    if para.text.strip() == nl.text.strip():
+        raise CorpusError("%s: paraphrase is identical to nl_base" % tid)
+    if not entry.get("op"):
+        raise CorpusError("%s: paraphrase declares no surface operation" % tid)
 
 
 def _assert_single_quantity_edit(
@@ -551,6 +632,47 @@ def _assert_single_quantity_edit(
 # ---------------------------------------------------------------------------
 
 
+def _validate_realization(
+    record: Dict[str, Any], cond: str, quantities: Sequence[str]
+) -> None:
+    """Span/anchor invariants for one realization. Applied to all four."""
+    r = record["realizations"][cond]
+    text = r["text"]
+    anchors = r["anchors"]
+    if "FINAL" not in anchors:
+        raise SpanError("%s/%s: FINAL sentinel missing" % (record["problem_id"], cond))
+    if anchors["FINAL"] != [-1, -1]:
+        raise SpanError(
+            "%s/%s: FINAL sentinel must be [-1, -1]" % (record["problem_id"], cond)
+        )
+    if not text:
+        raise CorpusError("%s/%s: empty text" % (record["problem_id"], cond))
+    missing = [q for q in quantities if q not in anchors]
+    if missing:
+        raise SpanError(
+            "%s/%s: quantities missing from anchors: %r"
+            % (record["problem_id"], cond, missing)
+        )
+    for name, span in anchors.items():
+        if name == "FINAL":
+            continue
+        start, end = span
+        if not (0 <= start < end <= len(text)):
+            raise SpanError(
+                "%s/%s: span %r for %r out of bounds"
+                % (record["problem_id"], cond, span, name)
+            )
+    # spans must be disjoint and increasing -- overlapping anchors would map
+    # two quantities onto one token at extraction time
+    ordered = sorted((tuple(s) for n, s in anchors.items() if n != "FINAL"))
+    for (s1, e1), (s2, e2) in zip(ordered, ordered[1:]):
+        if s2 < e1:
+            raise SpanError(
+                "%s/%s: overlapping anchor spans %r and %r"
+                % (record["problem_id"], cond, (s1, e1), (s2, e2))
+            )
+
+
 def validate_record(record: Dict[str, Any]) -> None:
     """Hard invariants. Every failure is fatal -- never emit a bad span."""
     quantities = [q["name"] for q in record["quantities"]]
@@ -560,60 +682,156 @@ def validate_record(record: Dict[str, Any]) -> None:
         if cond not in reals:
             raise CorpusError("%s: missing realization %r" % (record["problem_id"], cond))
 
-    for cond in GENERATED_CONDITIONS:
-        r = reals[cond]
-        text = r["text"]
-        anchors = r["anchors"]
-        if "FINAL" not in anchors:
-            raise SpanError("%s/%s: FINAL sentinel missing" % (record["problem_id"], cond))
-        if anchors["FINAL"] != [-1, -1]:
-            raise SpanError(
-                "%s/%s: FINAL sentinel must be [-1, -1]" % (record["problem_id"], cond)
-            )
-        if not text:
-            raise CorpusError("%s/%s: empty text" % (record["problem_id"], cond))
-        missing = [q for q in quantities if q not in anchors]
-        if missing:
-            raise SpanError(
-                "%s/%s: quantities missing from anchors: %r"
-                % (record["problem_id"], cond, missing)
-            )
-        for name, span in anchors.items():
-            if name == "FINAL":
-                continue
-            start, end = span
-            if not (0 <= start < end <= len(text)):
-                raise SpanError(
-                    "%s/%s: span %r for %r out of bounds" % (record["problem_id"], cond, span, name)
-                )
-        # spans must be disjoint and increasing -- overlapping anchors would map
-        # two quantities onto one token at extraction time
-        ordered = sorted(
-            (tuple(s) for n, s in anchors.items() if n != "FINAL"),
-        )
-        for (s1, e1), (s2, e2) in zip(ordered, ordered[1:]):
-            if s2 < e1:
-                raise SpanError(
-                    "%s/%s: overlapping anchor spans %r and %r"
-                    % (record["problem_id"], cond, (s1, e1), (s2, e2))
-                )
-
+    # configs/corpus_schema.md: "every quantity key appears in the anchors of all
+    # four realizations". While `nl_para` was pending that invariant could not be
+    # evaluated, and `validate_record` said so rather than quietly passing. A
+    # written paraphrase is held to exactly the same standard as the three
+    # generated conditions -- that is the whole point of filling the slot.
+    conditions = list(GENERATED_CONDITIONS)
     para = reals["nl_para"]
-    if para.get("status") != "pending" or para.get("text") or para.get("anchors"):
-        # If a later pass has filled it, hold it to the same standard.
-        if para.get("status") == "pending":
-            raise CorpusError("%s: nl_para marked pending but not empty" % record["problem_id"])
-        missing = [q for q in quantities if q not in para.get("anchors", {})]
-        if missing:
-            raise SpanError(
-                "%s/nl_para: quantities missing from anchors: %r"
-                % (record["problem_id"], missing)
+    status = para.get("status")
+    if status == "written":
+        conditions.append("nl_para")
+    elif status == "pending":
+        if para.get("text") or para.get("anchors"):
+            raise CorpusError(
+                "%s: nl_para marked pending but not empty" % record["problem_id"]
             )
+    else:
+        raise CorpusError(
+            "%s: nl_para has unknown status %r" % (record["problem_id"], status)
+        )
+
+    for cond in conditions:
+        _validate_realization(record, cond, quantities)
+
+    if status == "written" and para.get("answer") != record["ground_truth"]:
+        raise CorpusError(
+            "%s: nl_para is answer-preserving but records %r, ground truth is %r"
+            % (record["problem_id"], para.get("answer"), record["ground_truth"])
+        )
 
     if reals["nl_break"]["answer"] == record["ground_truth"]:
         raise CorpusError("%s: nl_break answer did not change" % record["problem_id"])
     if reals["formal"]["answer"] != record["ground_truth"]:
         raise CorpusError("%s: formal answer differs from ground truth" % record["problem_id"])
+
+
+_FORMAL_LITERAL_RE = re.compile(r"^(?:-?\d+|-?\d+\.\d+|Fraction\(-?\d+, -?\d+\))$")
+
+
+def _literal_value(literal: str) -> Fraction:
+    """Exact value of a formal givens literal. Raises on anything else."""
+    m = re.match(r"^Fraction\((-?\d+), (-?\d+)\)$", literal)
+    if m:
+        return Fraction(int(m.group(1)), int(m.group(2)))
+    if not _FORMAL_LITERAL_RE.match(literal):
+        raise CorpusError("not a bare numeric literal: %r" % literal)
+    return Fraction(literal)
+
+
+def assert_formal_givens(
+    template: Template,
+    formal: Rendered,
+    bindings: Dict[str, Any],
+    quantities: Sequence[str],
+) -> None:
+    """Retained check #1 (Amendment 4): the givens are values, not a program.
+
+    Every non-comment line of `formal` must be either `<quantity> = <bare
+    numeric literal>` -- with the literal's VALUE equal to the sampled value it
+    claims -- or the single `answer = ?` line declaring the unknown. Anything
+    with an operator in it would be a derivation, which is exactly what
+    Amendment 4 removed, so this is a crash rather than a warning.
+    """
+    tid = template.template_id
+    bound: List[str] = []
+    saw_unknown = 0
+    for line in formal.text.splitlines():
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        name, sep, rhs = line.partition(" = ")
+        if not sep or not name.isidentifier():
+            raise CorpusError("%s: formal line is not an assignment: %r" % (tid, line))
+        if name == "answer":
+            if rhs != "?":
+                raise CorpusError(
+                    "%s: formal binds the answer (%r) -- that is the derivation, "
+                    "not the notation (Amendment 4)" % (tid, rhs)
+                )
+            saw_unknown += 1
+            continue
+        if name not in quantities:
+            raise CorpusError(
+                "%s: formal binds %r, which is not a quantity of the problem"
+                % (tid, name)
+            )
+        try:
+            value = _literal_value(rhs)
+        except CorpusError as exc:
+            raise CorpusError("%s: given %r: %s" % (tid, name, exc))
+        bound_value = bindings[name]
+        # Exact for ints and Fractions; a float is compared as the decimal it
+        # was printed as, because Fraction(62.1) is not Fraction("62.1").
+        same = (
+            float(value) == float(bound_value)
+            if isinstance(bound_value, float)
+            else value == Fraction(bound_value)
+        )
+        if not same:
+            raise CorpusError(
+                "%s: given %r = %s but the sampled value is %r"
+                % (tid, name, rhs, bound_value)
+            )
+        bound.append(name)
+    if bound != list(quantities):
+        raise CorpusError(
+            "%s: formal givens are %r, quantities are %r" % (tid, bound, list(quantities))
+        )
+    if saw_unknown != 1:
+        raise CorpusError("%s: formal must declare `answer = ?` exactly once" % tid)
+    # The derivation must not appear as text either. Only checked for compound
+    # expressions: three templates write `#answer: ans` -- a bare scratch
+    # variable, which is never emitted (only quantities are bound) and whose
+    # name is a substring of the word "answer".
+    expr = re.sub(r"\s+", "", template.answer_expr)
+    if re.search(r"[-+*/%()]", expr) and expr in re.sub(r"\s+", "", formal.text):
+        raise CorpusError("%s: formal contains the template's answer expression" % tid)
+    leaked = [v for v in template.free_vars if v in bindings and v in bound]
+    if leaked:
+        raise CorpusError("%s: formal binds solved-for scratch variables %r" % (tid, leaked))
+
+
+def assert_formal_goal(template: Template, formal: Rendered, nl: Rendered) -> None:
+    """Retained check #2 (Amendment 4): the goal names what the template asks for.
+
+    Operationally: the goal `formal` emitted is, verbatim, the final sentence of
+    the natural-language rendering of the SAME instance -- so the two conditions
+    ask the identical question -- and the quantity it asks for is declared as the
+    unbound symbol `answer`.
+    """
+    tid = template.template_id
+    goal_nl = formal.meta.get("goal_nl", "")
+    if not goal_nl:
+        raise CorpusError("%s: formal recorded no goal" % tid)
+    if not nl.text.endswith(goal_nl):
+        raise CorpusError(
+            "%s: formal goal %r is not the final sentence of nl_base" % (tid, goal_nl)
+        )
+    head = nl.text[: len(nl.text) - len(goal_nl)]
+    if head and not re.search(r"[.!?]\s+$", head):
+        raise CorpusError("%s: formal goal is not a whole sentence of nl_base" % tid)
+    if not _asks_a_question(goal_nl):
+        raise CorpusError("%s: formal goal asks nothing: %r" % (tid, goal_nl))
+    if formal.meta.get("unknown") != "answer" or not formal.text.endswith("answer = ?"):
+        raise CorpusError("%s: formal does not declare the unknown last" % tid)
+
+
+def _asks_a_question(sentence: str) -> bool:
+    low = sentence.lower()
+    return "?" in sentence or any(
+        re.search(r"\b%s\b" % v, low) for v in _IMPERATIVE
+    )
 
 
 def assert_span_literals(record: Dict[str, Any], literals: Dict[str, Dict[str, str]]) -> None:
@@ -644,17 +862,59 @@ def problem_rng(seed: int, template_id: str) -> random.Random:
     return random.Random(int.from_bytes(digest[:8], "big"))
 
 
+DEFAULT_PARAPHRASE_BUNDLE = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    "data", "corpus", "paraphrases.json",
+)
+
+
+def load_paraphrases(
+    path: str = DEFAULT_PARAPHRASE_BUNDLE, required: bool = False
+) -> Tuple[Dict[str, Any], Dict[str, Dict[str, Any]]]:
+    """Load the vendored `nl_para` schemas. Returns (provenance, by problem_id).
+
+    The paraphrases are a static authored asset rather than something generated
+    at build time -- they are the one condition a template cannot emit, and
+    DESIGN.md A.5 wants them answer-preserving, which is a judgement no
+    generator of ours makes. They are stored as SCHEMAS, with `{var}`
+    placeholders naming the template's own variables, not as finished strings:
+    that keeps them seed-independent (the same file renders correctly under any
+    `--seed`) and it is what lets the quantity spans be emitted at substitution
+    time instead of searched for in finished prose.
+
+    A missing file yields an empty mapping, and every `nl_para` slot then stays
+    the honest pending placeholder. `required=True` turns that into an error for
+    callers that must have all four conditions.
+    """
+    try:
+        with open(path, "r", encoding="utf-8") as fh:
+            bundle = json.load(fh)
+    except FileNotFoundError:
+        if required:
+            raise CorpusError("paraphrase bundle not found: %s" % path)
+        return {}, {}
+    return bundle.get("_provenance", {}), bundle.get("paraphrases", {})
+
+
 def build_corpus(
     templates: Sequence[Template],
     seed: int,
     n_problems: int = 100,
     provenance: Optional[Dict[str, Any]] = None,
+    paraphrases: Optional[Dict[str, Dict[str, Any]]] = None,
 ) -> Tuple[List[Dict[str, Any]], List[Tuple[str, str]]]:
     """Build up to `n_problems` records, one per template, in template order.
 
     Returns (records, failures). Failures are reported, never silently skipped:
     DESIGN.md A.5 wants the drop rate logged.
+
+    `paraphrases` defaults to the vendored bundle. If the bundle is present but
+    has no entry for a template, that problem FAILS the build -- a corpus with
+    three conditions for 99 problems and four for one is worse than a corpus
+    that says which problem it could not paraphrase.
     """
+    if paraphrases is None:
+        _, paraphrases = load_paraphrases()
     records: List[Dict[str, Any]] = []
     failures: List[Tuple[str, str]] = []
     for template in templates:
@@ -662,9 +922,18 @@ def build_corpus(
             break
         rng = problem_rng(seed, template.template_id)
         try:
+            entry = paraphrases.get(template.template_id) if paraphrases else None
+            if paraphrases and entry is None:
+                raise CorpusError(
+                    "%s: no paraphrase in the bundle" % template.template_id
+                )
             records.append(
                 build_problem(
-                    template, rng, seed=seed, provenance=provenance
+                    template,
+                    rng,
+                    seed=seed,
+                    provenance=provenance,
+                    paraphrase=entry,
                 )
             )
         except (CorpusError, TemplateError, SpanError) as exc:

@@ -75,7 +75,53 @@
   "n_distinct_templates": 100,
   "n_problems": 100,
   "n_realizations_generated": 300,
-  "n_realizations_pending": 100,
+  "n_realizations_paraphrased": 100,
+  "n_realizations_pending": 0,
+  "paraphrase": {
+    "char_edit_distance_normalised": {
+      "max": 0.753,
+      "median": 0.392,
+      "min": 0.123
+    },
+    "identical_to_nl_base": 0,
+    "lexical_overlap_jaccard": {
+      "max": 1.0,
+      "median": 0.755,
+      "min": 0.5
+    },
+    "n": 100,
+    "n_distinct_operations": 14,
+    "operations": {
+      "active_voice": 1,
+      "clause_reorder": 13,
+      "enumeration_reorder": 1,
+      "existential_to_possessive": 3,
+      "fronted_adverbial": 5,
+      "fronted_conditional": 3,
+      "imperative_to_wh": 4,
+      "lexical_substitution": 2,
+      "nominalization": 8,
+      "passive_voice": 14,
+      "relative_clause": 9,
+      "sentence_join": 20,
+      "sentence_split": 9,
+      "topicalization": 8
+    },
+    "sentence_count_delta": {
+      "-3": 2,
+      "-2": 17,
+      "-1": 31,
+      "0": 39,
+      "1": 10,
+      "2": 1
+    },
+    "word_count_delta": {
+      "max": 8,
+      "median": -1.0,
+      "min": -19
+    }
+  },
+  "paraphrase_route": "AUTHORED",
   "perturbation": {
     "median_text_char_edit_distance": 1.0,
     "occurrences_rewritten": {
@@ -104,15 +150,15 @@
     "total_anchors": 400
   },
   "seed": 20260906,
-  "sha256": "28185911251c644e6c518ff4bd2eca987842f6d98da8545a2108252dc0516473",
+  "sha256": "0f868fbe7d6cc8b46d3f1baae1a8e99343c23641cceb81a454d75a43d9986bda",
   "template_commit": "b6a1625025fc857300203bac9f617e5d8ec99f65",
   "template_route": "OFFICIAL",
   "text_length_chars": {
     "formal": {
-      "max": 298,
-      "mean": 103.7,
-      "median": 94.0,
-      "min": 45
+      "max": 670,
+      "mean": 324.6,
+      "median": 300.0,
+      "min": 148
     },
     "nl_base": {
       "max": 586,
@@ -125,6 +171,12 @@
       "mean": 241.8,
       "median": 220.0,
       "min": 96
+    },
+    "nl_para": {
+      "max": 557,
+      "mean": 233.2,
+      "median": 210.0,
+      "min": 92
     }
   }
 }

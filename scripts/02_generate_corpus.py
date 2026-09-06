@@ -10,18 +10,19 @@ GSM-Symbolic `templates/symbolic/*.json`, vendored into
 `src/ling/templates.py` for exactly which parts are Apple's and which parts are
 our reconstruction). Nothing is fetched at run time.
 
-Emits three of the four realizations per problem:
+Emits all four realizations per problem:
 
     nl_base    NL rendering; values freshly sampled; ground truth COMPUTED by
                executing the template's own `#answer:` expression
-    formal     Python rewrite of the SAME instance (DESIGN.md §B.8: input
-               notation, never executed during the experiment -- executed once
-               here, at build time, to verify it returns ground truth)
+    nl_para    answer-preserving paraphrase, rendered from the authored schemas
+               in `data/corpus/paraphrases.json` against the SAME bindings as
+               nl_base, so every quantity keeps its nl_base surface form and its
+               span is emitted rather than searched for
+    formal     GIVENS + GOAL rewrite of the SAME instance (DESIGN.md §B.8 and
+               prereg/DEVIATIONS.md Amendment 4: input notation, NO derivation
+               and no answer expression, never executed)
     nl_break   exactly ONE quantity perturbed so the computed answer changes,
                kept as surface-similar to nl_base as the template allows
-
-`nl_para` is written as an explicit empty placeholder with anchors NOT yet
-determined. A separate pass fills it.
 
 Determinism: the same `--seed` reproduces byte-identical output. Each problem
 draws from its own RNG derived by SHA-256 from (seed, template_id), so adding,
@@ -53,6 +54,7 @@ from ling.corpus import (  # noqa: E402
     CONDITIONS,
     GENERATED_CONDITIONS,
     build_corpus,
+    load_paraphrases,
     write_jsonl,
 )
 from ling.templates import load_templates  # noqa: E402
@@ -86,6 +88,81 @@ def serialise(records) -> bytes:
     ).encode("utf-8")
 
 
+def _tokens(text):
+    return set(re.findall(r"[a-z0-9']+", text.lower()))
+
+
+def _char_edit(a, b):
+    """Levenshtein on characters (the corpus is small; this is fast enough)."""
+    if a == b:
+        return 0
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        cur = [i]
+        for j, cb in enumerate(b, 1):
+            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
+        prev = cur
+    return prev[-1]
+
+
+def paraphrase_stats(records) -> dict:
+    """How far each nl_para moved from its nl_base, and by which operation.
+
+    H2's control is a surface-dissimilarity covariate, lexical AND syntactic.
+    If every paraphrase applied the same transformation those covariates would
+    have no variance to work with, so the spread reported here is a property the
+    corpus has to demonstrate, not an incidental statistic.
+    """
+    if not records:
+        return {"n": 0}
+    jac, edit, dsent, dword = [], [], [], []
+    for r in records:
+        base = r["realizations"]["nl_base"]["text"]
+        para = r["realizations"]["nl_para"]["text"]
+        tb, tp = _tokens(base), _tokens(para)
+        jac.append(len(tb & tp) / max(len(tb | tp), 1))
+        edit.append(_char_edit(base, para) / max(len(base), 1))
+        dsent.append(
+            len(re.findall(r"[.!?](?:\s|$)", para))
+            - len(re.findall(r"[.!?](?:\s|$)", base))
+        )
+        dword.append(len(para.split()) - len(base.split()))
+    return {
+        "n": len(records),
+        "operations": dict(
+            sorted(
+                collections.Counter(
+                    r["realizations"]["nl_para"]["paraphrase_op"] for r in records
+                ).items()
+            )
+        ),
+        "n_distinct_operations": len(
+            {r["realizations"]["nl_para"]["paraphrase_op"] for r in records}
+        ),
+        "lexical_overlap_jaccard": {
+            "min": round(min(jac), 3),
+            "median": round(statistics.median(jac), 3),
+            "max": round(max(jac), 3),
+        },
+        "char_edit_distance_normalised": {
+            "min": round(min(edit), 3),
+            "median": round(statistics.median(edit), 3),
+            "max": round(max(edit), 3),
+        },
+        "sentence_count_delta": dict(sorted(collections.Counter(dsent).items())),
+        "word_count_delta": {
+            "min": min(dword),
+            "median": statistics.median(dword),
+            "max": max(dword),
+        },
+        "identical_to_nl_base": sum(
+            1
+            for r in records
+            if r["realizations"]["nl_para"]["text"] == r["realizations"]["nl_base"]["text"]
+        ),
+    }
+
+
 def summarise(records) -> dict:
     prof = [r["linguistic_profile"] for r in records]
     pert = [r["perturbation"] for r in records]
@@ -102,14 +179,20 @@ def summarise(records) -> dict:
 
     lens = {
         cond: [len(r["realizations"][cond]["text"]) for r in records]
-        for cond in GENERATED_CONDITIONS
+        for cond in CONDITIONS
+        if all(r["realizations"][cond].get("text") for r in records)
     }
+    written = [
+        r for r in records if r["realizations"]["nl_para"].get("status") == "written"
+    ]
 
     return {
         "n_problems": len(records),
         "n_realizations_generated": len(records) * len(GENERATED_CONDITIONS),
-        "n_realizations_pending": len(records),
+        "n_realizations_paraphrased": len(written),
+        "n_realizations_pending": len(records) - len(written),
         "conditions": list(CONDITIONS),
+        "paraphrase": paraphrase_stats(written),
         "n_distinct_templates": len({r["template_id"] for r in records}),
         "quantities": {
             "total_anchors": sum(quantities),
@@ -181,21 +264,32 @@ def main(argv=None) -> int:
     ap.add_argument("--summary", default=DEFAULT_SUMMARY)
     ap.add_argument("-n", "--n-problems", type=int, default=100)
     ap.add_argument("--templates", default=None, help="template bundle path")
+    ap.add_argument("--paraphrases", default=None,
+                    help="nl_para schema bundle path "
+                         "(default data/corpus/paraphrases.json)")
     ap.add_argument("--verify-reproducible", action="store_true",
                     help="rebuild once more and require byte-identical output")
     args = ap.parse_args(argv)
 
     prov, templates = load_templates(args.templates) if args.templates else load_templates()
+    para_prov, paraphrases = (
+        load_paraphrases(args.paraphrases) if args.paraphrases else load_paraphrases()
+    )
 
     print("corpus generation — DESIGN.md §A.5")
     print("  template route     : %s" % prov.get("route"))
     print("  template source    : %s @ %s" % (prov.get("repo"), (prov.get("commit") or "")[:12]))
     print("  templates loaded   : %d" % len(templates))
+    print("  paraphrases loaded : %d  (%s)" % (len(paraphrases), para_prov.get("route", "none")))
     print("  master seed        : %d  (%s)" % (args.seed, seed_src))
     print()
 
     records, failures = build_corpus(
-        templates, seed=args.seed, n_problems=args.n_problems, provenance=prov
+        templates,
+        seed=args.seed,
+        n_problems=args.n_problems,
+        provenance=prov,
+        paraphrases=paraphrases,
     )
 
     if failures:
@@ -208,7 +302,11 @@ def main(argv=None) -> int:
 
     if args.verify_reproducible:
         again, _ = build_corpus(
-            templates, seed=args.seed, n_problems=args.n_problems, provenance=prov
+            templates,
+            seed=args.seed,
+            n_problems=args.n_problems,
+            provenance=prov,
+            paraphrases=paraphrases,
         )
         if serialise(again) != payload:
             print("FATAL: rebuild with the same seed is not byte-identical.")
@@ -225,6 +323,7 @@ def main(argv=None) -> int:
     summary["template_route"] = prov.get("route")
     summary["template_commit"] = prov.get("commit")
     summary["build_failures"] = [{"template_id": t, "reason": w} for t, w in failures]
+    summary["paraphrase_route"] = para_prov.get("route")
     with open(args.summary, "w", encoding="utf-8", newline="\n") as fh:
         json.dump(summary, fh, indent=2, sort_keys=True, ensure_ascii=False)
         fh.write("\n")
@@ -238,16 +337,19 @@ def main(argv=None) -> int:
           % (n, summary["n_distinct_templates"]))
     print("realizations       : %d generated (nl_base, formal, nl_break)"
           % summary["n_realizations_generated"])
-    print("                     %d pending  (nl_para — anchors undetermined)"
-          % summary["n_realizations_pending"])
+    print("                     %d paraphrased (nl_para, authored schemas)"
+          % summary["n_realizations_paraphrased"])
+    print("                     %d pending" % summary["n_realizations_pending"])
     print("build drop rate    : %d/%d templates (%.1f%%)"
           % (len(failures), len(templates), 100.0 * len(failures) / max(len(templates), 1)))
     print()
     print("anchored quantities: %d total, %d–%d per problem"
           % (summary["quantities"]["total_anchors"],
              summary["quantities"]["min"], summary["quantities"]["max"]))
-    print("                     every quantity anchored in all 3 generated realizations")
-    print("                     FINAL sentinel present in all 3")
+    print("                     every quantity anchored in all %d realizations"
+          % len(summary["conditions"]))
+    print("                     FINAL sentinel present in all %d"
+          % len(summary["conditions"]))
     print()
     p = summary["perturbation"]
     print("nl_break           : %d/%d differ from nl_base by ONE character"
@@ -256,6 +358,22 @@ def main(argv=None) -> int:
           % (p["template_conditions_still_satisfied"], n))
     print("                     answer changed in %d/%d (asserted)" % (n, n))
     print()
+    pp = summary["paraphrase"]
+    if pp["n"]:
+        print("nl_para            : %d/%d written, %d distinct surface operations"
+              % (pp["n"], n, pp["n_distinct_operations"]))
+        print("                     lexical overlap (Jaccard) median %.2f (%.2f–%.2f)"
+              % (pp["lexical_overlap_jaccard"]["median"],
+                 pp["lexical_overlap_jaccard"]["min"],
+                 pp["lexical_overlap_jaccard"]["max"]))
+        print("                     char edit / len   median %.2f (%.2f–%.2f)"
+              % (pp["char_edit_distance_normalised"]["median"],
+                 pp["char_edit_distance_normalised"]["min"],
+                 pp["char_edit_distance_normalised"]["max"]))
+        print("                     sentence-count delta: %s" % pp["sentence_count_delta"])
+        print("                     answer unchanged in %d/%d (asserted)" % (pp["n"], pp["n"]))
+        print()
+
     lv = summary["linguistic_variation"]
     print("linguistic variation (nl_base):")
     print("  question form    : %s" % ", ".join("%s=%d" % kv for kv in lv["question_form"].items()))

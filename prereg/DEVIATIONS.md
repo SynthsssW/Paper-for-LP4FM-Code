@@ -179,3 +179,41 @@ sampled value it claims, and that the goal names the quantity the template asks 
 4. **10 of 100 problems have only 2 quantities** (3 aligned positions including FINAL).
    Amendment 2 assumed 3-5. Pooled lambda2 handles the low tail, but it is real and the
    distribution should be reported.
+
+### Amendment 4, clarification — what `formal` actually is
+
+**Timestamp:** 2026-09-06T23:05 UTC
+
+The implemented `formal` condition is:
+
+```
+# GIVEN
+n = 840
+frac_1 = Fraction(1, 5)
+
+# WHERE
+# A juggler can juggle n balls. frac_1 of the balls are tennis balls, ...
+
+# FIND
+# How many orange tennis balls are there?
+answer = ?
+```
+
+The situation description in the WHERE block **remains English**, with quantities
+replaced by their symbolic identifiers. Stripping it to bare bindings
+(`x=200, k=8, y=6, solve`) makes the problem literally unanswerable, which would drive the
+formal arm's accuracy to ~0 and make gate G2 meaningless — it would measure unanswerability,
+not notation.
+
+**The intervention is therefore: quantities lifted to symbolic bindings, plus an explicit
+given/goal frame, with the situation retained in prose.** It is NOT full formalization.
+
+**This must be stated in the paper exactly that way.** Describing it as a "Python rewrite"
+or "formal rewriting" without qualification would overclaim the manipulation. H3's result —
+in either direction — is a claim about *this* intervention, and a reviewer comparing the
+figure caption against the corpus example will check.
+
+Enforced at build: every non-comment line is `<quantity> = <bare literal>` matching the
+sampled value; exactly one `answer = ?`; no compound answer expression; no scratch variable
+bound (three templates whose `#answer:` names a solved-for intermediate would otherwise have
+leaked the answer).
