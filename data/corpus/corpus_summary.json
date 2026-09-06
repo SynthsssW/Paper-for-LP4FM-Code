@@ -9,7 +9,9 @@
     "nl_base",
     "nl_para",
     "formal",
-    "nl_break"
+    "nl_break",
+    "nl_minimal_orth",
+    "nl_minimal_lex"
   ],
   "linguistic_variation": {
     "clause_marker_frequency": {
@@ -70,6 +72,46 @@
     },
     "question_is_final_sentence": {
       "true": 100
+    }
+  },
+  "minimal_edits": {
+    "nl_minimal_lex": {
+      "article_adjusted": 0,
+      "n_available": 70,
+      "n_unavailable": 30,
+      "occurrences_rewritten": {
+        "1": 35,
+        "2": 21,
+        "3": 12,
+        "4": 1,
+        "5": 1
+      },
+      "text_char_edit_distance": {
+        "max": 15,
+        "median": 4.5,
+        "min": 1
+      },
+      "unavailable_reasons": {
+        "the template instantiates no proper name": 30
+      }
+    },
+    "nl_minimal_orth": {
+      "article_adjusted": 1,
+      "matches_nl_break_site": 95,
+      "n_available": 99,
+      "n_unavailable": 1,
+      "occurrences_rewritten": {
+        "1": 98,
+        "2": 1
+      },
+      "text_char_edit_distance": {
+        "max": 41,
+        "median": 9,
+        "min": 3
+      },
+      "unavailable_reasons": {
+        "no integer quantity rendered in digits that a number word could replace": 1
+      }
     }
   },
   "n_distinct_templates": 100,
@@ -150,7 +192,7 @@
     "total_anchors": 400
   },
   "seed": 20260906,
-  "sha256": "0f868fbe7d6cc8b46d3f1baae1a8e99343c23641cceb81a454d75a43d9986bda",
+  "sha256": "2822c1ec76cd9783647e3b2ed47758636446eb83be9fdf51626bea639b28261c",
   "template_commit": "b6a1625025fc857300203bac9f617e5d8ec99f65",
   "template_route": "OFFICIAL",
   "text_length_chars": {

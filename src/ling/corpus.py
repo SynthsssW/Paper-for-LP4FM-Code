@@ -1,7 +1,7 @@
-"""Corpus construction: 100 problems x 4 realizations (configs/corpus_schema.md).
+"""Corpus construction: 100 problems x 6 realizations (configs/corpus_schema.md).
 
-Three of the four conditions are emitted here, directly from the parameterised
-symbolic templates in `ling.templates`:
+Three conditions are emitted here directly from the parameterised symbolic
+templates in `ling.templates`:
 
   * ``nl_base``  -- natural-language rendering, freshly sampled values, ground
                     truth COMPUTED by executing the template's own `#answer:`
@@ -29,6 +29,30 @@ symbolic templates in `ling.templates`:
                     emitted for it and makes its span emitted rather than
                     searched. If the bundle is absent the slot falls back to the
                     honest empty placeholder (`PARA_PLACEHOLDER`).
+
+Two further conditions (prereg/DEVIATIONS.md **Amendment 6**) are emitted here as
+well. Both are answer-preserving and both are MINIMAL edits of ``nl_base``:
+
+  * ``nl_minimal_orth`` -- exactly ONE quantity re-rendered as an English number
+                    word (``24`` -> ``twenty four``), with the SAME value. The
+                    slot chosen is, wherever the value allows it, the very slot
+                    ``nl_break`` perturbs, so the two conditions edit the same
+                    position and differ ONLY in whether the value -- and hence
+                    the answer -- changes. That matched-site/matched-kind
+                    contrast is what identifies H2's residual.
+  * ``nl_minimal_lex``  -- exactly ONE proper name swapped for another drawn from
+                    the same template pool. Semantically null, and deliberately
+                    OFF-anchor: names are not quantities, so this edit lands
+                    nowhere near an anchor. It is the LOWER bracket on the
+                    surface-perturbation floor, as ``nl_minimal_orth`` is the
+                    upper one; Amendment 6 says in as many words that neither is
+                    trustworthy alone.
+
+Neither is faked when the instance cannot support it. A template with no
+integer quantity rendered in digits, or with no proper name at all, records that
+condition as ``status: "unavailable"`` with empty text and NO anchors -- the same
+honest hole ``PARA_PLACEHOLDER`` leaves -- rather than inventing a name or a
+wording. `build_corpus` counts them.
 
 WHY THE ANCHOR SPANS ARE TRUSTWORTHY
 ------------------------------------
@@ -66,19 +90,24 @@ from fractions import Fraction
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from .templates import (
+    WORD_POOLS,
     Instance,
+    IntQ,
     Rendered,
     SpanError,
     Template,
     TemplateError,
     _wrap,
     is_numeric,
+    number_to_words,
 )
 
 __all__ = [
     "CONDITIONS",
     "GENERATED_CONDITIONS",
+    "MINIMAL_CONDITIONS",
     "PARA_PLACEHOLDER",
+    "UNAVAILABLE",
     "CorpusError",
     "assert_formal_givens",
     "assert_formal_goal",
@@ -87,11 +116,29 @@ __all__ = [
     "load_paraphrases",
     "DEFAULT_PARAPHRASE_BUNDLE",
     "linguistic_profile",
+    "name_swap_for",
+    "orth_target_for",
     "validate_record",
 ]
 
-CONDITIONS = ("nl_base", "nl_para", "formal", "nl_break")
+#: All six conditions, in corpus order (prereg/DEVIATIONS.md Amendment 6).
+CONDITIONS = (
+    "nl_base",
+    "nl_para",
+    "formal",
+    "nl_break",
+    "nl_minimal_orth",
+    "nl_minimal_lex",
+)
+#: Conditions every record always carries, emitted straight from the template.
 GENERATED_CONDITIONS = ("nl_base", "formal", "nl_break")
+#: Amendment 6's two style controls. Present when the instance supports them,
+#: `status: "unavailable"` when it does not -- never faked.
+MINIMAL_CONDITIONS = ("nl_minimal_orth", "nl_minimal_lex")
+
+#: Largest value `number_to_words` renders correctly (it recurses on thousands,
+#: so a million would come out as "one thousand thousand").
+MAX_WORDED_VALUE = 999999
 
 #: Cap on how many alternative values are tried per quantity when searching for
 #: a minimal answer-breaking perturbation.
@@ -111,7 +158,7 @@ def PARA_PLACEHOLDER(ground_truth: float) -> Dict[str, Any]:
     DESIGN.md A.5's answer-preserving paraphrase is written by a separate pass
     (it is the one condition that genuinely needs a generator model). Leaving it
     empty here, rather than faking it, keeps the schema invariant honest: the
-    "every quantity appears in all four realizations" check in
+    "every quantity appears in all realizations" check in
     configs/corpus_schema.md cannot be evaluated until this slot is filled, and
     `validate_record` says so instead of quietly passing.
     """
@@ -125,6 +172,24 @@ def PARA_PLACEHOLDER(ground_truth: float) -> Dict[str, Any]:
             "UNDETERMINED and must be emitted during paraphrase construction, "
             "not recovered by searching the finished string."
         ),
+    }
+
+
+def UNAVAILABLE(ground_truth: float, reason: str) -> Dict[str, Any]:
+    """An Amendment 6 style-control slot this instance cannot support.
+
+    Empty text, NO anchors, and a reason. The alternative -- inventing a proper
+    name for a template that has none, or wording a fraction as if it were an
+    integer -- would put a fabricated realization into a condition whose entire
+    purpose is to be a *minimal, semantically null* edit of `nl_base`. A hole
+    that counts itself is worth more than a filled cell that lies.
+    """
+    return {
+        "text": "",
+        "anchors": {},
+        "answer": ground_truth,
+        "status": "unavailable",
+        "note": reason,
     }
 
 
@@ -298,6 +363,232 @@ def find_perturbation(inst: Instance) -> Perturbation:
 
 
 # ---------------------------------------------------------------------------
+# Amendment 6: the two minimal answer-PRESERVING edits
+# ---------------------------------------------------------------------------
+#
+# The design problem these fix: on the four-condition corpus, `nl_break` was the
+# only answer-breaking condition AND the only one-character edit, so "surface
+# dissimilarity" was very nearly a perfect proxy for "answer-preserving" and H2's
+# residual coefficient -- the part that is ours rather than Han et al.'s -- was
+# weakly identified. Both conditions below are answer-preserving minimal edits,
+# so the two factors stop moving together.
+
+
+@dataclass
+class MinimalEdit:
+    """One answer-preserving minimal edit and everything a reviewer would check."""
+
+    kind: str  # "orth" | "lex"
+    variable: str
+    old_surface: str
+    new_surface: str
+    bindings: Dict[str, Any]
+    occurrences: int
+    on_anchor: bool
+    #: For "orth": did we land on the slot `nl_break` perturbs? Amendment 6's
+    #: matched-site contrast is void if we did not, so it is recorded per
+    #: problem rather than assumed.
+    matches_break_site: bool
+    conditions_satisfied: bool
+
+
+def orth_target_for(
+    inst: Instance, preferred: Optional[str] = None
+) -> Optional[Tuple[str, IntQ]]:
+    """Pick the quantity to re-render as a number word, and build its new value.
+
+    `preferred` is `nl_break`'s perturbed quantity. It is tried FIRST, because
+    the whole point of `nl_minimal_orth` is that it edits the same site as
+    `nl_break` and differs only in whether the value changes. It is tried first
+    rather than required, because a slot whose value is a Fraction or is already
+    spelled out cannot be re-rendered as a number word at all; the fallback walks
+    the remaining quantities in first-appearance order and the record says
+    whether the site matched.
+
+    Eligible = a non-boolean integer, currently surfaced as DIGITS (a value drawn
+    from `numbers_within(...)` is already a number word, so re-wording it would
+    be a no-op), in the range `number_to_words` renders correctly.
+    """
+    order = list(inst.quantities)
+    if preferred in order:
+        order = [preferred] + [q for q in order if q != preferred]
+    for name in order:
+        value = inst.bindings.get(name)
+        if isinstance(value, bool) or not isinstance(value, int):
+            continue
+        if not (0 <= int(value) <= MAX_WORDED_VALUE):
+            continue
+        if getattr(value, "surface", str(value)) != str(int(value)):
+            continue  # already a word, or a decorated surface
+        # Same convention the templates' own `numbers_within(...)` pool uses
+        # ("thirty two", space-separated, no hyphen) -- matched deliberately so
+        # that a worded quantity in this condition is indistinguishable from a
+        # worded quantity the template itself produced.
+        worded = number_to_words(int(value))
+        if worded == value.surface:
+            continue
+        return name, IntQ(int(value), worded)
+    return None
+
+
+#: Person-name pools. `cities`/`weekdays` are proper nouns too, but Amendment 6
+#: says "proper name" and a swapped city can change what the situation is about.
+_PERSON_NAMES = frozenset(
+    WORD_POOLS["names"] + WORD_POOLS["names_male"] + WORD_POOLS["names_female"]
+)
+
+
+def _is_name_pool(pool: Sequence[Any]) -> bool:
+    """True if this init pool is a pool of person names.
+
+    Decided from the POOL, not from the sampled value: a template that inlines
+    its own list of names is still drawing names, and a stray string that
+    happens to collide with our reconstructed `names` pool is not.
+    """
+    if len(pool) < 2:
+        return False
+    return all(type(v) is str and v in _PERSON_NAMES for v in pool)
+
+
+def name_swap_for(inst: Instance) -> Optional[Tuple[str, str, str]]:
+    """Pick one proper-name slot and its replacement. -> (var, old, new) or None.
+
+    The first name-valued placeholder in first-appearance order is swapped, for
+    the surface-closest alternative from the SAME pool (ties broken
+    alphabetically) -- deterministic, and consuming no RNG, so this cannot
+    perturb any other draw. Names already used by another lexical slot are
+    excluded, because `Template._lexically_coherent` rejects a draw where two
+    slots land on the same word and this edit must not create one.
+    """
+    template = inst.template
+    taken = {
+        v.lower() for k, v in inst.bindings.items() if type(v) is str
+    }
+    for var in template.placeholder_vars:
+        current = inst.bindings.get(var)
+        if type(current) is not str:
+            continue
+        pool = template.pool_for(var)
+        if not _is_name_pool(pool):
+            continue
+        cands = [
+            c for c in pool if c != current and c.lower() not in taken
+        ]
+        if not cands:
+            continue
+        cands.sort(key=lambda c: (_levenshtein(current, c), c))
+        return var, current, cands[0]
+    return None
+
+
+def build_minimal_orth(inst: Instance, preferred: Optional[str]) -> Optional[MinimalEdit]:
+    """`nl_minimal_orth`: one quantity, same VALUE, spelled out in words."""
+    picked = orth_target_for(inst, preferred)
+    if picked is None:
+        return None
+    var, value = picked
+    bindings = dict(inst.bindings)
+    bindings[var] = value
+    # Answer-preserving BY CONSTRUCTION -- the value is unchanged, only its
+    # surface string is -- but re-executing the template's own `#answer:` is
+    # cheap and catches a template that reads a quantity's surface rather than
+    # its value.
+    if inst.template.answer(bindings) != inst.answer:
+        return None
+    return MinimalEdit(
+        kind="orth",
+        variable=var,
+        old_surface=inst.bindings[var].surface,
+        new_surface=value.surface,
+        bindings=bindings,
+        occurrences=_occurrences(inst.template, var),
+        on_anchor=True,
+        matches_break_site=(var == preferred),
+        conditions_satisfied=inst.template.conditions_hold(bindings),
+    )
+
+
+def build_minimal_lex(inst: Instance) -> Optional[MinimalEdit]:
+    """`nl_minimal_lex`: one proper name swapped for another. OFF-anchor."""
+    picked = name_swap_for(inst)
+    if picked is None:
+        return None
+    var, old, new = picked
+    bindings = dict(inst.bindings)
+    bindings[var] = new
+    if inst.template.answer(bindings) != inst.answer:
+        # A name that enters the arithmetic would not be a name. Refuse rather
+        # than ship an "answer-preserving" condition whose answer moved.
+        return None
+    return MinimalEdit(
+        kind="lex",
+        variable=var,
+        old_surface=old,
+        new_surface=new,
+        bindings=bindings,
+        occurrences=_occurrences(inst.template, var),
+        on_anchor=False,
+        matches_break_site=False,
+        conditions_satisfied=inst.template.conditions_hold(bindings),
+    )
+
+
+_ARTICLE_ONLY_RE = re.compile(r"(?<![A-Za-z])[Aa]n?(?=\s)")
+
+
+def _assert_minimal_edit(
+    template: Template,
+    base_chunks: Sequence[str],
+    new_chunks: Sequence[str],
+    edit: MinimalEdit,
+) -> bool:
+    """Confirm the rendering differs from `nl_base` ONLY at `edit.variable`.
+
+    Checked over the template's segment list -- what the two strings were BUILT
+    from -- rather than by diffing the finished text, so this is a statement
+    about construction and not an inference from appearance.
+
+    One adjacent literal chunk is allowed to differ, and only by its indefinite
+    article: `_fix_article` makes "a 8" into "an eight" when the digit becomes a
+    word, and shipping "a eight" to keep a byte count would be trading grammar
+    for a metric. Returns whether that happened, so the record can say so.
+    """
+    tid = template.template_id
+    if len(base_chunks) != len(new_chunks):
+        raise CorpusError("%s/%s: chunk count changed" % (tid, edit.kind))
+    diff = [i for i, (a, b) in enumerate(zip(base_chunks, new_chunks)) if a != b]
+    slots = [
+        i
+        for i, seg in enumerate(template.segments)
+        if seg.kind == "ph" and seg.var == edit.variable
+    ]
+    if not slots:
+        raise CorpusError("%s/%s: %r has no slot in the body" % (tid, edit.kind, edit.variable))
+    if not set(slots) <= set(diff):
+        raise CorpusError(
+            "%s/%s: not every slot of %r was rewritten" % (tid, edit.kind, edit.variable)
+        )
+    article_adjusted = False
+    for i in diff:
+        if i in slots:
+            continue
+        if template.segments[i].kind != "lit" or (i + 1) not in slots:
+            raise CorpusError(
+                "%s/%s: edit changed segment %d, which is not a slot of %r"
+                % (tid, edit.kind, i, edit.variable)
+            )
+        if _ARTICLE_ONLY_RE.sub("a", base_chunks[i]) != _ARTICLE_ONLY_RE.sub(
+            "a", new_chunks[i]
+        ):
+            raise CorpusError(
+                "%s/%s: adjacent literal changed by more than its article"
+                % (tid, edit.kind)
+            )
+        article_adjusted = True
+    return article_adjusted
+
+
+# ---------------------------------------------------------------------------
 # Linguistic structure profile
 # ---------------------------------------------------------------------------
 
@@ -421,7 +712,7 @@ def build_problem(
     provenance: Optional[Dict[str, Any]] = None,
     paraphrase: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """Build one corpus record: all four realizations.
+    """Build one corpus record: all six realizations.
 
     `paraphrase` is this problem's entry from data/corpus/paraphrases.json (see
     `load_paraphrases`). If it is None the `nl_para` slot is left as the honest
@@ -452,6 +743,53 @@ def build_problem(
     # placed. Checked structurally against the segment list, not by diffing the
     # finished strings.
     _assert_single_quantity_edit(template, inst.bindings, pert, nl.text, brk.text)
+
+    # Amendment 6's two style controls. Built AFTER the perturbation because
+    # `nl_minimal_orth` deliberately targets the slot `nl_break` perturbs.
+    base_chunks = template._chunks(inst.bindings)
+    minimal: Dict[str, Any] = {}
+    minimal_rendered: Dict[str, Rendered] = {}
+    for kind, cond, edit in (
+        ("orth", "nl_minimal_orth", build_minimal_orth(inst, pert.quantity)),
+        ("lex", "nl_minimal_lex", build_minimal_lex(inst)),
+    ):
+        if edit is None:
+            minimal[cond] = {
+                "available": False,
+                "reason": (
+                    "no integer quantity rendered in digits that a number word "
+                    "could replace"
+                    if kind == "orth"
+                    else "the template instantiates no proper name"
+                ),
+            }
+            continue
+        new_chunks = template._chunks(edit.bindings)
+        article_adjusted = _assert_minimal_edit(template, base_chunks, new_chunks, edit)
+        rendered = template.render_nl(edit.bindings, quantities)
+        if rendered.text == nl.text:
+            raise CorpusError("%s/%s: text identical to nl_base" % (template.template_id, cond))
+        for name in quantities:
+            if name != edit.variable and rendered.literals[name] != nl.literals[name]:
+                raise SpanError(
+                    "%s/%s: quantity %r reads %r but nl_base emitted %r"
+                    % (template.template_id, cond, name, rendered.literals[name],
+                       nl.literals[name])
+                )
+        minimal_rendered[cond] = rendered
+        minimal[cond] = {
+            "available": True,
+            "kind": edit.kind,
+            "variable": edit.variable,
+            "from_surface": edit.old_surface,
+            "to_surface": edit.new_surface,
+            "on_anchor": edit.on_anchor,
+            "matches_nl_break_site": edit.matches_break_site,
+            "occurrences_rewritten": edit.occurrences,
+            "article_adjusted": article_adjusted,
+            "template_conditions_still_satisfied": edit.conditions_satisfied,
+            "text_char_edit_distance": _levenshtein(nl.text, rendered.text),
+        }
 
     para = None
     if paraphrase is not None:
@@ -515,6 +853,36 @@ def build_problem(
                 ground_truth_base=inst.answer,
                 perturbed_quantity=pert.quantity,
             ),
+            # Amendment 6. Answer UNCHANGED in both -- that is the point: they
+            # bracket the surface-perturbation floor that `nl_break` would
+            # otherwise be measured against with nothing to compare to.
+            "nl_minimal_orth": (
+                _realization(
+                    minimal_rendered["nl_minimal_orth"],
+                    inst.answer,
+                    status="written",
+                    edit_kind="orthographic",
+                    edited_quantity=minimal["nl_minimal_orth"]["variable"],
+                    on_anchor=True,
+                    matches_nl_break_site=minimal["nl_minimal_orth"][
+                        "matches_nl_break_site"
+                    ],
+                )
+                if "nl_minimal_orth" in minimal_rendered
+                else UNAVAILABLE(inst.answer, minimal["nl_minimal_orth"]["reason"])
+            ),
+            "nl_minimal_lex": (
+                _realization(
+                    minimal_rendered["nl_minimal_lex"],
+                    inst.answer,
+                    status="written",
+                    edit_kind="lexical_proper_name",
+                    edited_variable=minimal["nl_minimal_lex"]["variable"],
+                    on_anchor=False,
+                )
+                if "nl_minimal_lex" in minimal_rendered
+                else UNAVAILABLE(inst.answer, minimal["nl_minimal_lex"]["reason"])
+            ),
         },
         "perturbation": {
             "quantity": pert.quantity,
@@ -529,11 +897,14 @@ def build_problem(
             "occurrences_rewritten": pert.occurrences,
             "text_char_edit_distance": _levenshtein(nl.text, brk.text),
         },
+        "minimal_edits": minimal,
         "answer_preserving": {
             "nl_base": True,
             "nl_para": True,
             "formal": True,
             "nl_break": False,
+            "nl_minimal_orth": True,
+            "nl_minimal_lex": True,
         },
         "linguistic_profile": linguistic_profile(nl.text, nl.anchors),
         "template_source": {
@@ -557,6 +928,8 @@ def build_problem(
     }
     if para is not None:
         literals["nl_para"] = para.literals
+    for cond, rendered in minimal_rendered.items():
+        literals[cond] = rendered.literals
     assert_span_literals(record, literals)
     return record
 
@@ -682,11 +1055,12 @@ def validate_record(record: Dict[str, Any]) -> None:
         if cond not in reals:
             raise CorpusError("%s: missing realization %r" % (record["problem_id"], cond))
 
-    # configs/corpus_schema.md: "every quantity key appears in the anchors of all
-    # four realizations". While `nl_para` was pending that invariant could not be
-    # evaluated, and `validate_record` said so rather than quietly passing. A
-    # written paraphrase is held to exactly the same standard as the three
-    # generated conditions -- that is the whole point of filling the slot.
+    # configs/corpus_schema.md: "every quantity key appears in the anchors of
+    # every realization that has text". While `nl_para` was pending that
+    # invariant could not be evaluated, and `validate_record` said so rather than
+    # quietly passing. A written paraphrase -- and each of Amendment 6's style
+    # controls, where the instance supports it -- is held to exactly the same
+    # standard as the three generated conditions.
     conditions = list(GENERATED_CONDITIONS)
     para = reals["nl_para"]
     status = para.get("status")
@@ -701,6 +1075,35 @@ def validate_record(record: Dict[str, Any]) -> None:
         raise CorpusError(
             "%s: nl_para has unknown status %r" % (record["problem_id"], status)
         )
+
+    # Amendment 6's style controls are held to exactly the same standard as the
+    # generated conditions when they are present, and must be a genuinely empty
+    # hole -- no text, no anchors -- when they are not.
+    for cond in MINIMAL_CONDITIONS:
+        real = reals[cond]
+        st = real.get("status")
+        if st == "written":
+            conditions.append(cond)
+            if real.get("answer") != record["ground_truth"]:
+                raise CorpusError(
+                    "%s: %s is answer-preserving but records %r, ground truth is %r"
+                    % (record["problem_id"], cond, real.get("answer"),
+                       record["ground_truth"])
+                )
+        elif st == "unavailable":
+            if real.get("text") or real.get("anchors"):
+                raise CorpusError(
+                    "%s: %s marked unavailable but not empty" % (record["problem_id"], cond)
+                )
+            if not real.get("note"):
+                raise CorpusError(
+                    "%s: %s is unavailable with no reason given"
+                    % (record["problem_id"], cond)
+                )
+        else:
+            raise CorpusError(
+                "%s: %s has unknown status %r" % (record["problem_id"], cond, st)
+            )
 
     for cond in conditions:
         _validate_realization(record, cond, quantities)
@@ -884,7 +1287,7 @@ def load_paraphrases(
 
     A missing file yields an empty mapping, and every `nl_para` slot then stays
     the honest pending placeholder. `required=True` turns that into an error for
-    callers that must have all four conditions.
+    callers that must have the paraphrase condition.
     """
     try:
         with open(path, "r", encoding="utf-8") as fh:

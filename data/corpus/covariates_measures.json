@@ -6,13 +6,15 @@
     "conditions": [
       "nl_para",
       "formal",
-      "nl_break"
+      "nl_break",
+      "nl_minimal_orth",
+      "nl_minimal_lex"
     ],
     "corpus": "data/corpus/problems.jsonl",
-    "generated_utc": "2026-09-06T22:44:46Z",
+    "generated_utc": "2026-09-06T23:06:54Z",
     "lex_dissim_method": "normalized character Levenshtein distance, dist / max(len_a, len_b)",
     "lex_dissim_robustness_method": "token-type Jaccard distance, lowercased [A-Za-z0-9_]+ runs, numerals retained",
-    "n_pairs_with_covariates": 300,
+    "n_pairs_with_covariates": 469,
     "n_problems_in_corpus": 100,
     "parser": {
       "model": "en_core_web_sm",
@@ -29,7 +31,163 @@
       "lex_dissim": "lex_jaccard",
       "syn_dissim": "syn_pos_seq"
     },
-    "skipped_pairs": [],
+    "skipped_pairs": [
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0001",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0003",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0007",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0008",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0010",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0024",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0025",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0026",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0028",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0032",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0034",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0038",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0039",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0041",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0044",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0046",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_orth",
+        "problem_id": "gsms_0055",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0058",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0059",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0062",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0063",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0070",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0074",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0075",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0081",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0082",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0083",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0087",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0094",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0095",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      },
+      {
+        "condition": "nl_minimal_lex",
+        "problem_id": "gsms_0098",
+        "reason": "realization is an empty placeholder (status=unavailable)"
+      }
+    ],
     "summary": {
       "char_edit_distance": {
         "formal": {
@@ -45,6 +203,20 @@
           "median": 1.0,
           "min": 1.0,
           "n": 100
+        },
+        "nl_minimal_lex": {
+          "max": 15.0,
+          "mean": 5.357142857142857,
+          "median": 4.5,
+          "min": 1.0,
+          "n": 70
+        },
+        "nl_minimal_orth": {
+          "max": 41.0,
+          "mean": 11.202020202020202,
+          "median": 9.0,
+          "min": 3.0,
+          "n": 99
         },
         "nl_para": {
           "max": 274.0,
@@ -69,6 +241,20 @@
           "min": 0.0017064846416382253,
           "n": 100
         },
+        "nl_minimal_lex": {
+          "max": 0.08571428571428572,
+          "mean": 0.02395000340139931,
+          "median": 0.017520077753337766,
+          "min": 0.004081632653061225,
+          "n": 70
+        },
+        "nl_minimal_orth": {
+          "max": 0.16942148760330578,
+          "mean": 0.0486341240268244,
+          "median": 0.035398230088495575,
+          "min": 0.006607929515418502,
+          "n": 99
+        },
         "nl_para": {
           "max": 0.6973180076628352,
           "mean": 0.3910652752315271,
@@ -91,6 +277,20 @@
           "median": 0.0625,
           "min": 0.020000000000000018,
           "n": 100
+        },
+        "nl_minimal_lex": {
+          "max": 0.11111111111111116,
+          "mean": 0.06419872663544018,
+          "median": 0.0625,
+          "min": 0.033333333333333326,
+          "n": 70
+        },
+        "nl_minimal_orth": {
+          "max": 0.2142857142857143,
+          "mean": 0.09084066699187983,
+          "median": 0.07999999999999996,
+          "min": 0.025000000000000022,
+          "n": 99
         },
         "nl_para": {
           "max": 0.5161290322580645,
@@ -115,6 +315,20 @@
           "min": 0.0,
           "n": 100
         },
+        "nl_minimal_lex": {
+          "max": 0.09999999999999999,
+          "mean": 0.00560049742210466,
+          "median": 0.0,
+          "min": 0.0,
+          "n": 70
+        },
+        "nl_minimal_orth": {
+          "max": 0.10606060606060609,
+          "mean": 0.021745858559503926,
+          "median": 0.01636469900642898,
+          "min": 0.0,
+          "n": 99
+        },
         "nl_para": {
           "max": 0.3385093167701863,
           "mean": 0.1603042289098383,
@@ -138,6 +352,20 @@
           "min": 0.0,
           "n": 100
         },
+        "nl_minimal_lex": {
+          "max": 0.16666666666666666,
+          "mean": 0.013795996417107315,
+          "median": 0.0,
+          "min": 0.0,
+          "n": 70
+        },
+        "nl_minimal_orth": {
+          "max": 0.16666666666666666,
+          "mean": 0.025086875955576494,
+          "median": 0.01724137931034479,
+          "min": 0.0,
+          "n": 99
+        },
         "nl_para": {
           "max": 0.5080128205128205,
           "mean": 0.2573686515795093,
@@ -160,6 +388,20 @@
           "median": 0.0,
           "min": 0.0,
           "n": 100
+        },
+        "nl_minimal_lex": {
+          "max": 0.05405405405405406,
+          "mean": 0.003973793651211984,
+          "median": 0.0,
+          "min": 0.0,
+          "n": 70
+        },
+        "nl_minimal_orth": {
+          "max": 0.1111111111111111,
+          "mean": 0.0198741997121592,
+          "median": 0.010869565217391304,
+          "min": 0.0,
+          "n": 99
         },
         "nl_para": {
           "max": 0.6379310344827587,
@@ -195,6 +437,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.013333333333333334,
+      "lex_jaccard": 0.08333333333333337,
+      "n_chars_a": 150,
+      "n_chars_b": 149,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 11,
+      "lex_edit": 0.06962025316455696,
+      "lex_jaccard": 0.12,
+      "n_chars_a": 150,
+      "n_chars_b": 158,
+      "syn_dep_bag": 0.029411764705882363,
+      "syn_dep_triple": 0.11497326203208558,
+      "syn_pos_seq": 0.029411764705882353
+    },
     "nl_para": {
       "char_edit_distance": 113,
       "lex_edit": 0.6384180790960452,
@@ -227,6 +489,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 23,
+      "lex_edit": 0.08185053380782918,
+      "lex_jaccard": 0.1351351351351351,
+      "n_chars_a": 261,
+      "n_chars_b": 281,
+      "syn_dep_bag": 0.06048615036743925,
+      "syn_dep_triple": 0.06387789711701526,
+      "syn_pos_seq": 0.04918032786885246
+    },
     "nl_para": {
       "char_edit_distance": 182,
       "lex_edit": 0.6973180076628352,
@@ -255,6 +527,26 @@
       "lex_jaccard": 0.0714285714285714,
       "n_chars_a": 173,
       "n_chars_b": 173,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.017341040462427744,
+      "lex_jaccard": 0.0714285714285714,
+      "n_chars_a": 173,
+      "n_chars_b": 172,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.017142857142857144,
+      "lex_jaccard": 0.0714285714285714,
+      "n_chars_a": 173,
+      "n_chars_b": 175,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -291,6 +583,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 25,
+      "lex_edit": 0.09803921568627451,
+      "lex_jaccard": 0.1428571428571429,
+      "n_chars_a": 233,
+      "n_chars_b": 255,
+      "syn_dep_bag": 0.05555555555555557,
+      "syn_dep_triple": 0.05555555555555557,
+      "syn_pos_seq": 0.05555555555555555
+    },
     "nl_para": {
       "char_edit_distance": 91,
       "lex_edit": 0.35271317829457366,
@@ -322,6 +624,26 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 9,
+      "lex_edit": 0.015570934256055362,
+      "lex_jaccard": 0.03508771929824561,
+      "n_chars_a": 578,
+      "n_chars_b": 572,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.008605851979345954,
+      "lex_jaccard": 0.03508771929824561,
+      "n_chars_a": 578,
+      "n_chars_b": 581,
+      "syn_dep_bag": 0.008130081300813004,
+      "syn_dep_triple": 0.008130081300813004,
+      "syn_pos_seq": 0.008130081300813009
     },
     "nl_para": {
       "char_edit_distance": 274,
@@ -355,6 +677,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.019704433497536946,
+      "lex_jaccard": 0.07999999999999996,
+      "n_chars_a": 203,
+      "n_chars_b": 203,
+      "syn_dep_bag": 0.023809523809523808,
+      "syn_dep_triple": 0.047619047619047616,
+      "syn_pos_seq": 0.023809523809523808
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 23,
+      "lex_edit": 0.1031390134529148,
+      "lex_jaccard": 0.1785714285714286,
+      "n_chars_a": 203,
+      "n_chars_b": 223,
+      "syn_dep_bag": 0.06507936507936504,
+      "syn_dep_triple": 0.06666666666666662,
+      "syn_pos_seq": 0.06666666666666667
+    },
     "nl_para": {
       "char_edit_distance": 63,
       "lex_edit": 0.3103448275862069,
@@ -386,6 +728,26 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 15,
+      "lex_edit": 0.08571428571428572,
+      "lex_jaccard": 0.07692307692307687,
+      "n_chars_a": 175,
+      "n_chars_b": 172,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.16666666666666666,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 11,
+      "lex_edit": 0.059782608695652176,
+      "lex_jaccard": 0.11111111111111116,
+      "n_chars_a": 175,
+      "n_chars_b": 184,
+      "syn_dep_bag": 0.026276276276276225,
+      "syn_dep_triple": 0.027027027027026973,
+      "syn_pos_seq": 0.02702702702702703
     },
     "nl_para": {
       "char_edit_distance": 97,
@@ -419,6 +781,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 11,
+      "lex_edit": 0.02,
+      "lex_jaccard": 0.044117647058823484,
+      "n_chars_a": 542,
+      "n_chars_b": 550,
+      "syn_dep_bag": 0.007281268349970662,
+      "syn_dep_triple": 0.007574867880211422,
+      "syn_pos_seq": 0.007633587786259542
+    },
     "nl_para": {
       "char_edit_distance": 268,
       "lex_edit": 0.4944649446494465,
@@ -450,6 +822,16 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 19,
+      "lex_edit": 0.11377245508982035,
+      "lex_jaccard": 0.19999999999999996,
+      "n_chars_a": 151,
+      "n_chars_b": 167,
+      "syn_dep_bag": 0.051948051948051965,
+      "syn_dep_triple": 0.05714285714285716,
+      "syn_pos_seq": 0.05714285714285714
     },
     "nl_para": {
       "char_edit_distance": 41,
@@ -483,6 +865,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.015748031496062992,
+      "lex_jaccard": 0.04166666666666663,
+      "n_chars_a": 379,
+      "n_chars_b": 381,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.012345679012345678,
+      "syn_pos_seq": 0.012345679012345678
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 11,
+      "lex_edit": 0.028350515463917526,
+      "lex_jaccard": 0.061224489795918324,
+      "n_chars_a": 379,
+      "n_chars_b": 388,
+      "syn_dep_bag": 0.011592893706714822,
+      "syn_dep_triple": 0.024089129780186666,
+      "syn_pos_seq": 0.012195121951219513
+    },
     "nl_para": {
       "char_edit_distance": 173,
       "lex_edit": 0.45646437994722955,
@@ -514,6 +916,16 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.016483516483516484,
+      "lex_jaccard": 0.0625,
+      "n_chars_a": 181,
+      "n_chars_b": 182,
+      "syn_dep_bag": 0.022222222222222216,
+      "syn_dep_triple": 0.02222222222222222,
+      "syn_pos_seq": 0.022222222222222223
     },
     "nl_para": {
       "char_edit_distance": 53,
@@ -547,6 +959,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.006622516556291391,
+      "lex_jaccard": 0.052631578947368474,
+      "n_chars_a": 302,
+      "n_chars_b": 302,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 24,
+      "lex_edit": 0.07430340557275542,
+      "lex_jaccard": 0.12195121951219512,
+      "n_chars_a": 302,
+      "n_chars_b": 323,
+      "syn_dep_bag": 0.0403893951946976,
+      "syn_dep_triple": 0.042253521126760576,
+      "syn_pos_seq": 0.04225352112676056
+    },
     "nl_para": {
       "char_edit_distance": 118,
       "lex_edit": 0.39072847682119205,
@@ -579,6 +1011,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.03125,
+      "lex_jaccard": 0.07407407407407407,
+      "n_chars_a": 160,
+      "n_chars_b": 158,
+      "syn_dep_bag": 0.02702702702702703,
+      "syn_dep_triple": 0.05405405405405406,
+      "syn_pos_seq": 0.05405405405405406
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 12,
+      "lex_edit": 0.07058823529411765,
+      "lex_jaccard": 0.1071428571428571,
+      "n_chars_a": 160,
+      "n_chars_b": 170,
+      "syn_dep_bag": 0.026315789473684265,
+      "syn_dep_triple": 0.026315789473684265,
+      "syn_pos_seq": 0.02631578947368421
+    },
     "nl_para": {
       "char_edit_distance": 91,
       "lex_edit": 0.56875,
@@ -607,6 +1059,26 @@
       "lex_jaccard": 0.040000000000000036,
       "n_chars_a": 363,
       "n_chars_b": 363,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.01652892561983471,
+      "lex_jaccard": 0.040000000000000036,
+      "n_chars_a": 363,
+      "n_chars_b": 363,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.01366120218579235,
+      "lex_jaccard": 0.040000000000000036,
+      "n_chars_a": 363,
+      "n_chars_b": 366,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -643,6 +1115,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 1,
+      "lex_edit": 0.004081632653061225,
+      "lex_jaccard": 0.0625,
+      "n_chars_a": 245,
+      "n_chars_b": 245,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 11,
+      "lex_edit": 0.04330708661417323,
+      "lex_jaccard": 0.09090909090909094,
+      "n_chars_a": 245,
+      "n_chars_b": 254,
+      "syn_dep_bag": 0.01818181818181816,
+      "syn_dep_triple": 0.01818181818181817,
+      "syn_pos_seq": 0.01818181818181818
+    },
     "nl_para": {
       "char_edit_distance": 88,
       "lex_edit": 0.34782608695652173,
@@ -674,6 +1166,26 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.025477707006369428,
+      "lex_jaccard": 0.10526315789473684,
+      "n_chars_a": 157,
+      "n_chars_b": 155,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 20,
+      "lex_edit": 0.11560693641618497,
+      "lex_jaccard": 0.19047619047619047,
+      "n_chars_a": 157,
+      "n_chars_b": 173,
+      "syn_dep_bag": 0.05096525096525093,
+      "syn_dep_triple": 0.054054054054054015,
+      "syn_pos_seq": 0.05405405405405406
     },
     "nl_para": {
       "char_edit_distance": 77,
@@ -707,6 +1219,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.018691588785046728,
+      "lex_jaccard": 0.05405405405405406,
+      "n_chars_a": 321,
+      "n_chars_b": 321,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 10,
+      "lex_edit": 0.030395136778115502,
+      "lex_jaccard": 0.05405405405405406,
+      "n_chars_a": 321,
+      "n_chars_b": 329,
+      "syn_dep_bag": 0.01245614035087723,
+      "syn_dep_triple": 0.013157894736842157,
+      "syn_pos_seq": 0.013157894736842105
+    },
     "nl_para": {
       "char_edit_distance": 93,
       "lex_edit": 0.2672413793103448,
@@ -739,6 +1271,26 @@
       "syn_dep_triple": 0.02391975308641979,
       "syn_pos_seq": 0.024691358024691357
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.016666666666666666,
+      "lex_jaccard": 0.0444444444444444,
+      "n_chars_a": 360,
+      "n_chars_b": 360,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.012345679012345678,
+      "syn_pos_seq": 0.012345679012345678
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 24,
+      "lex_edit": 0.06315789473684211,
+      "lex_jaccard": 0.0444444444444444,
+      "n_chars_a": 360,
+      "n_chars_b": 380,
+      "syn_dep_bag": 0.021716495612077908,
+      "syn_dep_triple": 0.022311468094600585,
+      "syn_pos_seq": 0.024096385542168676
+    },
     "nl_para": {
       "char_edit_distance": 166,
       "lex_edit": 0.46111111111111114,
@@ -767,6 +1319,26 @@
       "lex_jaccard": 0.06060606060606055,
       "n_chars_a": 195,
       "n_chars_b": 194,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.03076923076923077,
+      "lex_jaccard": 0.06060606060606055,
+      "n_chars_a": 195,
+      "n_chars_b": 195,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.02512562814070352,
+      "lex_jaccard": 0.06060606060606055,
+      "n_chars_a": 195,
+      "n_chars_b": 199,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -803,6 +1375,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.017985611510791366,
+      "lex_jaccard": 0.0625,
+      "n_chars_a": 278,
+      "n_chars_b": 275,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.02127659574468085,
+      "lex_jaccard": 0.0625,
+      "n_chars_a": 278,
+      "n_chars_b": 282,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 107,
       "lex_edit": 0.3614864864864865,
@@ -835,6 +1427,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.031746031746031744,
+      "lex_jaccard": 0.09523809523809523,
+      "n_chars_a": 189,
+      "n_chars_b": 189,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 25,
+      "lex_edit": 0.11848341232227488,
+      "lex_jaccard": 0.20833333333333337,
+      "n_chars_a": 189,
+      "n_chars_b": 211,
+      "syn_dep_bag": 0.07500000000000001,
+      "syn_dep_triple": 0.07500000000000001,
+      "syn_pos_seq": 0.075
+    },
     "nl_para": {
       "char_edit_distance": 71,
       "lex_edit": 0.37566137566137564,
@@ -863,6 +1475,26 @@
       "lex_jaccard": 0.020000000000000018,
       "n_chars_a": 452,
       "n_chars_b": 452,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.006622516556291391,
+      "lex_jaccard": 0.039215686274509776,
+      "n_chars_a": 452,
+      "n_chars_b": 453,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.006607929515418502,
+      "lex_jaccard": 0.039215686274509776,
+      "n_chars_a": 452,
+      "n_chars_b": 454,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -899,6 +1531,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 12,
+      "lex_edit": 0.024691358024691357,
+      "lex_jaccard": 0.038461538461538436,
+      "n_chars_a": 486,
+      "n_chars_b": 486,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.009523809523809523,
+      "syn_pos_seq": 0.009523809523809525
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 8,
+      "lex_edit": 0.016260162601626018,
+      "lex_jaccard": 0.038461538461538436,
+      "n_chars_a": 486,
+      "n_chars_b": 492,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 192,
       "lex_edit": 0.3950617283950617,
@@ -927,6 +1579,26 @@
       "lex_jaccard": 0.021739130434782594,
       "n_chars_a": 366,
       "n_chars_b": 366,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.00546448087431694,
+      "lex_jaccard": 0.04255319148936165,
+      "n_chars_a": 366,
+      "n_chars_b": 366,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 8,
+      "lex_edit": 0.021505376344086023,
+      "lex_jaccard": 0.04255319148936165,
+      "n_chars_a": 366,
+      "n_chars_b": 372,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -963,6 +1635,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 13,
+      "lex_edit": 0.05485232067510549,
+      "lex_jaccard": 0.08108108108108103,
+      "n_chars_a": 227,
+      "n_chars_b": 237,
+      "syn_dep_bag": 0.020351526364477332,
+      "syn_dep_triple": 0.02127659574468085,
+      "syn_pos_seq": 0.02127659574468085
+    },
     "nl_para": {
       "char_edit_distance": 128,
       "lex_edit": 0.5470085470085471,
@@ -995,6 +1677,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 22,
+      "lex_edit": 0.07119741100323625,
+      "lex_jaccard": 0.11904761904761907,
+      "n_chars_a": 290,
+      "n_chars_b": 309,
+      "syn_dep_bag": 0.04256854256854254,
+      "syn_dep_triple": 0.060606060606060566,
+      "syn_pos_seq": 0.045454545454545456
+    },
     "nl_para": {
       "char_edit_distance": 79,
       "lex_edit": 0.27241379310344827,
@@ -1023,6 +1715,16 @@
       "lex_jaccard": 0.08333333333333337,
       "n_chars_a": 156,
       "n_chars_b": 156,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.03125,
+      "lex_jaccard": 0.08333333333333337,
+      "n_chars_a": 156,
+      "n_chars_b": 160,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -1059,6 +1761,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 9,
+      "lex_edit": 0.05113636363636364,
+      "lex_jaccard": 0.0714285714285714,
+      "n_chars_a": 176,
+      "n_chars_b": 176,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 22,
+      "lex_edit": 0.11282051282051282,
+      "lex_jaccard": 0.16129032258064513,
+      "n_chars_a": 176,
+      "n_chars_b": 195,
+      "syn_dep_bag": 0.06627906976744188,
+      "syn_dep_triple": 0.06976744186046513,
+      "syn_pos_seq": 0.06976744186046512
+    },
     "nl_para": {
       "char_edit_distance": 91,
       "lex_edit": 0.5170454545454546,
@@ -1090,6 +1812,16 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 24,
+      "lex_edit": 0.10344827586206896,
+      "lex_jaccard": 0.1428571428571429,
+      "n_chars_a": 212,
+      "n_chars_b": 232,
+      "syn_dep_bag": 0.06666666666666662,
+      "syn_dep_triple": 0.06666666666666664,
+      "syn_pos_seq": 0.06666666666666667
     },
     "nl_para": {
       "char_edit_distance": 125,
@@ -1123,6 +1855,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.034482758620689655,
+      "lex_jaccard": 0.10526315789473684,
+      "n_chars_a": 116,
+      "n_chars_b": 116,
+      "syn_dep_bag": 0.09999999999999999,
+      "syn_dep_triple": 0.1,
+      "syn_pos_seq": 0.03333333333333333
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 10,
+      "lex_edit": 0.08064516129032258,
+      "lex_jaccard": 0.15000000000000002,
+      "n_chars_a": 116,
+      "n_chars_b": 124,
+      "syn_dep_bag": 0.032258064516129045,
+      "syn_dep_triple": 0.032258064516129045,
+      "syn_pos_seq": 0.03225806451612903
+    },
     "nl_para": {
       "char_edit_distance": 67,
       "lex_edit": 0.48905109489051096,
@@ -1154,6 +1906,26 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.024096385542168676,
+      "lex_jaccard": 0.06060606060606055,
+      "n_chars_a": 166,
+      "n_chars_b": 166,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 11,
+      "lex_edit": 0.06285714285714286,
+      "lex_jaccard": 0.08823529411764708,
+      "n_chars_a": 166,
+      "n_chars_b": 175,
+      "syn_dep_bag": 0.024291497975708478,
+      "syn_dep_triple": 0.02564102564102562,
+      "syn_pos_seq": 0.02564102564102564
     },
     "nl_para": {
       "char_edit_distance": 95,
@@ -1187,6 +1959,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 8,
+      "lex_edit": 0.05405405405405406,
+      "lex_jaccard": 0.08333333333333337,
+      "n_chars_a": 148,
+      "n_chars_b": 146,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 10,
+      "lex_edit": 0.0641025641025641,
+      "lex_jaccard": 0.07999999999999996,
+      "n_chars_a": 148,
+      "n_chars_b": 156,
+      "syn_dep_bag": 0.029411764705882363,
+      "syn_dep_triple": 0.02941176470588237,
+      "syn_pos_seq": 0.029411764705882353
+    },
     "nl_para": {
       "char_edit_distance": 87,
       "lex_edit": 0.5878378378378378,
@@ -1218,6 +2010,16 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 29,
+      "lex_edit": 0.07692307692307693,
+      "lex_jaccard": 0.1063829787234043,
+      "n_chars_a": 354,
+      "n_chars_b": 377,
+      "syn_dep_bag": 0.044045911047345766,
+      "syn_dep_triple": 0.04705882352941177,
+      "syn_pos_seq": 0.03529411764705882
     },
     "nl_para": {
       "char_edit_distance": 129,
@@ -1251,6 +2053,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 15,
+      "lex_edit": 0.025597269624573378,
+      "lex_jaccard": 0.033333333333333326,
+      "n_chars_a": 586,
+      "n_chars_b": 577,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 12,
+      "lex_edit": 0.020134228187919462,
+      "lex_jaccard": 0.049180327868852514,
+      "n_chars_a": 586,
+      "n_chars_b": 596,
+      "syn_dep_bag": 0.008999653859466949,
+      "syn_dep_triple": 0.00925925925925926,
+      "syn_pos_seq": 0.009259259259259259
+    },
     "nl_para": {
       "char_edit_distance": 200,
       "lex_edit": 0.3412969283276451,
@@ -1283,6 +2105,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 29,
+      "lex_edit": 0.08950617283950617,
+      "lex_jaccard": 0.125,
+      "n_chars_a": 301,
+      "n_chars_b": 324,
+      "syn_dep_bag": 0.05335968379446641,
+      "syn_dep_triple": 0.05797101449275363,
+      "syn_pos_seq": 0.043478260869565216
+    },
     "nl_para": {
       "char_edit_distance": 118,
       "lex_edit": 0.3920265780730897,
@@ -1311,6 +2143,26 @@
       "lex_jaccard": 0.06451612903225812,
       "n_chars_a": 243,
       "n_chars_b": 243,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.024691358024691357,
+      "lex_jaccard": 0.06451612903225812,
+      "n_chars_a": 243,
+      "n_chars_b": 241,
+      "syn_dep_bag": 0.038461538461538464,
+      "syn_dep_triple": 0.11538461538461539,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.024291497975708502,
+      "lex_jaccard": 0.06451612903225812,
+      "n_chars_a": 243,
+      "n_chars_b": 247,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -1347,6 +2199,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.013100436681222707,
+      "lex_jaccard": 0.06666666666666665,
+      "n_chars_a": 229,
+      "n_chars_b": 229,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0196078431372549,
+      "syn_pos_seq": 0.0196078431372549
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.012987012987012988,
+      "lex_jaccard": 0.033333333333333326,
+      "n_chars_a": 229,
+      "n_chars_b": 231,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 56,
       "lex_edit": 0.2445414847161572,
@@ -1379,6 +2251,26 @@
       "syn_dep_triple": 0.1,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.031007751937984496,
+      "lex_jaccard": 0.08695652173913049,
+      "n_chars_a": 129,
+      "n_chars_b": 127,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.03759398496240601,
+      "lex_jaccard": 0.08695652173913049,
+      "n_chars_a": 129,
+      "n_chars_b": 133,
+      "syn_dep_bag": 0.09999999999999999,
+      "syn_dep_triple": 0.16666666666666666,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 78,
       "lex_edit": 0.582089552238806,
@@ -1407,6 +2299,16 @@
       "lex_jaccard": 0.04761904761904767,
       "n_chars_a": 117,
       "n_chars_b": 117,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.03333333333333333,
+      "lex_jaccard": 0.09090909090909094,
+      "n_chars_a": 117,
+      "n_chars_b": 120,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -1443,6 +2345,16 @@
       "syn_dep_triple": 0.02,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.013452914798206279,
+      "lex_jaccard": 0.052631578947368474,
+      "n_chars_a": 221,
+      "n_chars_b": 223,
+      "syn_dep_bag": 0.02,
+      "syn_dep_triple": 0.02,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 111,
       "lex_edit": 0.4889867841409692,
@@ -1475,6 +2387,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.011204481792717087,
+      "lex_jaccard": 0.033333333333333326,
+      "n_chars_a": 357,
+      "n_chars_b": 357,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 26,
+      "lex_edit": 0.06860158311345646,
+      "lex_jaccard": 0.07936507936507942,
+      "n_chars_a": 357,
+      "n_chars_b": 379,
+      "syn_dep_bag": 0.04314934155225554,
+      "syn_dep_triple": 0.04651162790697676,
+      "syn_pos_seq": 0.03488372093023256
+    },
     "nl_para": {
       "char_edit_distance": 81,
       "lex_edit": 0.226890756302521,
@@ -1503,6 +2435,16 @@
       "lex_jaccard": 0.07407407407407407,
       "n_chars_a": 183,
       "n_chars_b": 183,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.026737967914438502,
+      "lex_jaccard": 0.07407407407407407,
+      "n_chars_a": 183,
+      "n_chars_b": 187,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -1539,6 +2481,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.005714285714285714,
+      "lex_jaccard": 0.04081632653061229,
+      "n_chars_a": 350,
+      "n_chars_b": 350,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.01694915254237288,
+      "lex_jaccard": 0.04081632653061229,
+      "n_chars_a": 350,
+      "n_chars_b": 354,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 175,
       "lex_edit": 0.5,
@@ -1571,6 +2533,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.014925373134328358,
+      "lex_jaccard": 0.06896551724137934,
+      "n_chars_a": 201,
+      "n_chars_b": 201,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 23,
+      "lex_edit": 0.10407239819004525,
+      "lex_jaccard": 0.15625,
+      "n_chars_a": 201,
+      "n_chars_b": 221,
+      "syn_dep_bag": 0.07500000000000001,
+      "syn_dep_triple": 0.07500000000000001,
+      "syn_pos_seq": 0.075
+    },
     "nl_para": {
       "char_edit_distance": 74,
       "lex_edit": 0.3681592039800995,
@@ -1599,6 +2581,16 @@
       "lex_jaccard": 0.125,
       "n_chars_a": 113,
       "n_chars_b": 113,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.02631578947368421,
+      "lex_jaccard": 0.125,
+      "n_chars_a": 113,
+      "n_chars_b": 114,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -1635,6 +2627,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 10,
+      "lex_edit": 0.03003003003003003,
+      "lex_jaccard": 0.04255319148936165,
+      "n_chars_a": 333,
+      "n_chars_b": 328,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 7,
+      "lex_edit": 0.020710059171597635,
+      "lex_jaccard": 0.04255319148936165,
+      "n_chars_a": 333,
+      "n_chars_b": 338,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 85,
       "lex_edit": 0.2552552552552553,
@@ -1667,6 +2679,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 12,
+      "lex_edit": 0.03870967741935484,
+      "lex_jaccard": 0.06818181818181823,
+      "n_chars_a": 301,
+      "n_chars_b": 310,
+      "syn_dep_bag": 0.017470300489168436,
+      "syn_dep_triple": 0.01851851851851854,
+      "syn_pos_seq": 0.018518518518518517
+    },
     "nl_para": {
       "char_edit_distance": 182,
       "lex_edit": 0.5260115606936416,
@@ -1695,6 +2717,26 @@
       "lex_jaccard": 0.03125,
       "n_chars_a": 235,
       "n_chars_b": 235,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.02127659574468085,
+      "lex_jaccard": 0.06060606060606055,
+      "n_chars_a": 235,
+      "n_chars_b": 232,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.012658227848101266,
+      "lex_jaccard": 0.06060606060606055,
+      "n_chars_a": 235,
+      "n_chars_b": 237,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -1731,6 +2773,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.015267175572519083,
+      "lex_jaccard": 0.09090909090909094,
+      "n_chars_a": 130,
+      "n_chars_b": 131,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.03731343283582089,
+      "lex_jaccard": 0.09090909090909094,
+      "n_chars_a": 130,
+      "n_chars_b": 134,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 49,
       "lex_edit": 0.3356164383561644,
@@ -1762,6 +2824,26 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.019672131147540985,
+      "lex_jaccard": 0.04761904761904767,
+      "n_chars_a": 305,
+      "n_chars_b": 305,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 18,
+      "lex_edit": 0.05625,
+      "lex_jaccard": 0.09090909090909094,
+      "n_chars_a": 305,
+      "n_chars_b": 320,
+      "syn_dep_bag": 0.04385080645161289,
+      "syn_dep_triple": 0.046874999999999986,
+      "syn_pos_seq": 0.03125
     },
     "nl_para": {
       "char_edit_distance": 76,
@@ -1795,6 +2877,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.014388489208633094,
+      "lex_jaccard": 0.09523809523809523,
+      "n_chars_a": 138,
+      "n_chars_b": 139,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 24,
+      "lex_edit": 0.1509433962264151,
+      "lex_jaccard": 0.20833333333333337,
+      "n_chars_a": 138,
+      "n_chars_b": 159,
+      "syn_dep_bag": 0.08571428571428572,
+      "syn_dep_triple": 0.08571428571428573,
+      "syn_pos_seq": 0.08571428571428572
+    },
     "nl_para": {
       "char_edit_distance": 43,
       "lex_edit": 0.3115942028985507,
@@ -1823,6 +2925,26 @@
       "lex_jaccard": 0.040000000000000036,
       "n_chars_a": 422,
       "n_chars_b": 422,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.014218009478672985,
+      "lex_jaccard": 0.040000000000000036,
+      "n_chars_a": 422,
+      "n_chars_b": 419,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.021978021978021976,
+      "syn_pos_seq": 0.02197802197802198
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.009411764705882352,
+      "lex_jaccard": 0.040000000000000036,
+      "n_chars_a": 422,
+      "n_chars_b": 425,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -1859,6 +2981,26 @@
       "syn_dep_triple": 0.02631578947368421,
       "syn_pos_seq": 0.02631578947368421
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.014705882352941176,
+      "lex_jaccard": 0.07692307692307687,
+      "n_chars_a": 136,
+      "n_chars_b": 136,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.02877697841726619,
+      "lex_jaccard": 0.038461538461538436,
+      "n_chars_a": 136,
+      "n_chars_b": 139,
+      "syn_dep_bag": 0.02631578947368421,
+      "syn_dep_triple": 0.02631578947368421,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 58,
       "lex_edit": 0.4172661870503597,
@@ -1891,6 +3033,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 9,
+      "lex_edit": 0.057692307692307696,
+      "lex_jaccard": 0.09090909090909094,
+      "n_chars_a": 156,
+      "n_chars_b": 150,
+      "syn_dep_bag": 0.030303030303030304,
+      "syn_dep_triple": 0.030303030303030304,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 23,
+      "lex_edit": 0.13068181818181818,
+      "lex_jaccard": 0.19999999999999996,
+      "n_chars_a": 156,
+      "n_chars_b": 176,
+      "syn_dep_bag": 0.10606060606060609,
+      "syn_dep_triple": 0.10858585858585862,
+      "syn_pos_seq": 0.08333333333333333
+    },
     "nl_para": {
       "char_edit_distance": 57,
       "lex_edit": 0.35625,
@@ -1919,6 +3081,26 @@
       "lex_jaccard": 0.03703703703703709,
       "n_chars_a": 180,
       "n_chars_b": 180,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.016574585635359115,
+      "lex_jaccard": 0.0714285714285714,
+      "n_chars_a": 180,
+      "n_chars_b": 181,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.02185792349726776,
+      "lex_jaccard": 0.0714285714285714,
+      "n_chars_a": 180,
+      "n_chars_b": 183,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -1955,6 +3137,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.02214022140221402,
+      "lex_jaccard": 0.052631578947368474,
+      "n_chars_a": 271,
+      "n_chars_b": 269,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 54,
       "lex_edit": 0.1956521739130435,
@@ -1983,6 +3175,26 @@
       "lex_jaccard": 0.08695652173913049,
       "n_chars_a": 124,
       "n_chars_b": 124,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.016129032258064516,
+      "lex_jaccard": 0.08695652173913049,
+      "n_chars_a": 124,
+      "n_chars_b": 124,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.023809523809523808,
+      "lex_jaccard": 0.08695652173913049,
+      "n_chars_a": 124,
+      "n_chars_b": 126,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -2019,6 +3231,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 12,
+      "lex_edit": 0.059113300492610835,
+      "lex_jaccard": 0.09999999999999998,
+      "n_chars_a": 203,
+      "n_chars_b": 203,
+      "syn_dep_bag": 0.021739130434782608,
+      "syn_dep_triple": 0.06521739130434782,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 7,
+      "lex_edit": 0.03365384615384615,
+      "lex_jaccard": 0.09999999999999998,
+      "n_chars_a": 203,
+      "n_chars_b": 208,
+      "syn_dep_bag": 0.021739130434782615,
+      "syn_dep_triple": 0.021739130434782608,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 89,
       "lex_edit": 0.43842364532019706,
@@ -2050,6 +3282,16 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 10,
+      "lex_edit": 0.03690036900369004,
+      "lex_jaccard": 0.08333333333333337,
+      "n_chars_a": 263,
+      "n_chars_b": 271,
+      "syn_dep_bag": 0.01663641863278884,
+      "syn_dep_triple": 0.01724137931034479,
+      "syn_pos_seq": 0.017241379310344827
     },
     "nl_para": {
       "char_edit_distance": 122,
@@ -2083,6 +3325,16 @@
       "syn_dep_triple": 0.018867924528301893,
       "syn_pos_seq": 0.018867924528301886
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.026785714285714284,
+      "lex_jaccard": 0.06060606060606055,
+      "n_chars_a": 220,
+      "n_chars_b": 224,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 60,
       "lex_edit": 0.2727272727272727,
@@ -2111,6 +3363,26 @@
       "lex_jaccard": 0.02777777777777779,
       "n_chars_a": 231,
       "n_chars_b": 231,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.017316017316017316,
+      "lex_jaccard": 0.05555555555555558,
+      "n_chars_a": 231,
+      "n_chars_b": 231,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.02553191489361702,
+      "lex_jaccard": 0.02777777777777779,
+      "n_chars_a": 231,
+      "n_chars_b": 235,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -2147,6 +3419,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.017699115044247787,
+      "lex_jaccard": 0.040000000000000036,
+      "n_chars_a": 339,
+      "n_chars_b": 339,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 7,
+      "lex_edit": 0.020348837209302327,
+      "lex_jaccard": 0.040000000000000036,
+      "n_chars_a": 339,
+      "n_chars_b": 344,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 161,
       "lex_edit": 0.4749262536873156,
@@ -2175,6 +3467,16 @@
       "lex_jaccard": 0.07999999999999996,
       "n_chars_a": 186,
       "n_chars_b": 186,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.031578947368421054,
+      "lex_jaccard": 0.07999999999999996,
+      "n_chars_a": 186,
+      "n_chars_b": 190,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -2211,6 +3513,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 8,
+      "lex_edit": 0.0784313725490196,
+      "lex_jaccard": 0.11111111111111116,
+      "n_chars_a": 96,
+      "n_chars_b": 102,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 28,
       "lex_edit": 0.2916666666666667,
@@ -2239,6 +3551,26 @@
       "lex_jaccard": 0.06060606060606055,
       "n_chars_a": 243,
       "n_chars_b": 243,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 12,
+      "lex_edit": 0.04938271604938271,
+      "lex_jaccard": 0.06060606060606055,
+      "n_chars_a": 243,
+      "n_chars_b": 237,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 7,
+      "lex_edit": 0.028225806451612902,
+      "lex_jaccard": 0.06060606060606055,
+      "n_chars_a": 243,
+      "n_chars_b": 248,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -2275,6 +3607,26 @@
       "syn_dep_triple": 0.015151515151515152,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.013422818791946308,
+      "lex_jaccard": 0.0444444444444444,
+      "n_chars_a": 298,
+      "n_chars_b": 297,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.013289036544850499,
+      "lex_jaccard": 0.0444444444444444,
+      "n_chars_a": 298,
+      "n_chars_b": 301,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.015151515151515152,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 111,
       "lex_edit": 0.36156351791530944,
@@ -2306,6 +3658,26 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.02564102564102564,
       "syn_pos_seq": 0.02564102564102564
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.0106951871657754,
+      "lex_jaccard": 0.10526315789473684,
+      "n_chars_a": 187,
+      "n_chars_b": 186,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 10,
+      "lex_edit": 0.05128205128205128,
+      "lex_jaccard": 0.15000000000000002,
+      "n_chars_a": 187,
+      "n_chars_b": 195,
+      "syn_dep_bag": 0.02243589743589741,
+      "syn_dep_triple": 0.047435897435897406,
+      "syn_pos_seq": 0.05
     },
     "nl_para": {
       "char_edit_distance": 91,
@@ -2339,6 +3711,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.007782101167315175,
+      "lex_jaccard": 0.050000000000000044,
+      "n_chars_a": 257,
+      "n_chars_b": 257,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.03278688524590164,
+      "syn_pos_seq": 0.01639344262295082
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 32,
+      "lex_edit": 0.11228070175438597,
+      "lex_jaccard": 0.13636363636363635,
+      "n_chars_a": 257,
+      "n_chars_b": 285,
+      "syn_dep_bag": 0.061538461538461514,
+      "syn_dep_triple": 0.06153846153846153,
+      "syn_pos_seq": 0.06153846153846154
+    },
     "nl_para": {
       "char_edit_distance": 79,
       "lex_edit": 0.30739299610894943,
@@ -2371,6 +3763,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.014492753623188406,
+      "lex_jaccard": 0.06666666666666665,
+      "n_chars_a": 207,
+      "n_chars_b": 207,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 12,
+      "lex_edit": 0.055299539170506916,
+      "lex_jaccard": 0.09677419354838712,
+      "n_chars_a": 207,
+      "n_chars_b": 217,
+      "syn_dep_bag": 0.021040974529346605,
+      "syn_dep_triple": 0.02325581395348835,
+      "syn_pos_seq": 0.023255813953488372
+    },
     "nl_para": {
       "char_edit_distance": 84,
       "lex_edit": 0.4057971014492754,
@@ -2399,6 +3811,26 @@
       "lex_jaccard": 0.06451612903225812,
       "n_chars_a": 259,
       "n_chars_b": 259,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.015444015444015444,
+      "lex_jaccard": 0.06451612903225812,
+      "n_chars_a": 259,
+      "n_chars_b": 259,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.022813688212927757,
+      "lex_jaccard": 0.06451612903225812,
+      "n_chars_a": 259,
+      "n_chars_b": 263,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -2435,6 +3867,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.026845637583892617,
+      "lex_jaccard": 0.08333333333333337,
+      "n_chars_a": 146,
+      "n_chars_b": 149,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 57,
       "lex_edit": 0.3904109589041096,
@@ -2463,6 +3905,26 @@
       "lex_jaccard": 0.0625,
       "n_chars_a": 204,
       "n_chars_b": 204,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.029411764705882353,
+      "lex_jaccard": 0.0625,
+      "n_chars_a": 204,
+      "n_chars_b": 204,
+      "syn_dep_bag": 0.021739130434782608,
+      "syn_dep_triple": 0.043478260869565216,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.02403846153846154,
+      "lex_jaccard": 0.0625,
+      "n_chars_a": 204,
+      "n_chars_b": 208,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -2499,6 +3961,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.01694915254237288,
+      "lex_jaccard": 0.050000000000000044,
+      "n_chars_a": 236,
+      "n_chars_b": 235,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.012658227848101266,
+      "lex_jaccard": 0.025000000000000022,
+      "n_chars_a": 236,
+      "n_chars_b": 237,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 54,
       "lex_edit": 0.2288135593220339,
@@ -2530,6 +4012,26 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.024193548387096774,
+      "lex_jaccard": 0.0714285714285714,
+      "n_chars_a": 248,
+      "n_chars_b": 248,
+      "syn_dep_bag": 0.016949152542372878,
+      "syn_dep_triple": 0.01694915254237288,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 10,
+      "lex_edit": 0.0390625,
+      "lex_jaccard": 0.10344827586206895,
+      "n_chars_a": 248,
+      "n_chars_b": 256,
+      "syn_dep_bag": 0.01638418079096047,
+      "syn_dep_triple": 0.01666666666666667,
+      "syn_pos_seq": 0.016666666666666666
     },
     "nl_para": {
       "char_edit_distance": 82,
@@ -2563,6 +4065,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 18,
+      "lex_edit": 0.08256880733944955,
+      "lex_jaccard": 0.14814814814814814,
+      "n_chars_a": 203,
+      "n_chars_b": 218,
+      "syn_dep_bag": 0.03473729917498916,
+      "syn_dep_triple": 0.04081632653061225,
+      "syn_pos_seq": 0.04081632653061224
+    },
     "nl_para": {
       "char_edit_distance": 64,
       "lex_edit": 0.31527093596059114,
@@ -2591,6 +4103,16 @@
       "lex_jaccard": 0.07407407407407407,
       "n_chars_a": 227,
       "n_chars_b": 227,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.017391304347826087,
+      "lex_jaccard": 0.07407407407407407,
+      "n_chars_a": 227,
+      "n_chars_b": 230,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -2627,6 +4149,26 @@
       "syn_dep_triple": 0.017241379310344827,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.006779661016949152,
+      "lex_jaccard": 0.05882352941176472,
+      "n_chars_a": 294,
+      "n_chars_b": 295,
+      "syn_dep_bag": 0.017241379310344827,
+      "syn_dep_triple": 0.034482758620689655,
+      "syn_pos_seq": 0.017241379310344827
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.016778523489932886,
+      "lex_jaccard": 0.05882352941176472,
+      "n_chars_a": 294,
+      "n_chars_b": 298,
+      "syn_dep_bag": 0.017241379310344827,
+      "syn_dep_triple": 0.017241379310344827,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 122,
       "lex_edit": 0.41496598639455784,
@@ -2659,6 +4201,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.0410958904109589,
+      "lex_jaccard": 0.08333333333333337,
+      "n_chars_a": 146,
+      "n_chars_b": 143,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.03225806451612903,
+      "syn_pos_seq": 0.03225806451612903
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 12,
+      "lex_edit": 0.07692307692307693,
+      "lex_jaccard": 0.15384615384615385,
+      "n_chars_a": 146,
+      "n_chars_b": 156,
+      "syn_dep_bag": 0.030241935483870955,
+      "syn_dep_triple": 0.030241935483870955,
+      "syn_pos_seq": 0.03125
+    },
     "nl_para": {
       "char_edit_distance": 55,
       "lex_edit": 0.3767123287671233,
@@ -2687,6 +4249,26 @@
       "lex_jaccard": 0.04081632653061229,
       "n_chars_a": 297,
       "n_chars_b": 297,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.006734006734006734,
+      "lex_jaccard": 0.04081632653061229,
+      "n_chars_a": 297,
+      "n_chars_b": 297,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.010033444816053512,
+      "lex_jaccard": 0.04081632653061229,
+      "n_chars_a": 297,
+      "n_chars_b": 299,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -2723,6 +4305,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.03550295857988166,
+      "lex_jaccard": 0.07999999999999996,
+      "n_chars_a": 167,
+      "n_chars_b": 169,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 25,
+      "lex_edit": 0.13227513227513227,
+      "lex_jaccard": 0.1785714285714286,
+      "n_chars_a": 167,
+      "n_chars_b": 189,
+      "syn_dep_bag": 0.07323232323232326,
+      "syn_dep_triple": 0.08333333333333337,
+      "syn_pos_seq": 0.08333333333333333
+    },
     "nl_para": {
       "char_edit_distance": 45,
       "lex_edit": 0.26785714285714285,
@@ -2755,6 +4357,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.015957446808510637,
+      "lex_jaccard": 0.06451612903225812,
+      "n_chars_a": 188,
+      "n_chars_b": 188,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 12,
+      "lex_edit": 0.06060606060606061,
+      "lex_jaccard": 0.09375,
+      "n_chars_a": 188,
+      "n_chars_b": 198,
+      "syn_dep_bag": 0.02325581395348835,
+      "syn_dep_triple": 0.02325581395348835,
+      "syn_pos_seq": 0.023255813953488372
+    },
     "nl_para": {
       "char_edit_distance": 66,
       "lex_edit": 0.32673267326732675,
@@ -2783,6 +4405,16 @@
       "lex_jaccard": 0.07999999999999996,
       "n_chars_a": 175,
       "n_chars_b": 175,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.0335195530726257,
+      "lex_jaccard": 0.07999999999999996,
+      "n_chars_a": 175,
+      "n_chars_b": 179,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -2819,6 +4451,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 10,
+      "lex_edit": 0.04975124378109453,
+      "lex_jaccard": 0.10344827586206895,
+      "n_chars_a": 193,
+      "n_chars_b": 201,
+      "syn_dep_bag": 0.023809523809523832,
+      "syn_dep_triple": 0.023809523809523836,
+      "syn_pos_seq": 0.023809523809523808
+    },
     "nl_para": {
       "char_edit_distance": 96,
       "lex_edit": 0.49740932642487046,
@@ -2851,6 +4493,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 41,
+      "lex_edit": 0.16942148760330578,
+      "lex_jaccard": 0.2142857142857143,
+      "n_chars_a": 205,
+      "n_chars_b": 242,
+      "syn_dep_bag": 0.09722222222222221,
+      "syn_dep_triple": 0.11111111111111112,
+      "syn_pos_seq": 0.1111111111111111
+    },
     "nl_para": {
       "char_edit_distance": 73,
       "lex_edit": 0.35609756097560974,
@@ -2879,6 +4531,26 @@
       "lex_jaccard": 0.06666666666666665,
       "n_chars_a": 191,
       "n_chars_b": 191,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 12,
+      "lex_edit": 0.06282722513089005,
+      "lex_jaccard": 0.06666666666666665,
+      "n_chars_a": 191,
+      "n_chars_b": 191,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.02564102564102564,
+      "lex_jaccard": 0.06666666666666665,
+      "n_chars_a": 191,
+      "n_chars_b": 195,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -2915,6 +4587,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 9,
+      "lex_edit": 0.05357142857142857,
+      "lex_jaccard": 0.0714285714285714,
+      "n_chars_a": 168,
+      "n_chars_b": 168,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 17,
+      "lex_edit": 0.09340659340659341,
+      "lex_jaccard": 0.1333333333333333,
+      "n_chars_a": 168,
+      "n_chars_b": 182,
+      "syn_dep_bag": 0.054054054054054015,
+      "syn_dep_triple": 0.054054054054054015,
+      "syn_pos_seq": 0.05405405405405406
+    },
     "nl_para": {
       "char_edit_distance": 66,
       "lex_edit": 0.39285714285714285,
@@ -2946,6 +4638,26 @@
       "syn_dep_bag": 0.010989010989010988,
       "syn_dep_triple": 0.010989010989010988,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.004878048780487805,
+      "lex_jaccard": 0.040000000000000036,
+      "n_chars_a": 410,
+      "n_chars_b": 410,
+      "syn_dep_bag": 0.021978021978021983,
+      "syn_dep_triple": 0.03296703296703297,
+      "syn_pos_seq": 0.01098901098901099
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 12,
+      "lex_edit": 0.02857142857142857,
+      "lex_jaccard": 0.05882352941176472,
+      "n_chars_a": 410,
+      "n_chars_b": 420,
+      "syn_dep_bag": 0.031892021022455815,
+      "syn_dep_triple": 0.03248924988055425,
+      "syn_pos_seq": 0.010869565217391304
     },
     "nl_para": {
       "char_edit_distance": 132,
@@ -2979,6 +4691,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.019801980198019802,
+      "lex_jaccard": 0.0625,
+      "n_chars_a": 299,
+      "n_chars_b": 303,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.01639344262295082,
+      "syn_pos_seq": 0.01639344262295082
+    },
     "nl_para": {
       "char_edit_distance": 128,
       "lex_edit": 0.42524916943521596,
@@ -3007,6 +4729,26 @@
       "lex_jaccard": 0.05128205128205132,
       "n_chars_a": 273,
       "n_chars_b": 273,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.01098901098901099,
+      "lex_jaccard": 0.05128205128205132,
+      "n_chars_a": 273,
+      "n_chars_b": 273,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.018050541516245487,
+      "lex_jaccard": 0.02631578947368418,
+      "n_chars_a": 273,
+      "n_chars_b": 277,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -3043,6 +4785,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 5,
+      "lex_edit": 0.031446540880503145,
+      "lex_jaccard": 0.06451612903225812,
+      "n_chars_a": 159,
+      "n_chars_b": 156,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.024691358024691357,
+      "lex_jaccard": 0.06451612903225812,
+      "n_chars_a": 159,
+      "n_chars_b": 162,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 28,
       "lex_edit": 0.15555555555555556,
@@ -3074,6 +4836,26 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.03260869565217391,
+      "lex_jaccard": 0.11111111111111116,
+      "n_chars_a": 184,
+      "n_chars_b": 184,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 11,
+      "lex_edit": 0.05699481865284974,
+      "lex_jaccard": 0.1578947368421053,
+      "n_chars_a": 184,
+      "n_chars_b": 193,
+      "syn_dep_bag": 0.025641025641025616,
+      "syn_dep_triple": 0.025641025641025626,
+      "syn_pos_seq": 0.02564102564102564
     },
     "nl_para": {
       "char_edit_distance": 68,
@@ -3107,6 +4889,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 9,
+      "lex_edit": 0.03214285714285714,
+      "lex_jaccard": 0.06060606060606055,
+      "n_chars_a": 277,
+      "n_chars_b": 280,
+      "syn_dep_bag": 0.03278688524590164,
+      "syn_dep_triple": 0.04918032786885246,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 12,
+      "lex_edit": 0.041811846689895474,
+      "lex_jaccard": 0.06060606060606055,
+      "n_chars_a": 277,
+      "n_chars_b": 287,
+      "syn_dep_bag": 0.016129032258064523,
+      "syn_dep_triple": 0.01612903225806453,
+      "syn_pos_seq": 0.016129032258064516
+    },
     "nl_para": {
       "char_edit_distance": 69,
       "lex_edit": 0.2490974729241877,
@@ -3139,6 +4941,26 @@
       "syn_dep_triple": 0.08571428571428572,
       "syn_pos_seq": 0.02857142857142857
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.012698412698412698,
+      "lex_jaccard": 0.05405405405405406,
+      "n_chars_a": 315,
+      "n_chars_b": 313,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.02857142857142857,
+      "syn_pos_seq": 0.014285714285714285
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 13,
+      "lex_edit": 0.04,
+      "lex_jaccard": 0.05405405405405406,
+      "n_chars_a": 315,
+      "n_chars_b": 325,
+      "syn_dep_bag": 0.013480885311871206,
+      "syn_dep_triple": 0.027766599597585494,
+      "syn_pos_seq": 0.014084507042253521
+    },
     "nl_para": {
       "char_edit_distance": 145,
       "lex_edit": 0.4447852760736196,
@@ -3167,6 +4989,26 @@
       "lex_jaccard": 0.0625,
       "n_chars_a": 215,
       "n_chars_b": 215,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 12,
+      "lex_edit": 0.05581395348837209,
+      "lex_jaccard": 0.0625,
+      "n_chars_a": 215,
+      "n_chars_b": 215,
+      "syn_dep_bag": 0.04000000000000001,
+      "syn_dep_triple": 0.04,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 7,
+      "lex_edit": 0.031818181818181815,
+      "lex_jaccard": 0.0625,
+      "n_chars_a": 215,
+      "n_chars_b": 220,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -3203,6 +5045,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 13,
+      "lex_edit": 0.04710144927536232,
+      "lex_jaccard": 0.11538461538461542,
+      "n_chars_a": 266,
+      "n_chars_b": 276,
+      "syn_dep_bag": 0.01636469900642898,
+      "syn_dep_triple": 0.016949152542372885,
+      "syn_pos_seq": 0.01694915254237288
+    },
     "nl_para": {
       "char_edit_distance": 134,
       "lex_edit": 0.5037593984962406,
@@ -3231,6 +5083,16 @@
       "lex_jaccard": 0.06896551724137934,
       "n_chars_a": 220,
       "n_chars_b": 220,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 8,
+      "lex_edit": 0.035398230088495575,
+      "lex_jaccard": 0.06896551724137934,
+      "n_chars_a": 220,
+      "n_chars_b": 226,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
@@ -3267,6 +5129,26 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_lex": {
+      "char_edit_distance": 2,
+      "lex_edit": 0.006578947368421052,
+      "lex_jaccard": 0.04347826086956519,
+      "n_chars_a": 304,
+      "n_chars_b": 304,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 13,
+      "lex_edit": 0.041401273885350316,
+      "lex_jaccard": 0.06382978723404253,
+      "n_chars_a": 304,
+      "n_chars_b": 314,
+      "syn_dep_bag": 0.025290498974709467,
+      "syn_dep_triple": 0.025974025974025927,
+      "syn_pos_seq": 0.012987012987012988
+    },
     "nl_para": {
       "char_edit_distance": 100,
       "lex_edit": 0.32894736842105265,
@@ -3298,6 +5180,26 @@
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 3,
+      "lex_edit": 0.013761467889908258,
+      "lex_jaccard": 0.05882352941176472,
+      "n_chars_a": 218,
+      "n_chars_b": 218,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 9,
+      "lex_edit": 0.04,
+      "lex_jaccard": 0.08571428571428574,
+      "n_chars_a": 218,
+      "n_chars_b": 225,
+      "syn_dep_bag": 0.021670190274841444,
+      "syn_dep_triple": 0.022727272727272714,
+      "syn_pos_seq": 0.022727272727272728
     },
     "nl_para": {
       "char_edit_distance": 95,
@@ -3331,6 +5233,16 @@
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0
     },
+    "nl_minimal_orth": {
+      "char_edit_distance": 7,
+      "lex_edit": 0.0546875,
+      "lex_jaccard": 0.10526315789473684,
+      "n_chars_a": 123,
+      "n_chars_b": 128,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
     "nl_para": {
       "char_edit_distance": 68,
       "lex_edit": 0.5190839694656488,
@@ -3359,6 +5271,26 @@
       "lex_jaccard": 0.07999999999999996,
       "n_chars_a": 146,
       "n_chars_b": 146,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_lex": {
+      "char_edit_distance": 6,
+      "lex_edit": 0.0410958904109589,
+      "lex_jaccard": 0.07999999999999996,
+      "n_chars_a": 146,
+      "n_chars_b": 142,
+      "syn_dep_bag": 0.0,
+      "syn_dep_triple": 0.0,
+      "syn_pos_seq": 0.0
+    },
+    "nl_minimal_orth": {
+      "char_edit_distance": 4,
+      "lex_edit": 0.026845637583892617,
+      "lex_jaccard": 0.07999999999999996,
+      "n_chars_a": 146,
+      "n_chars_b": 149,
       "syn_dep_bag": 0.0,
       "syn_dep_triple": 0.0,
       "syn_pos_seq": 0.0

@@ -18,6 +18,18 @@
       "x": "nummod",
       "y": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "x": "nummod",
+      "y": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "x": "compound",
+      "y": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "k": "nummod",
@@ -44,6 +56,12 @@
       "t": "nummod",
       "y": "nummod"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "t": "compound",
+      "y": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "d": "nummod",
@@ -63,6 +81,16 @@
       "target": "pobj"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "sides": "advmod",
+      "target": "pobj"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "sides": "advmod",
+      "target": "pobj"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "sides": "advmod",
       "target": "pobj"
@@ -89,6 +117,12 @@
     "nl_break": {
       "FINAL": "punct",
       "n": "nummod",
+      "n_1": "nsubj",
+      "n_2": "nsubj"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "n": "compound",
       "n_1": "nsubj",
       "n_2": "nsubj"
     },
@@ -121,6 +155,20 @@
       "n": "nummod",
       "s": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "k_2": "nummod",
+      "k_3": "nummod",
+      "n": "nummod",
+      "s": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "k_2": "nummod",
+      "k_3": "nummod",
+      "n": "amod",
+      "s": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "k_2": "nummod",
@@ -145,6 +193,18 @@
     "nl_break": {
       "FINAL": "punct",
       "m": "pobj",
+      "n": "pobj",
+      "x": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "m": "pobj",
+      "n": "pobj",
+      "x": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "m": "compound",
       "n": "pobj",
       "x": "nummod"
     },
@@ -173,6 +233,18 @@
       "k": "nummod",
       "n": "nummod",
       "x": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod",
+      "x": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod",
+      "x": "compound"
     },
     "nl_para": {
       "FINAL": "punct",
@@ -218,6 +290,18 @@
       "w3": "nummod",
       "w4": "nummod"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "n1": "compound",
+      "n2": "nummod",
+      "n3": "nummod",
+      "n4": "nummod",
+      "total": "compound",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "nummod",
+      "w4": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "n1": "compound",
@@ -250,6 +334,12 @@
       "frac_2": "nsubj",
       "n": "nummod"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "frac_1": "det",
+      "frac_2": "nsubj",
+      "n": "compound"
+    },
     "nl_para": {
       "FINAL": "punct",
       "frac_1": "det",
@@ -279,6 +369,20 @@
       "y": "nummod",
       "z": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "total": "pobj",
+      "x": "nummod",
+      "y": "nummod",
+      "z": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "total": "pobj",
+      "x": "compound",
+      "y": "nummod",
+      "z": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "total": "dobj",
@@ -303,6 +407,13 @@
       "total": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "frac1": "dobj",
+      "frac2": "pobj",
+      "t": "nummod",
+      "total": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "frac1": "dobj",
       "frac2": "pobj",
@@ -348,6 +459,26 @@
       "w2": "nummod",
       "w3": "dobj"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "dobj"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "n": "compound",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "dobj"
+    },
     "nl_para": {
       "FINAL": "punct",
       "n": "nummod",
@@ -378,6 +509,18 @@
       "n": "nummod",
       "x": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod",
+      "x": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod",
+      "x": "compound"
+    },
     "nl_para": {
       "FINAL": "punct",
       "k": "nummod",
@@ -401,6 +544,20 @@
       "x": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "r": "nummod",
+      "w": "nummod",
+      "x": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "r": "nummod",
+      "w": "nummod",
+      "x": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "n": "nummod",
       "r": "nummod",
@@ -434,6 +591,18 @@
       "t1": "nummod",
       "t2": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "t": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "t": "compound",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "t": "nummod",
@@ -461,6 +630,20 @@
       "k1": "nsubj",
       "k2": "nsubj",
       "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "k1": "nsubj",
+      "k2": "nsubj",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "k1": "nsubj",
+      "k2": "nsubj",
+      "n1": "compound",
       "n2": "nummod"
     },
     "nl_para": {
@@ -499,6 +682,24 @@
       "n1": "nummod",
       "n2": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "cm": "dobj",
+      "cn": "dobj",
+      "m1": "nummod",
+      "m2": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "cm": "dobj",
+      "cn": "dobj",
+      "m1": "nummod",
+      "m2": "nummod",
+      "n1": "compound",
+      "n2": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "cm": "pobj",
@@ -534,6 +735,22 @@
       "n": "nummod",
       "t": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "mult": "nummod",
+      "n": "nummod",
+      "t": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "mult": "nummod",
+      "n": "compound",
+      "t": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "k": "nummod",
@@ -561,6 +778,22 @@
       "n2": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "c1": "dobj",
+      "c2": "dobj",
+      "c3": "dobj",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "c1": "dobj",
+      "c2": "dobj",
+      "c3": "dobj",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "c1": "dobj",
       "c2": "dobj",
@@ -599,6 +832,20 @@
       "p1": "nummod",
       "r1": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "nummod",
+      "p1": "nummod",
+      "r1": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "nummod",
+      "p1": "nummod",
+      "r1": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "frac": "det",
@@ -624,6 +871,18 @@
       "FINAL": "punct",
       "mult": "predet",
       "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "mult": "predet",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "mult": "predet",
+      "n1": "compound",
       "n2": "nummod"
     },
     "nl_para": {
@@ -664,6 +923,26 @@
       "n2": "nummod",
       "total": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "h1": "nummod",
+      "h2": "nummod",
+      "h3": "nummod",
+      "m1": "nummod",
+      "m2": "nummod",
+      "n2": "nummod",
+      "total": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "h1": "nummod",
+      "h2": "nummod",
+      "h3": "nummod",
+      "m1": "nummod",
+      "m2": "nummod",
+      "n2": "nummod",
+      "total": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "h1": "nummod",
@@ -689,6 +968,18 @@
       "total": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "dobj",
+      "total": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "dobj",
+      "total": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "n1": "nummod",
       "n2": "dobj",
@@ -723,6 +1014,26 @@
       "n5": "conj"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "children": "attr",
+      "count": "nummod",
+      "n1": "nummod",
+      "n2": "npadvmod",
+      "n3": "conj",
+      "n4": "conj",
+      "n5": "conj"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "children": "attr",
+      "count": "nummod",
+      "n1": "nummod",
+      "n2": "npadvmod",
+      "n3": "conj",
+      "n4": "conj",
+      "n5": "conj"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "children": "attr",
       "count": "nummod",
@@ -768,6 +1079,14 @@
       "spent": "nummod",
       "total": "attr"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "cal": "nummod",
+      "n": "nummod",
+      "size": "compound",
+      "spent": "nummod",
+      "total": "attr"
+    },
     "nl_para": {
       "FINAL": "punct",
       "cal": "nummod",
@@ -796,6 +1115,12 @@
       "p2": "nummod",
       "total": "nummod"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "p1": "nummod",
+      "p2": "nummod",
+      "total": "compound"
+    },
     "nl_para": {
       "FINAL": "punct",
       "p1": "nummod",
@@ -817,6 +1142,12 @@
       "n3": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "n1": "nummod",
       "n2": "nummod",
@@ -848,6 +1179,18 @@
       "n": "nummod",
       "p": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "n": "nummod",
+      "p": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "n": "compound",
+      "p": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "d": "nummod",
@@ -877,6 +1220,13 @@
       "period": "nummod",
       "total": "nummod"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "daily": "nummod",
+      "frac": "pobj",
+      "period": "nummod",
+      "total": "compound"
+    },
     "nl_para": {
       "FINAL": "punct",
       "daily": "nummod",
@@ -901,6 +1251,18 @@
     "nl_break": {
       "FINAL": "punct",
       "age1": "nummod",
+      "mult": "attr",
+      "years": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "age1": "nummod",
+      "mult": "attr",
+      "years": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "age1": "compound",
       "mult": "attr",
       "years": "nummod"
     },
@@ -930,6 +1292,18 @@
       "quantity": "nummod",
       "unit_price": "dobj"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "initial_amount": "dobj",
+      "quantity": "nummod",
+      "unit_price": "dobj"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "initial_amount": "dobj",
+      "quantity": "compound",
+      "unit_price": "dobj"
+    },
     "nl_para": {
       "FINAL": "punct",
       "initial_amount": "dobj",
@@ -952,6 +1326,16 @@
       "FINAL": "punct",
       "age1": "nummod",
       "age_diff": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "age1": "nummod",
+      "age_diff": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "age1": "nummod",
+      "age_diff": "compound"
     },
     "nl_para": {
       "FINAL": "punct",
@@ -978,6 +1362,13 @@
       "FINAL": "punct",
       "brokerage_fee": "nummod",
       "budget": "nummod",
+      "price": "pobj",
+      "transfer_fee": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "brokerage_fee": "nummod",
+      "budget": "compound",
       "price": "pobj",
       "transfer_fee": "nummod"
     },
@@ -1014,6 +1405,22 @@
       "s1": "nummod",
       "s2": "dobj"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "goal": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "s1": "nummod",
+      "s2": "dobj"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "goal": "nummod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "s1": "compound",
+      "s2": "dobj"
+    },
     "nl_para": {
       "FINAL": "punct",
       "goal": "nummod",
@@ -1045,6 +1452,13 @@
       "loan": "dobj",
       "price": "pobj"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "fee1_percent": "nummod",
+      "fee2_percent": "nummod",
+      "loan": "dobj",
+      "price": "compound"
+    },
     "nl_para": {
       "FINAL": "punct",
       "fee1_percent": "nummod",
@@ -1067,6 +1481,18 @@
       "total": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "current": "dobj",
+      "fraction": "det",
+      "total": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "current": "dobj",
+      "fraction": "det",
+      "total": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "current": "dobj",
       "fraction": "det",
@@ -1107,6 +1533,24 @@
       "p2": "dobj",
       "p3": "pobj"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "dobj",
+      "p2": "dobj",
+      "p3": "pobj"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "dobj",
+      "p2": "dobj",
+      "p3": "pobj"
+    },
     "nl_para": {
       "FINAL": "punct",
       "n1": "nummod",
@@ -1131,6 +1575,18 @@
       "x": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "mult": "advmod",
+      "n": "nummod",
+      "x": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "mult": "advmod",
+      "n": "nummod",
+      "x": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "mult": "advmod",
       "n": "nummod",
@@ -1165,6 +1621,13 @@
       "price1": "appos",
       "price2": "dobj"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "price1": "appos",
+      "price2": "dobj"
+    },
     "nl_para": {
       "FINAL": "punct",
       "n1": "nummod",
@@ -1189,6 +1652,13 @@
       "t": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "h": "nummod",
+      "n": "nummod",
+      "t": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "d": "nummod",
       "h": "nummod",
@@ -1240,6 +1710,30 @@
       "p3": "attr",
       "total": "dobj"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "discount": "nummod",
+      "n1": "nummod",
+      "n12": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "pobj",
+      "p2": "pobj",
+      "p3": "attr",
+      "total": "dobj"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "discount": "nummod",
+      "n1": "nummod",
+      "n12": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "pobj",
+      "p2": "pobj",
+      "p3": "attr",
+      "total": "compound"
+    },
     "nl_para": {
       "FINAL": "punct",
       "discount": "nummod",
@@ -1267,6 +1761,12 @@
       "total": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "mult": "amod",
+      "n1": "nummod",
+      "total": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "mult": "amod",
       "n1": "nummod",
@@ -1301,6 +1801,20 @@
       "price": "dobj",
       "usage": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "extra_price": "pobj",
+      "percent": "nummod",
+      "price": "dobj",
+      "usage": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "extra_price": "pobj",
+      "percent": "nummod",
+      "price": "dobj",
+      "usage": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "extra_price": "pobj",
@@ -1325,6 +1839,16 @@
       "frac": "dobj",
       "n": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "frac": "dobj",
+      "n": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "frac": "dobj",
+      "n": "compound"
+    },
     "nl_para": {
       "FINAL": "punct",
       "frac": "dobj",
@@ -1343,6 +1867,11 @@
       "n": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "mult": "predet",
+      "n": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "mult": "predet",
       "n": "nummod"
@@ -1378,6 +1907,22 @@
       "plant_width": "nummod",
       "space": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "cost": "dobj",
+      "length": "nummod",
+      "owned": "nummod",
+      "plant_width": "nummod",
+      "space": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "cost": "dobj",
+      "length": "nummod",
+      "owned": "nummod",
+      "plant_width": "nummod",
+      "space": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "cost": "dobj",
@@ -1404,6 +1949,12 @@
       "FINAL": "punct",
       "faculty": "nummod",
       "graduates": "nummod",
+      "total": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "faculty": "nummod",
+      "graduates": "compound",
       "total": "nummod"
     },
     "nl_para": {
@@ -1438,6 +1989,22 @@
       "x": "nummod",
       "y": "dobj"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "frac": "det",
+      "mult1": "nummod",
+      "n": "nummod",
+      "x": "nummod",
+      "y": "dobj"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "frac": "det",
+      "mult1": "nummod",
+      "n": "nummod",
+      "x": "nummod",
+      "y": "dobj"
+    },
     "nl_para": {
       "FINAL": "punct",
       "frac": "det",
@@ -1463,6 +2030,20 @@
       "total": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t": "nummod",
+      "total": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t": "nummod",
+      "total": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "n1": "nummod",
       "n2": "nummod",
@@ -1505,6 +2086,24 @@
       "p": "nummod",
       "r": "dobj"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "a": "nummod",
+      "f": "nummod",
+      "n": "nummod",
+      "n_first": "nsubj",
+      "p": "nummod",
+      "r": "dobj"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "a": "compound",
+      "f": "nummod",
+      "n": "nummod",
+      "n_first": "nsubj",
+      "p": "nummod",
+      "r": "dobj"
+    },
     "nl_para": {
       "FINAL": "punct",
       "a": "nummod",
@@ -1529,6 +2128,16 @@
     "nl_break": {
       "FINAL": "punct",
       "area": "nummod",
+      "length": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "area": "nummod",
+      "length": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "area": "compound",
       "length": "nummod"
     },
     "nl_para": {
@@ -1557,6 +2166,24 @@
       "p3": "pobj"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "pobj",
+      "p2": "pobj",
+      "p3": "pobj"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "pobj",
+      "p2": "pobj",
+      "p3": "pobj"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "n1": "nummod",
       "n2": "nummod",
@@ -1603,6 +2230,24 @@
       "p1": "pobj",
       "p2": "pobj"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "bill": "nummod",
+      "k": "nummod",
+      "m": "nummod",
+      "n": "quantmod",
+      "p1": "pobj",
+      "p2": "pobj"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "bill": "nummod",
+      "k": "nummod",
+      "m": "nummod",
+      "n": "nummod",
+      "p1": "pobj",
+      "p2": "pobj"
+    },
     "nl_para": {
       "FINAL": "punct",
       "bill": "nummod",
@@ -1632,6 +2277,18 @@
       "n1": "nummod",
       "n2": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "frac": "advmod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "frac": "advmod",
+      "n1": "compound",
+      "n2": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "frac": "advmod",
@@ -1655,6 +2312,20 @@
       "total": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "dobj",
+      "n3": "dobj",
+      "total": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "dobj",
+      "n3": "dobj",
+      "total": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "n1": "nummod",
       "n2": "dobj",
@@ -1688,6 +2359,12 @@
       "frac": "det",
       "n1": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "alphabets": "compound",
+      "frac": "det",
+      "n1": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "alphabets": "compound",
@@ -1709,6 +2386,18 @@
       "vol": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "cal": "nummod",
+      "num": "nummod",
+      "vol": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "cal": "nummod",
+      "num": "nummod",
+      "vol": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "cal": "nummod",
       "num": "nummod",
@@ -1743,6 +2432,20 @@
       "n1": "nummod",
       "n2": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "frac1": "nmod",
+      "mult1": "amod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "frac1": "nmod",
+      "mult1": "amod",
+      "n1": "amod",
+      "n2": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "frac1": "nmod",
@@ -1775,6 +2478,14 @@
       "mult1": "amod",
       "mult2": "nummod",
       "n": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "base": "nummod",
+      "days": "nummod",
+      "mult1": "amod",
+      "mult2": "nummod",
+      "n": "compound"
     },
     "nl_para": {
       "FINAL": "punct",
@@ -1813,6 +2524,15 @@
       "spill": "nummod",
       "total": "nummod"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "frac1": "det",
+      "frac2": "amod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "spill": "nummod",
+      "total": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "frac1": "nsubj",
@@ -1839,6 +2559,20 @@
       "r": "dobj"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "b": "nummod",
+      "d": "nummod",
+      "h": "nummod",
+      "r": "dobj"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "b": "nummod",
+      "d": "nummod",
+      "h": "nummod",
+      "r": "dobj"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "b": "nummod",
       "d": "nummod",
@@ -1875,6 +2609,20 @@
       "k": "pobj",
       "n": "pobj"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "fake_num": "npadvmod",
+      "frac": "dobj",
+      "k": "pobj",
+      "n": "pobj"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "fake_num": "npadvmod",
+      "frac": "dobj",
+      "k": "pobj",
+      "n": "pobj"
+    },
     "nl_para": {
       "FINAL": "punct",
       "fake_num": "nsubj",
@@ -1895,6 +2643,11 @@
       "p": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "p": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "n1": "nummod",
       "p": "nummod"
@@ -1921,6 +2674,11 @@
       "k": "nummod",
       "n": "nummod"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "n": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "k": "dobj",
@@ -1941,6 +2699,18 @@
       "n": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "n": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "n": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "k": "nummod",
       "m": "nummod",
@@ -1972,6 +2742,18 @@
       "n": "nummod",
       "rate": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "fee": "dobj",
+      "n": "nummod",
+      "rate": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "fee": "dobj",
+      "n": "nummod",
+      "rate": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "fee": "dobj",
@@ -1995,6 +2777,20 @@
       "n4": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "n4": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "n4": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "n1": "nummod",
       "n2": "nummod",
@@ -2034,6 +2830,22 @@
       "weight_passenger": "nummod",
       "weight_vehicle": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "force_percent": "nummod",
+      "num_passengers": "nummod",
+      "weight_item": "nummod",
+      "weight_passenger": "nummod",
+      "weight_vehicle": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "force_percent": "nummod",
+      "num_passengers": "nummod",
+      "weight_item": "nummod",
+      "weight_passenger": "nummod",
+      "weight_vehicle": "compound"
+    },
     "nl_para": {
       "FINAL": "punct",
       "force_percent": "nummod",
@@ -2065,6 +2877,20 @@
       "t1": "nummod",
       "t2": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t1": "compound",
+      "t2": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "n1": "nummod",
@@ -2087,6 +2913,18 @@
       "t2": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "mult": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "mult": "nummod",
+      "t1": "nummod",
+      "t2": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "mult": "nummod",
       "t1": "nummod",
@@ -2118,6 +2956,12 @@
       "p": "nummod",
       "w": "nummod"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "p": "nummod",
+      "w": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "d": "nummod",
@@ -2141,6 +2985,20 @@
       "n2": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "k1": "nummod",
+      "k2": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "k1": "nummod",
+      "k2": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "k1": "nummod",
       "k2": "nummod",
@@ -2180,6 +3038,22 @@
       "p": "nummod",
       "t": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "l": "nummod",
+      "n1": "nummod",
+      "n2": "pobj",
+      "p": "nummod",
+      "t": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "l": "nummod",
+      "n1": "nummod",
+      "n2": "pobj",
+      "p": "nummod",
+      "t": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "l": "nummod",
@@ -2206,6 +3080,18 @@
       "FINAL": "punct",
       "multiple": "nummod",
       "orbit_period": "nummod",
+      "relative_age": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "multiple": "nummod",
+      "orbit_period": "nummod",
+      "relative_age": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "multiple": "nummod",
+      "orbit_period": "compound",
       "relative_age": "nummod"
     },
     "nl_para": {
@@ -2237,6 +3123,13 @@
       "num_girls": "nsubj",
       "total": "nummod"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "absent_boys": "nummod",
+      "absent_girls": "nummod",
+      "num_girls": "nsubj",
+      "total": "compound"
+    },
     "nl_para": {
       "FINAL": "punct",
       "absent_boys": "nummod",
@@ -2265,6 +3158,15 @@
       "p3": "dobj"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod",
+      "p1": "dobj",
+      "p2": "dobj",
+      "p3": "dobj"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "n1": "nummod",
       "n2": "nummod",
@@ -2308,6 +3210,22 @@
       "w2": "nummod",
       "w3": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "price": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "price": "nummod",
+      "w1": "nummod",
+      "w2": "nummod",
+      "w3": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "n": "nummod",
@@ -2329,6 +3247,16 @@
       "n": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "frac": "det",
       "n": "nummod"
@@ -2364,6 +3292,22 @@
       "n2": "nummod",
       "t": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "frac": "dobj",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "frac": "dobj",
+      "n1": "nummod",
+      "n2": "nummod",
+      "t": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "d": "nummod",
@@ -2390,6 +3334,18 @@
       "FINAL": "punct",
       "frac": "dobj",
       "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "frac": "dobj",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "frac": "dobj",
+      "n1": "compound",
       "n2": "nummod"
     },
     "nl_para": {
@@ -2424,6 +3380,22 @@
       "price2": "nummod",
       "total": "dobj"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "p": "nummod",
+      "price1": "nummod",
+      "price2": "nummod",
+      "total": "dobj"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "p": "nummod",
+      "price1": "compound",
+      "price2": "nummod",
+      "total": "dobj"
+    },
     "nl_para": {
       "FINAL": "punct",
       "n1": "nummod",
@@ -2447,6 +3419,12 @@
       "total": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "m": "pobj",
+      "n": "nummod",
+      "total": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "m": "pobj",
       "n": "nummod",
@@ -2481,6 +3459,13 @@
       "m_left": "nummod",
       "w": "nummod"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "frac": "nsubj",
+      "m": "compound",
+      "m_left": "nummod",
+      "w": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "frac": "ROOT",
@@ -2507,6 +3492,12 @@
       "n1": "nummod",
       "n2": "nummod",
       "total": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "n1": "nummod",
+      "n2": "nummod",
+      "total": "compound"
     },
     "nl_para": {
       "FINAL": "punct",
@@ -2537,6 +3528,20 @@
       "r1": "nummod",
       "r2": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "p": "pobj",
+      "r1": "nummod",
+      "r2": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "n": "nummod",
+      "p": "pobj",
+      "r1": "nummod",
+      "r2": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "n": "nummod",
@@ -2560,6 +3565,16 @@
       "FINAL": "punct",
       "diff": "nummod",
       "total": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "diff": "nummod",
+      "total": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "diff": "nummod",
+      "total": "compound"
     },
     "nl_para": {
       "FINAL": "punct",
@@ -2591,6 +3606,24 @@
       "d": "pobj",
       "frac": "amod",
       "p1": "pobj",
+      "p2": "npadvmod",
+      "p3": "attr",
+      "p4": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "d": "pobj",
+      "frac": "amod",
+      "p1": "pobj",
+      "p2": "npadvmod",
+      "p3": "attr",
+      "p4": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "d": "pobj",
+      "frac": "amod",
+      "p1": "compound",
       "p2": "npadvmod",
       "p3": "attr",
       "p4": "nummod"
@@ -2627,6 +3660,13 @@
       "s1": "nummod",
       "s2": "nummod"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "l1": "nummod",
+      "l2": "nummod",
+      "s1": "nummod",
+      "s2": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "l1": "nummod",
@@ -2655,6 +3695,24 @@
       "total_time": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "frac_run": "dobj",
+      "frac_skip": "advmod",
+      "frac_walk": "conj",
+      "mult_run": "nummod",
+      "skip_speed": "nummod",
+      "total_time": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "frac_run": "dobj",
+      "frac_skip": "advmod",
+      "frac_walk": "conj",
+      "mult_run": "nummod",
+      "skip_speed": "nummod",
+      "total_time": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "frac_run": "dobj",
       "frac_skip": "advmod",
@@ -2698,6 +3756,22 @@
       "multiplier": "predet",
       "start_time": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "end_time": "nummod",
+      "first_hour_cost": "attr",
+      "free_hours": "nummod",
+      "multiplier": "predet",
+      "start_time": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "end_time": "nummod",
+      "first_hour_cost": "attr",
+      "free_hours": "nummod",
+      "multiplier": "predet",
+      "start_time": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "end_time": "nummod",
@@ -2725,6 +3799,18 @@
       "mult1": "nummod",
       "mult2": "amod",
       "n": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "mult1": "nummod",
+      "mult2": "amod",
+      "n": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "mult1": "nummod",
+      "mult2": "amod",
+      "n": "compound"
     },
     "nl_para": {
       "FINAL": "punct",
@@ -2754,6 +3840,20 @@
       "m": "nummod",
       "mult": "nummod",
       "n": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "mult": "nummod",
+      "n": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "k": "nummod",
+      "m": "nummod",
+      "mult": "nummod",
+      "n": "compound"
     },
     "nl_para": {
       "FINAL": "punct",
@@ -2785,6 +3885,20 @@
       "mult1": "nummod",
       "n1": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "frac1": "npadvmod",
+      "frac2": "det",
+      "mult1": "nummod",
+      "n1": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "frac1": "npadvmod",
+      "frac2": "det",
+      "mult1": "nummod",
+      "n1": "compound"
+    },
     "nl_para": {
       "FINAL": "punct",
       "frac1": "dobj",
@@ -2809,6 +3923,20 @@
       "t1": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "mult": "amod",
+      "n": "nummod",
+      "t1": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "mult": "amod",
+      "n": "nummod",
+      "t1": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "d": "nummod",
       "mult": "amod",
@@ -2845,6 +3973,13 @@
       "p1": "nummod",
       "p2": "nummod"
     },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "frac": "det",
+      "n": "compound",
+      "p1": "nummod",
+      "p2": "nummod"
+    },
     "nl_para": {
       "FINAL": "punct",
       "frac": "det",
@@ -2869,6 +4004,13 @@
       "n3": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "mult": "amod",
+      "n1": "nummod",
+      "n2": "nummod",
+      "n3": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "mult": "amod",
       "n1": "nummod",
@@ -2908,6 +4050,22 @@
       "times": "nummod",
       "tokens": "dobj"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "budget": "dobj",
+      "cost1": "attr",
+      "cost2": "dobj",
+      "times": "nummod",
+      "tokens": "dobj"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "budget": "compound",
+      "cost1": "attr",
+      "cost2": "dobj",
+      "times": "nummod",
+      "tokens": "dobj"
+    },
     "nl_para": {
       "FINAL": "punct",
       "budget": "nsubjpass",
@@ -2933,6 +4091,16 @@
       "mult": "npadvmod",
       "n": "nummod"
     },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "mult": "npadvmod",
+      "n": "nummod"
+    },
+    "nl_minimal_orth": {
+      "FINAL": "punct",
+      "mult": "npadvmod",
+      "n": "compound"
+    },
     "nl_para": {
       "FINAL": "punct",
       "mult": "npadvmod",
@@ -2953,6 +4121,12 @@
       "r": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "d": "nummod",
+      "n0": "nummod",
+      "r": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "d": "nummod",
       "n0": "nummod",
@@ -2983,6 +4157,22 @@
       "n2": "nummod"
     },
     "nl_break": {
+      "FINAL": "punct",
+      "d1": "nummod",
+      "d2": "nummod",
+      "d3": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_lex": {
+      "FINAL": "punct",
+      "d1": "nummod",
+      "d2": "nummod",
+      "d3": "nummod",
+      "n1": "nummod",
+      "n2": "nummod"
+    },
+    "nl_minimal_orth": {
       "FINAL": "punct",
       "d1": "nummod",
       "d2": "nummod",

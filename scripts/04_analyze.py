@@ -24,6 +24,20 @@ endpoints, because Amendment 1 demoted H1:
       problems and no p-value. It is a methods note about the clustering front end. This
       script will not emit a test for it.
 
+SECONDARY endpoints (Amendment 6), under the top-level "secondary_endpoints" key. They
+are reported ALONGSIDE the two primaries and never in place of them:
+
+  H2 secondary, PRE-REGISTERED: hazard ratio for fork layer, nl_break vs
+      nl_minimal_orth, in the same cloglog model. Both arms are one-token edits at the
+      same quantity anchor and differ only in whether the value changes, so the
+      contrast is not confounded with surface dissimilarity. Pre-committed direction:
+      nl_break forks EARLIER (hazard ratio > 1).
+
+  SND, INTERPRETIVE SECONDARY: style-normalized displacement of lambda2 and path
+      entropy against BOTH style floors, reported as a RANGE. The raw difference with a
+      problem-level bootstrap CI stays PRIMARY. SND is emitted only where the
+      denominator's bootstrap CI excludes zero; elsewhere it is null with a reason.
+
 Everything else in the output carries "status": "EXPLORATORY".
 
 Optional inputs (never fabricated when absent):
@@ -221,6 +235,54 @@ def analyze_h1(a, args):
 # --------------------------------------------------------------------------------------
 
 
+def _count_fork_events(records):
+    """Uncensored (i.e. actually-forked) pairs. Censoring is always explicit."""
+    n = 0
+    for r in records:
+        f = r.get("fork")
+        if f is None:
+            censored = r.get("censored")
+        elif isinstance(f, dict):
+            censored = f.get("censored")
+        else:
+            censored = getattr(f, "censored", None)
+        if censored is False:
+            n += 1
+    return n
+
+
+def _fit_survival_or_report(records, layers, **kw):
+    """Fit the cloglog survival model, or return an UNFITTABLE REPORT instead of dying.
+
+    IRLS needs events. A dataset in which no pair ever forks (or in which the design is
+    singular, e.g. perfect separation) has no identified coefficient, and
+    `ling.stats.discrete_time_survival` correctly refuses it. What it must NOT do is
+    take the whole analysis down with it: this script runs after the pod is torn down,
+    and losing H3, the SND block and the exploratory tables because one model had zero
+    events would mean re-renting a GPU to recover numbers that were already computed.
+
+    So the refusal is caught HERE and turned into a report carrying the reason and the
+    event count, and the caller continues. The report has no "primary" key and
+    "fitted": False, so nothing downstream can mistake it for a fitted coefficient.
+    """
+    n_events = _count_fork_events(records)
+    try:
+        return S.discrete_time_survival(records, layers=layers, **kw)
+    except (ValueError, ZeroDivisionError, ArithmeticError) as exc:
+        return {
+            "fitted": False,
+            "link": "cloglog",
+            "model": "discrete-time survival, person-period expansion",
+            "unfittable_reason": str(exc),
+            "n_pairs": len(records),
+            "n_events": n_events,
+            "n_censored": len(records) - n_events,
+            "note": ("The model could not be fitted. No coefficient is reported and none "
+                     "is imputed. The remaining analyses in this file were computed and "
+                     "are unaffected."),
+        }
+
+
 def analyze_h2(a, args, covariates):
     breaking = set(args.breaking_conditions)
     ref = args.reference_condition
@@ -260,9 +322,9 @@ def analyze_h2(a, args, covariates):
             records.append(rec)
             censored += 1 if f.censored else 0
 
-    fit = S.discrete_time_survival(
+    fit = _fit_survival_or_report(
         records,
-        layers=a.layers,
+        a.layers,
         survival_key="answer_survival",
         covariates=cov_names,
         baseline=args.baseline_hazard,
@@ -283,6 +345,12 @@ def analyze_h2(a, args, covariates):
         "censoring_handling": ("right-censored pairs contribute all non-fork rows; none "
                                "dropped, no fabricated event layer (DESIGN.md §A.9.1)"),
         "fit": fit,
+        "model_fitted": bool(fit.get("fitted")),
+        "secondary_endpoints_note": (
+            "A pre-registered SECONDARY contrast for H2 (nl_break vs nl_minimal_orth, "
+            "Amendment 6) is reported under the top-level `secondary_endpoints` key. It "
+            "does NOT replace the endpoint in this block, whichever of the two looks "
+            "better."),
         "caveat": None if complete else (
             "NO surface-dissimilarity controls were available (--covariates not given). "
             "The pre-registered H2 endpoint is the coefficient on answer-survival AFTER "
@@ -397,6 +465,144 @@ def analyze_h3(a, args):
 
 
 # --------------------------------------------------------------------------------------
+# SECONDARY endpoints (DEVIATIONS Amendment 6) -- pre-registered, and NOT substitutes
+# --------------------------------------------------------------------------------------
+
+
+SECONDARY_STATUS = (
+    "PRE-REGISTERED SECONDARY (DEVIATIONS Amendment 6). This does NOT replace H2's "
+    "primary endpoint -- the coefficient on answer-survival with the surface-"
+    "dissimilarity covariates, reported under primary_endpoints.h2. BOTH are reported, "
+    "and the primary is the primary whichever one comes out looking better. Promoting "
+    "this contrast because the primary disappointed is the exact failure mode the "
+    "pre-registration exists to prevent."
+)
+
+
+def analyze_h2_secondary(a, args):
+    """Hazard ratio for fork layer, nl_break vs nl_minimal_orth (Amendment 6).
+
+    Both are ONE-TOKEN edits at the SAME quantity anchor; they differ only in whether
+    the value -- and hence the answer -- changes. So unlike the nl_para/formal contrasts,
+    this one is not confounded with surface dissimilarity, which is why no dissimilarity
+    covariates are entered: there is no systematic surface difference between the arms
+    to control for, and entering a control that is constant by construction would only
+    make the design near-singular.
+
+    Same model form as H2's primary: cloglog discrete-time survival, person-period
+    expansion, cluster-robust SE on problem. The two arms come from the same problems,
+    so the problem cluster carries the pairing.
+    """
+    brk, floor = args.break_condition, args.style_floor_upper
+    out = {
+        "status": SECONDARY_STATUS,
+        "hypothesis": "H2",
+        "endpoint": ("hazard ratio for fork layer, %s vs %s, in the cloglog discrete-"
+                     "time survival model" % (brk, floor)),
+        "direction_precommitted": (
+            "%s forks EARLIER than the matched-magnitude style edit %s: coefficient "
+            "POSITIVE, hazard ratio > 1" % (brk, floor)),
+        "replaces_primary": False,
+        "covariates_entered": [],
+        "covariates_note": (
+            "None, deliberately: the two arms are matched in edit magnitude and edit "
+            "site by construction (Amendment 6), which is the whole point of the "
+            "contrast."),
+    }
+    missing = [c for c in (args.reference_condition, brk, floor) if c not in a.conditions]
+    if missing:
+        out["available"] = False
+        out["reason"] = ("conditions %r are not present in the assignments (present: %r). "
+                         "This contrast needs the Amendment 6 style controls in the "
+                         "corpus." % (missing, list(a.conditions)))
+        return out
+
+    ref = args.reference_condition
+    records = []
+    for cond, is_break in ((brk, 1.0), (floor, 0.0)):
+        for f in M.fork_layers(a, (ref, cond)):
+            records.append({
+                "problem_id": f.problem_id,
+                "condition": cond,
+                "fork": f,
+                "is_answer_breaking": is_break,
+            })
+    fit = _fit_survival_or_report(
+        records,
+        a.layers,
+        survival_key="is_answer_breaking",
+        covariates=(),
+        baseline=args.baseline_hazard,
+        cluster_by_problem=True,
+        expected_direction="positive",
+        direction_note=out["direction_precommitted"],
+    )
+    out.update({
+        "available": True,
+        "model_fitted": bool(fit.get("fitted")),
+        "contrast": {"arm_1": brk, "arm_0": floor, "coded": "is_answer_breaking"},
+        "reference_condition": ref,
+        "n_pairs": len(records),
+        "n_censored_pairs": len(records) - _count_fork_events(records),
+        "fit": fit,
+    })
+    if fit.get("fitted"):
+        prim = fit["primary"]
+        out["hazard_ratio"] = prim["hazard_ratio"]
+        out["hazard_ratio_ci95"] = prim["hazard_ratio_ci95"]
+        out["p"] = prim["p"]
+        out["consistent_with_precommitted_direction"] = \
+            prim["consistent_with_precommitted_direction"]
+    return out
+
+
+def analyze_snd(a, args):
+    """Style-normalized displacement for lambda2 and path entropy, both floors, as a
+    RANGE (Amendment 6). INTERPRETIVE SECONDARY; the raw difference stays primary."""
+    out = {
+        "status": M.SND_STATUS,
+        "formula": "SND(c, m) = [m(c) - m(nl_base)] / [m(nl_minimal, m) - m(nl_base)]",
+        "floors": {"upper_bracket": args.style_floor_upper,
+                   "lower_bracket": args.style_floor_lower},
+        "guard": ("SND is reported ONLY where the denominator's problem-level bootstrap "
+                  "CI excludes zero; otherwise it is null with a reason. The guard is "
+                  "inside ling.metrics.style_normalized_displacement, so there is no "
+                  "code path that emits a ratio through a near-zero denominator."),
+    }
+    missing = [c for c in (args.reference_condition, args.style_floor_upper,
+                           args.style_floor_lower) if c not in a.conditions]
+    if missing:
+        out["available"] = False
+        out["reason"] = ("conditions %r are not present in the assignments (present: %r)"
+                         % (missing, list(a.conditions)))
+        return out
+    floors = {args.style_floor_upper, args.style_floor_lower, args.reference_condition}
+    targets = [c for c in a.conditions if c not in floors]
+    cache = {}
+    by_metric = {}
+    for metric in M.SND_METRICS:
+        by_condition = {}
+        for cond in targets:
+            pre = ("abs_gt_1" if (metric == "lambda2" and cond == args.formal_condition)
+                   else None)
+            by_condition[cond] = M.snd_range(
+                a, metric, cond,
+                upper_floor=args.style_floor_upper,
+                lower_floor=args.style_floor_lower,
+                base_condition=args.reference_condition,
+                n_boot=args.n_boot, alpha=args.alpha, seed=args.seed,
+                precommitted_upper=pre, cache=cache)
+        by_metric[metric] = by_condition
+    out["available"] = True
+    out["conditions"] = targets
+    out["by_metric"] = by_metric
+    out["n_undefined"] = sum(
+        1 for m in by_metric.values() for c in m.values()
+        for b in c["by_floor"].values() if b["snd"] is None)
+    return out
+
+
+# --------------------------------------------------------------------------------------
 # Exploratory block
 # --------------------------------------------------------------------------------------
 
@@ -429,7 +635,14 @@ def analyze_exploratory(a, args):
     out["metric_correlation_matrix"] = {
         "status": "EXPLORATORY",
         "note": ("DESIGN.md §A.8: correlation across the three retained metrics "
-                 "(lambda2, path entropy, fork layer), common index = layer-pair."),
+                 "(lambda2, path entropy, fork layer), common index = layer-pair. "
+                 "Computed for EVERY condition present in the assignments -- all six "
+                 "under Amendment 6, the two style floors included -- against the "
+                 "reference condition; the reference itself has no fork-layer pair with "
+                 "itself and so is not a row."),
+        "conditions_covered": sorted(corr),
+        "n_conditions_covered": len(corr),
+        "reference_condition": args.reference_condition,
         "by_condition": corr,
     }
     fork = {}
@@ -467,6 +680,13 @@ def main(argv=None) -> int:
     ap.add_argument("--formal-condition", default="formal")
     ap.add_argument("--breaking-conditions", nargs="*", default=["nl_break"],
                     help="conditions that BREAK the answer (answer_survival = 0)")
+    ap.add_argument("--break-condition", default="nl_break",
+                    help="the answer-breaking arm of the Amendment 6 secondary contrast")
+    ap.add_argument("--style-floor-upper", default="nl_minimal_orth",
+                    help="Amendment 6 style floor, UPPER bracket (on-anchor orthographic "
+                         "re-rendering); also the comparison arm of the H2 secondary")
+    ap.add_argument("--style-floor-lower", default="nl_minimal_lex",
+                    help="Amendment 6 style floor, LOWER bracket (off-anchor name swap)")
     ap.add_argument("--baseline-hazard", default="linear",
                     choices=["linear", "log", "dummy", "none"])
     ap.add_argument("--n-boot", type=int, default=200,
@@ -508,7 +728,8 @@ def main(argv=None) -> int:
             "n_boot": args.n_boot,
             "n_perm": args.n_perm,
             "numpy": M.HAVE_NUMPY,
-            "prereg": "prereg/PRIMARY_ENDPOINTS.md + prereg/DEVIATIONS.md (4 amendments)",
+            "prereg": "prereg/PRIMARY_ENDPOINTS.md + prereg/DEVIATIONS.md (6 amendments)",
+            "n_conditions": len(a.conditions),
         },
         "primary_endpoints": {
             "count": 2,
@@ -516,6 +737,13 @@ def main(argv=None) -> int:
                      "primary endpoint and no directional pre-commitment."),
             "h2": analyze_h2(a, args, covariates),
             "h3": analyze_h3(a, args),
+        },
+        "secondary_endpoints": {
+            "note": ("Amendment 6. Reported ALONGSIDE the primary endpoints, never in "
+                     "place of them. Neither entry below is a primary endpoint and "
+                     "neither becomes one by outperforming the primary."),
+            "h2_fork_hazard_break_vs_style_floor": analyze_h2_secondary(a, args),
+            "style_normalized_displacement": analyze_snd(a, args),
         },
         "h1_descriptive": analyze_h1(a, args),
         "exploratory": analyze_exploratory(a, args),
@@ -535,15 +763,36 @@ def main(argv=None) -> int:
     h3 = result["primary_endpoints"]["h3"]
     h2 = result["primary_endpoints"]["h2"]
     print("wrote %s" % args.out)
-    if h2.get("available"):
+    if h2.get("available") and h2["fit"].get("fitted"):
         pr = h2["fit"]["primary"]
         print("H2 PRIMARY  coef(answer_survival) = %+.4f  se %.4f  p %.4g  %s"
               % (pr["coef"], pr["se"], pr["p"],
                  "controlled" if h2["primary_endpoint_complete"] else "UNCONTROLLED"))
+    elif h2.get("available"):
+        print("H2 PRIMARY  UNFITTABLE (%d fork events of %d pairs): %s"
+              % (h2["fit"].get("n_events", 0), h2["fit"].get("n_pairs", 0),
+                 h2["fit"].get("unfittable_reason")))
+        print("            the remaining analyses were still computed and written.")
     if h3.get("available"):
         print("H3 PRIMARY  mean paired d(lambda2) = %+.6f over %d layer-pairs, "
               "Wilcoxon(less) p = %.4g"
               % (h3["mean_paired_difference"], h3["n_layer_pairs"], h3["wilcoxon"]["p"]))
+    sec = result["secondary_endpoints"]["h2_fork_hazard_break_vs_style_floor"]
+    if sec.get("available") and sec.get("model_fitted"):
+        print("H2 SECONDARY (pre-registered, does NOT replace the primary above)  "
+              "HR(%s vs %s) = %.4f  p %.4g"
+              % (args.break_condition, args.style_floor_upper, sec["hazard_ratio"],
+                 sec["p"]))
+    elif sec.get("available"):
+        print("H2 SECONDARY  UNFITTABLE (%d fork events): %s"
+              % (sec["fit"].get("n_events", 0), sec["fit"].get("unfittable_reason")))
+    else:
+        print("H2 SECONDARY  unavailable: %s" % sec.get("reason"))
+    snd = result["secondary_endpoints"]["style_normalized_displacement"]
+    if snd.get("available"):
+        print("SND is INTERPRETIVE SECONDARY, reported as a range over both style "
+              "floors; %d of its floor-wise values are null (denominator CI includes "
+              "zero)." % snd["n_undefined"])
     print("H1 is DESCRIPTIVE only (Amendment 1): no test, no direction.")
     return 0
 

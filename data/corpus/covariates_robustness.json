@@ -8,6 +8,14 @@
       "lex_dissim": 0.08333333333333337,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.08333333333333337,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.12,
+      "syn_dissim": 0.029411764705882353
+    },
     "nl_para": {
       "lex_dissim": 0.3666666666666667,
       "syn_dissim": 0.5675675675675675
@@ -22,6 +30,10 @@
       "lex_dissim": 0.05882352941176472,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.1351351351351351,
+      "syn_dissim": 0.04918032786885246
+    },
     "nl_para": {
       "lex_dissim": 0.36585365853658536,
       "syn_dissim": 0.6379310344827587
@@ -33,6 +45,14 @@
       "syn_dissim": 0.36363636363636365
     },
     "nl_break": {
+      "lex_dissim": 0.0714285714285714,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0714285714285714,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.0714285714285714,
       "syn_dissim": 0.0
     },
@@ -50,6 +70,10 @@
       "lex_dissim": 0.0625,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.1428571428571429,
+      "syn_dissim": 0.05555555555555555
+    },
     "nl_para": {
       "lex_dissim": 0.28205128205128205,
       "syn_dissim": 0.38596491228070173
@@ -63,6 +87,14 @@
     "nl_break": {
       "lex_dissim": 0.03508771929824561,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.03508771929824561,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.03508771929824561,
+      "syn_dissim": 0.008130081300813009
     },
     "nl_para": {
       "lex_dissim": 0.3783783783783784,
@@ -78,6 +110,14 @@
       "lex_dissim": 0.07999999999999996,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.07999999999999996,
+      "syn_dissim": 0.023809523809523808
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.1785714285714286,
+      "syn_dissim": 0.06666666666666667
+    },
     "nl_para": {
       "lex_dissim": 0.4375,
       "syn_dissim": 0.35714285714285715
@@ -91,6 +131,14 @@
     "nl_break": {
       "lex_dissim": 0.07692307692307687,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.07692307692307687,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.11111111111111116,
+      "syn_dissim": 0.02702702702702703
     },
     "nl_para": {
       "lex_dissim": 0.38235294117647056,
@@ -106,6 +154,10 @@
       "lex_dissim": 0.02985074626865669,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.044117647058823484,
+      "syn_dissim": 0.007633587786259542
+    },
     "nl_para": {
       "lex_dissim": 0.3292682926829268,
       "syn_dissim": 0.4307692307692308
@@ -119,6 +171,10 @@
     "nl_break": {
       "lex_dissim": 0.11111111111111116,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.19999999999999996,
+      "syn_dissim": 0.05714285714285714
     },
     "nl_para": {
       "lex_dissim": 0.31818181818181823,
@@ -134,6 +190,14 @@
       "lex_dissim": 0.04166666666666663,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.04166666666666663,
+      "syn_dissim": 0.012345679012345678
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.061224489795918324,
+      "syn_dissim": 0.012195121951219513
+    },
     "nl_para": {
       "lex_dissim": 0.28301886792452835,
       "syn_dissim": 0.38271604938271603
@@ -147,6 +211,10 @@
     "nl_break": {
       "lex_dissim": 0.0625,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.0625,
+      "syn_dissim": 0.022222222222222223
     },
     "nl_para": {
       "lex_dissim": 0.4871794871794872,
@@ -162,6 +230,14 @@
       "lex_dissim": 0.052631578947368474,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.052631578947368474,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.12195121951219512,
+      "syn_dissim": 0.04225352112676056
+    },
     "nl_para": {
       "lex_dissim": 0.3023255813953488,
       "syn_dissim": 0.38235294117647056
@@ -176,6 +252,14 @@
       "lex_dissim": 0.07407407407407407,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.07407407407407407,
+      "syn_dissim": 0.05405405405405406
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.1071428571428571,
+      "syn_dissim": 0.02631578947368421
+    },
     "nl_para": {
       "lex_dissim": 0.5161290322580645,
       "syn_dissim": 0.5135135135135135
@@ -187,6 +271,14 @@
       "syn_dissim": 0.30526315789473685
     },
     "nl_break": {
+      "lex_dissim": 0.040000000000000036,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.040000000000000036,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.040000000000000036,
       "syn_dissim": 0.0
     },
@@ -204,6 +296,14 @@
       "lex_dissim": 0.0625,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0625,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.09090909090909094,
+      "syn_dissim": 0.01818181818181818
+    },
     "nl_para": {
       "lex_dissim": 0.30000000000000004,
       "syn_dissim": 0.3888888888888889
@@ -217,6 +317,14 @@
     "nl_break": {
       "lex_dissim": 0.10526315789473684,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.10526315789473684,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.19047619047619047,
+      "syn_dissim": 0.05405405405405406
     },
     "nl_para": {
       "lex_dissim": 0.19047619047619047,
@@ -232,6 +340,14 @@
       "lex_dissim": 0.05405405405405406,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.05405405405405406,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.05405405405405406,
+      "syn_dissim": 0.013157894736842105
+    },
     "nl_para": {
       "lex_dissim": 0.28260869565217395,
       "syn_dissim": 0.28205128205128205
@@ -246,6 +362,14 @@
       "lex_dissim": 0.06666666666666665,
       "syn_dissim": 0.024691358024691357
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0444444444444444,
+      "syn_dissim": 0.012345679012345678
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.0444444444444444,
+      "syn_dissim": 0.024096385542168676
+    },
     "nl_para": {
       "lex_dissim": 0.3191489361702128,
       "syn_dissim": 0.4444444444444444
@@ -257,6 +381,14 @@
       "syn_dissim": 0.43661971830985913
     },
     "nl_break": {
+      "lex_dissim": 0.06060606060606055,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06060606060606055,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.06060606060606055,
       "syn_dissim": 0.0
     },
@@ -274,6 +406,14 @@
       "lex_dissim": 0.0625,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0625,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.0625,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.375,
       "syn_dissim": 0.21666666666666667
@@ -287,6 +427,14 @@
     "nl_break": {
       "lex_dissim": 0.09523809523809523,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.09523809523809523,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.20833333333333337,
+      "syn_dissim": 0.075
     },
     "nl_para": {
       "lex_dissim": 0.31999999999999995,
@@ -302,6 +450,14 @@
       "lex_dissim": 0.020000000000000018,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.039215686274509776,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.039215686274509776,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.2786885245901639,
       "syn_dissim": 0.3177570093457944
@@ -313,6 +469,14 @@
       "syn_dissim": 0.184
     },
     "nl_break": {
+      "lex_dissim": 0.038461538461538436,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.038461538461538436,
+      "syn_dissim": 0.009523809523809525
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.038461538461538436,
       "syn_dissim": 0.0
     },
@@ -330,6 +494,14 @@
       "lex_dissim": 0.021739130434782594,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.04255319148936165,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.04255319148936165,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.16666666666666663,
       "syn_dissim": 0.39325842696629215
@@ -343,6 +515,10 @@
     "nl_break": {
       "lex_dissim": 0.05555555555555558,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.08108108108108103,
+      "syn_dissim": 0.02127659574468085
     },
     "nl_para": {
       "lex_dissim": 0.13157894736842102,
@@ -358,6 +534,10 @@
       "lex_dissim": 0.05128205128205132,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.11904761904761907,
+      "syn_dissim": 0.045454545454545456
+    },
     "nl_para": {
       "lex_dissim": 0.3111111111111111,
       "syn_dissim": 0.23809523809523808
@@ -369,6 +549,10 @@
       "syn_dissim": 0.4107142857142857
     },
     "nl_break": {
+      "lex_dissim": 0.08333333333333337,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.08333333333333337,
       "syn_dissim": 0.0
     },
@@ -386,6 +570,14 @@
       "lex_dissim": 0.0714285714285714,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0714285714285714,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.16129032258064513,
+      "syn_dissim": 0.06976744186046512
+    },
     "nl_para": {
       "lex_dissim": 0.48571428571428577,
       "syn_dissim": 0.475
@@ -399,6 +591,10 @@
     "nl_break": {
       "lex_dissim": 0.0625,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.1428571428571429,
+      "syn_dissim": 0.06666666666666667
     },
     "nl_para": {
       "lex_dissim": 0.4878048780487805,
@@ -414,6 +610,14 @@
       "lex_dissim": 0.10526315789473684,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.10526315789473684,
+      "syn_dissim": 0.03333333333333333
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.15000000000000002,
+      "syn_dissim": 0.03225806451612903
+    },
     "nl_para": {
       "lex_dissim": 0.2272727272727273,
       "syn_dissim": 0.4722222222222222
@@ -427,6 +631,14 @@
     "nl_break": {
       "lex_dissim": 0.06060606060606055,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06060606060606055,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.08823529411764708,
+      "syn_dissim": 0.02564102564102564
     },
     "nl_para": {
       "lex_dissim": 0.19444444444444442,
@@ -442,6 +654,14 @@
       "lex_dissim": 0.04166666666666663,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.08333333333333337,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.07999999999999996,
+      "syn_dissim": 0.029411764705882353
+    },
     "nl_para": {
       "lex_dissim": 0.12,
       "syn_dissim": 0.5
@@ -455,6 +675,10 @@
     "nl_break": {
       "lex_dissim": 0.045454545454545414,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.1063829787234043,
+      "syn_dissim": 0.03529411764705882
     },
     "nl_para": {
       "lex_dissim": 0.2857142857142857,
@@ -470,6 +694,14 @@
       "lex_dissim": 0.033333333333333326,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.033333333333333326,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.049180327868852514,
+      "syn_dissim": 0.009259259259259259
+    },
     "nl_para": {
       "lex_dissim": 0.3125,
       "syn_dissim": 0.37383177570093457
@@ -484,6 +716,10 @@
       "lex_dissim": 0.05405405405405406,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.125,
+      "syn_dissim": 0.043478260869565216
+    },
     "nl_para": {
       "lex_dissim": 0.3571428571428571,
       "syn_dissim": 0.3333333333333333
@@ -495,6 +731,14 @@
       "syn_dissim": 0.3783783783783784
     },
     "nl_break": {
+      "lex_dissim": 0.06451612903225812,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06451612903225812,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.06451612903225812,
       "syn_dissim": 0.0
     },
@@ -512,6 +756,14 @@
       "lex_dissim": 0.033333333333333326,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06666666666666665,
+      "syn_dissim": 0.0196078431372549
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.033333333333333326,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.29032258064516125,
       "syn_dissim": 0.2549019607843137
@@ -523,6 +775,14 @@
       "syn_dissim": 0.48
     },
     "nl_break": {
+      "lex_dissim": 0.08695652173913049,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.08695652173913049,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.08695652173913049,
       "syn_dissim": 0.0
     },
@@ -540,6 +800,10 @@
       "lex_dissim": 0.04761904761904767,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.09090909090909094,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.34615384615384615,
       "syn_dissim": 0.4166666666666667
@@ -551,6 +815,10 @@
       "syn_dissim": 0.3698630136986301
     },
     "nl_break": {
+      "lex_dissim": 0.052631578947368474,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.052631578947368474,
       "syn_dissim": 0.0
     },
@@ -568,6 +836,14 @@
       "lex_dissim": 0.033333333333333326,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.033333333333333326,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.07936507936507942,
+      "syn_dissim": 0.03488372093023256
+    },
     "nl_para": {
       "lex_dissim": 0.140625,
       "syn_dissim": 0.2289156626506024
@@ -579,6 +855,10 @@
       "syn_dissim": 0.4032258064516129
     },
     "nl_break": {
+      "lex_dissim": 0.07407407407407407,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.07407407407407407,
       "syn_dissim": 0.0
     },
@@ -596,6 +876,14 @@
       "lex_dissim": 0.04081632653061229,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.04081632653061229,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.04081632653061229,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.4666666666666667,
       "syn_dissim": 0.47560975609756095
@@ -610,6 +898,14 @@
       "lex_dissim": 0.06896551724137934,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06896551724137934,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.15625,
+      "syn_dissim": 0.075
+    },
     "nl_para": {
       "lex_dissim": 0.4,
       "syn_dissim": 0.32432432432432434
@@ -621,6 +917,10 @@
       "syn_dissim": 0.4222222222222222
     },
     "nl_break": {
+      "lex_dissim": 0.125,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.125,
       "syn_dissim": 0.0
     },
@@ -638,6 +938,14 @@
       "lex_dissim": 0.04255319148936165,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.04255319148936165,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.04255319148936165,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.14583333333333337,
       "syn_dissim": 0.23943661971830985
@@ -652,6 +960,10 @@
       "lex_dissim": 0.046511627906976716,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.06818181818181823,
+      "syn_dissim": 0.018518518518518517
+    },
     "nl_para": {
       "lex_dissim": 0.2692307692307693,
       "syn_dissim": 0.5079365079365079
@@ -664,6 +976,14 @@
     },
     "nl_break": {
       "lex_dissim": 0.03125,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06060606060606055,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.06060606060606055,
       "syn_dissim": 0.0
     },
     "nl_para": {
@@ -680,6 +1000,14 @@
       "lex_dissim": 0.04761904761904767,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.09090909090909094,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.09090909090909094,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.23076923076923073,
       "syn_dissim": 0.375
@@ -693,6 +1021,14 @@
     "nl_break": {
       "lex_dissim": 0.04761904761904767,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.04761904761904767,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.09090909090909094,
+      "syn_dissim": 0.03125
     },
     "nl_para": {
       "lex_dissim": 0.21276595744680848,
@@ -708,6 +1044,14 @@
       "lex_dissim": 0.09523809523809523,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.09523809523809523,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.20833333333333337,
+      "syn_dissim": 0.08571428571428572
+    },
     "nl_para": {
       "lex_dissim": 0.28,
       "syn_dissim": 0.375
@@ -719,6 +1063,14 @@
       "syn_dissim": 0.2916666666666667
     },
     "nl_break": {
+      "lex_dissim": 0.040000000000000036,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.040000000000000036,
+      "syn_dissim": 0.02197802197802198
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.040000000000000036,
       "syn_dissim": 0.0
     },
@@ -736,6 +1088,14 @@
       "lex_dissim": 0.038461538461538436,
       "syn_dissim": 0.02631578947368421
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.07692307692307687,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.038461538461538436,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.30000000000000004,
       "syn_dissim": 0.4473684210526316
@@ -749,6 +1109,14 @@
     "nl_break": {
       "lex_dissim": 0.09090909090909094,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.09090909090909094,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.19999999999999996,
+      "syn_dissim": 0.08333333333333333
     },
     "nl_para": {
       "lex_dissim": 0.125,
@@ -764,6 +1132,14 @@
       "lex_dissim": 0.03703703703703709,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0714285714285714,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.0714285714285714,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.06896551724137934,
       "syn_dissim": 0.17777777777777778
@@ -775,6 +1151,10 @@
       "syn_dissim": 0.4189189189189189
     },
     "nl_break": {
+      "lex_dissim": 0.052631578947368474,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
       "lex_dissim": 0.052631578947368474,
       "syn_dissim": 0.0
     },
@@ -792,6 +1172,14 @@
       "lex_dissim": 0.08695652173913049,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.08695652173913049,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.08695652173913049,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.24,
       "syn_dissim": 0.2903225806451613
@@ -803,6 +1191,14 @@
       "syn_dissim": 0.4305555555555556
     },
     "nl_break": {
+      "lex_dissim": 0.09999999999999998,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.09999999999999998,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.09999999999999998,
       "syn_dissim": 0.0
     },
@@ -820,6 +1216,10 @@
       "lex_dissim": 0.05714285714285716,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.08333333333333337,
+      "syn_dissim": 0.017241379310344827
+    },
     "nl_para": {
       "lex_dissim": 0.10810810810810811,
       "syn_dissim": 0.45901639344262296
@@ -834,6 +1234,10 @@
       "lex_dissim": 0.03125,
       "syn_dissim": 0.018867924528301886
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.06060606060606055,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.3783783783783784,
       "syn_dissim": 0.33962264150943394
@@ -845,6 +1249,14 @@
       "syn_dissim": 0.35064935064935066
     },
     "nl_break": {
+      "lex_dissim": 0.02777777777777779,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.05555555555555558,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.02777777777777779,
       "syn_dissim": 0.0
     },
@@ -862,6 +1274,14 @@
       "lex_dissim": 0.040000000000000036,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.040000000000000036,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.040000000000000036,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.4126984126984127,
       "syn_dissim": 0.44155844155844154
@@ -873,6 +1293,10 @@
       "syn_dissim": 0.32786885245901637
     },
     "nl_break": {
+      "lex_dissim": 0.07999999999999996,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.07999999999999996,
       "syn_dissim": 0.0
     },
@@ -890,6 +1314,10 @@
       "lex_dissim": 0.11111111111111116,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.11111111111111116,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.21052631578947367,
       "syn_dissim": 0.20833333333333334
@@ -901,6 +1329,14 @@
       "syn_dissim": 0.323943661971831
     },
     "nl_break": {
+      "lex_dissim": 0.06060606060606055,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06060606060606055,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.06060606060606055,
       "syn_dissim": 0.0
     },
@@ -918,6 +1354,14 @@
       "lex_dissim": 0.0444444444444444,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0444444444444444,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.0444444444444444,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.4444444444444444,
       "syn_dissim": 0.3333333333333333
@@ -931,6 +1375,14 @@
     "nl_break": {
       "lex_dissim": 0.10526315789473684,
       "syn_dissim": 0.02564102564102564
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.10526315789473684,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.15000000000000002,
+      "syn_dissim": 0.05
     },
     "nl_para": {
       "lex_dissim": 0.0,
@@ -946,6 +1398,14 @@
       "lex_dissim": 0.050000000000000044,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.050000000000000044,
+      "syn_dissim": 0.01639344262295082
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.13636363636363635,
+      "syn_dissim": 0.06153846153846154
+    },
     "nl_para": {
       "lex_dissim": 0.1428571428571429,
       "syn_dissim": 0.2786885245901639
@@ -960,6 +1420,14 @@
       "lex_dissim": 0.06666666666666665,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06666666666666665,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.09677419354838712,
+      "syn_dissim": 0.023255813953488372
+    },
     "nl_para": {
       "lex_dissim": 0.06666666666666665,
       "syn_dissim": 0.38095238095238093
@@ -971,6 +1439,14 @@
       "syn_dissim": 0.3194444444444444
     },
     "nl_break": {
+      "lex_dissim": 0.06451612903225812,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06451612903225812,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.06451612903225812,
       "syn_dissim": 0.0
     },
@@ -988,6 +1464,10 @@
       "lex_dissim": 0.08333333333333337,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.08333333333333337,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.08333333333333337,
       "syn_dissim": 0.3333333333333333
@@ -999,6 +1479,14 @@
       "syn_dissim": 0.42028985507246375
     },
     "nl_break": {
+      "lex_dissim": 0.0625,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0625,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.0625,
       "syn_dissim": 0.0
     },
@@ -1016,6 +1504,14 @@
       "lex_dissim": 0.025000000000000022,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.050000000000000044,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.025000000000000022,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.2666666666666667,
       "syn_dissim": 0.23636363636363636
@@ -1029,6 +1525,14 @@
     "nl_break": {
       "lex_dissim": 0.0714285714285714,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0714285714285714,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.10344827586206895,
+      "syn_dissim": 0.016666666666666666
     },
     "nl_para": {
       "lex_dissim": 0.15625,
@@ -1044,6 +1548,10 @@
       "lex_dissim": 0.07999999999999996,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.14814814814814814,
+      "syn_dissim": 0.04081632653061224
+    },
     "nl_para": {
       "lex_dissim": 0.12,
       "syn_dissim": 0.2765957446808511
@@ -1055,6 +1563,10 @@
       "syn_dissim": 0.43209876543209874
     },
     "nl_break": {
+      "lex_dissim": 0.07407407407407407,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.07407407407407407,
       "syn_dissim": 0.0
     },
@@ -1072,6 +1584,14 @@
       "lex_dissim": 0.05882352941176472,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.05882352941176472,
+      "syn_dissim": 0.017241379310344827
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.05882352941176472,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.19444444444444442,
       "syn_dissim": 0.39655172413793105
@@ -1086,6 +1606,14 @@
       "lex_dissim": 0.08333333333333337,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.08333333333333337,
+      "syn_dissim": 0.03225806451612903
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.15384615384615385,
+      "syn_dissim": 0.03125
+    },
     "nl_para": {
       "lex_dissim": 0.04166666666666663,
       "syn_dissim": 0.45161290322580644
@@ -1097,6 +1625,14 @@
       "syn_dissim": 0.3617021276595745
     },
     "nl_break": {
+      "lex_dissim": 0.04081632653061229,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.04081632653061229,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.04081632653061229,
       "syn_dissim": 0.0
     },
@@ -1114,6 +1650,14 @@
       "lex_dissim": 0.07999999999999996,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.07999999999999996,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.1785714285714286,
+      "syn_dissim": 0.08333333333333333
+    },
     "nl_para": {
       "lex_dissim": 0.0,
       "syn_dissim": 0.2647058823529412
@@ -1128,6 +1672,14 @@
       "lex_dissim": 0.06451612903225812,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06451612903225812,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.09375,
+      "syn_dissim": 0.023255813953488372
+    },
     "nl_para": {
       "lex_dissim": 0.17647058823529416,
       "syn_dissim": 0.26666666666666666
@@ -1139,6 +1691,10 @@
       "syn_dissim": 0.42857142857142855
     },
     "nl_break": {
+      "lex_dissim": 0.07999999999999996,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.07999999999999996,
       "syn_dissim": 0.0
     },
@@ -1156,6 +1712,10 @@
       "lex_dissim": 0.0714285714285714,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.10344827586206895,
+      "syn_dissim": 0.023809523809523808
+    },
     "nl_para": {
       "lex_dissim": 0.19999999999999996,
       "syn_dissim": 0.5365853658536586
@@ -1170,6 +1730,10 @@
       "lex_dissim": 0.08333333333333337,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.2142857142857143,
+      "syn_dissim": 0.1111111111111111
+    },
     "nl_para": {
       "lex_dissim": 0.25,
       "syn_dissim": 0.325
@@ -1181,6 +1745,14 @@
       "syn_dissim": 0.4117647058823529
     },
     "nl_break": {
+      "lex_dissim": 0.06666666666666665,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06666666666666665,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.06666666666666665,
       "syn_dissim": 0.0
     },
@@ -1198,6 +1770,14 @@
       "lex_dissim": 0.0714285714285714,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0714285714285714,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.1333333333333333,
+      "syn_dissim": 0.05405405405405406
+    },
     "nl_para": {
       "lex_dissim": 0.34375,
       "syn_dissim": 0.4
@@ -1211,6 +1791,14 @@
     "nl_break": {
       "lex_dissim": 0.040000000000000036,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.040000000000000036,
+      "syn_dissim": 0.01098901098901099
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.05882352941176472,
+      "syn_dissim": 0.010869565217391304
     },
     "nl_para": {
       "lex_dissim": 0.30000000000000004,
@@ -1226,6 +1814,10 @@
       "lex_dissim": 0.0625,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.0625,
+      "syn_dissim": 0.01639344262295082
+    },
     "nl_para": {
       "lex_dissim": 0.1428571428571429,
       "syn_dissim": 0.46774193548387094
@@ -1240,6 +1832,14 @@
       "lex_dissim": 0.05128205128205132,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.05128205128205132,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.02631578947368418,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.30952380952380953,
       "syn_dissim": 0.5
@@ -1251,6 +1851,14 @@
       "syn_dissim": 0.5151515151515151
     },
     "nl_break": {
+      "lex_dissim": 0.06451612903225812,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06451612903225812,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.06451612903225812,
       "syn_dissim": 0.0
     },
@@ -1268,6 +1876,14 @@
       "lex_dissim": 0.11111111111111116,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.11111111111111116,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.1578947368421053,
+      "syn_dissim": 0.02564102564102564
+    },
     "nl_para": {
       "lex_dissim": 0.33333333333333337,
       "syn_dissim": 0.3181818181818182
@@ -1281,6 +1897,14 @@
     "nl_break": {
       "lex_dissim": 0.06060606060606055,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06060606060606055,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.06060606060606055,
+      "syn_dissim": 0.016129032258064516
     },
     "nl_para": {
       "lex_dissim": 0.19444444444444442,
@@ -1296,6 +1920,14 @@
       "lex_dissim": 0.05405405405405406,
       "syn_dissim": 0.02857142857142857
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.05405405405405406,
+      "syn_dissim": 0.014285714285714285
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.05405405405405406,
+      "syn_dissim": 0.014084507042253521
+    },
     "nl_para": {
       "lex_dissim": 0.2142857142857143,
       "syn_dissim": 0.4189189189189189
@@ -1307,6 +1939,14 @@
       "syn_dissim": 0.3698630136986301
     },
     "nl_break": {
+      "lex_dissim": 0.0625,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0625,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.0625,
       "syn_dissim": 0.0
     },
@@ -1324,6 +1964,10 @@
       "lex_dissim": 0.07999999999999996,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.11538461538461542,
+      "syn_dissim": 0.01694915254237288
+    },
     "nl_para": {
       "lex_dissim": 0.3125,
       "syn_dissim": 0.46551724137931033
@@ -1335,6 +1979,10 @@
       "syn_dissim": 0.421875
     },
     "nl_break": {
+      "lex_dissim": 0.06896551724137934,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.06896551724137934,
       "syn_dissim": 0.0
     },
@@ -1352,6 +2000,14 @@
       "lex_dissim": 0.04347826086956519,
       "syn_dissim": 0.0
     },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.04347826086956519,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.06382978723404253,
+      "syn_dissim": 0.012987012987012988
+    },
     "nl_para": {
       "lex_dissim": 0.16326530612244894,
       "syn_dissim": 0.3157894736842105
@@ -1365,6 +2021,14 @@
     "nl_break": {
       "lex_dissim": 0.05882352941176472,
       "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.05882352941176472,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.08571428571428574,
+      "syn_dissim": 0.022727272727272728
     },
     "nl_para": {
       "lex_dissim": 0.08571428571428574,
@@ -1380,6 +2044,10 @@
       "lex_dissim": 0.10526315789473684,
       "syn_dissim": 0.0
     },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.10526315789473684,
+      "syn_dissim": 0.0
+    },
     "nl_para": {
       "lex_dissim": 0.052631578947368474,
       "syn_dissim": 0.5714285714285714
@@ -1391,6 +2059,14 @@
       "syn_dissim": 0.4827586206896552
     },
     "nl_break": {
+      "lex_dissim": 0.07999999999999996,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.07999999999999996,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
       "lex_dissim": 0.07999999999999996,
       "syn_dissim": 0.0
     },

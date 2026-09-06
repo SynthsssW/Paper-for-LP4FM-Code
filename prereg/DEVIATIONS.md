@@ -300,3 +300,40 @@ near-zero denominator produces a spectacular artifact and this is the obvious wa
 metric fails.
 
 **Total corpus: 100 problems x 6 conditions = 600 prompts.**
+
+### Amendment 6, correction — the contrast is matched-SITE, not matched-magnitude
+
+**Timestamp:** 2026-09-07T00:45 UTC
+
+Amendment 6 as written called `nl_minimal_orth` vs `nl_break` a "matched-magnitude,
+matched-site" contrast. **The matched-magnitude half is wrong and is corrected here before
+any data exists.** Measured on the built corpus:
+
+| condition | lex_edit mean | median | range |
+|---|---|---|---|
+| `nl_break` | 0.0050 | 0.0046 | [0.0017, 0.0222] |
+| `nl_minimal_orth` | 0.0486 | 0.0354 | [0.0066, 0.1694] |
+| `nl_minimal_lex` | 0.0240 | 0.0175 | [0.0041, 0.0857] |
+
+Digits-to-words is inherently a multi-character rewrite: median per-problem char-edit ratio
+orth:break is **8.0x** (9 chars vs 1). Worst cases are large values —
+`7775` -> `"seven thousand seven hundred seventy five"` is 41 characters.
+
+**Corrected description, to be used verbatim in the paper:**
+`nl_minimal_orth` is matched to `nl_break` on **edit SITE** (95/99 edit the exact quantity
+slot `nl_break` perturbs) but is roughly an order of magnitude LARGER in edit size.
+`nl_minimal_lex` is the closer-magnitude control (~5x) but is off-anchor.
+
+**This strengthens rather than weakens the bracket argument.** Neither control is matched on
+both site and magnitude; each is matched on one and off on the other, in opposite
+directions. That is precisely why BOTH are reported and why the style floor is presented as
+a RANGE. Do not write "matched magnitude" anywhere.
+
+**Pre-committed direction is unchanged:** `nl_break` forks EARLIER than `nl_minimal_orth`.
+Note this is now a CONSERVATIVE prediction — `nl_minimal_orth` is the larger surface edit, so
+surface-driven forking would push it to fork earlier, against the predicted direction.
+
+**Availability (reported, not hidden):** `nl_minimal_orth` 99/100 (1 problem has no
+digit-rendered integer). `nl_minimal_lex` 70/100 (**30 problems contain no proper name**).
+Unavailable cells are recorded as genuine holes, never invented, and must be excluded
+upstream of the survival model rather than entering it as missing covariate rows.

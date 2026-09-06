@@ -45,8 +45,18 @@ import re
 from collections import Counter
 
 REFERENCE_CONDITION = "nl_base"
-#: conditions compared against the reference, in corpus order
-COMPARED_CONDITIONS = ("nl_para", "formal", "nl_break")
+#: conditions compared against the reference, in corpus order. The last two are
+#: prereg/DEVIATIONS.md Amendment 6's style controls: answer-PRESERVING minimal
+#: edits, added precisely so that surface dissimilarity stops being a near-perfect
+#: proxy for answer survival. Leaving them out here would reproduce the
+#: collinearity the amendment exists to break.
+COMPARED_CONDITIONS = (
+    "nl_para",
+    "formal",
+    "nl_break",
+    "nl_minimal_orth",
+    "nl_minimal_lex",
+)
 
 _TOKEN_RE = re.compile(r"[A-Za-z0-9_]+")
 

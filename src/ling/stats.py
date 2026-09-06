@@ -180,6 +180,8 @@ def discrete_time_survival(
     cluster_by_problem: bool = True,
     max_iter: int = 100,
     tol: float = 1e-10,
+    expected_direction: str = "negative",
+    direction_note: Optional[str] = None,
 ) -> dict:
     """H2's PRIMARY endpoint: the coefficient on answer-survival status.
 
@@ -198,7 +200,13 @@ def discrete_time_survival(
     them is a different quantity and callers must say so.
 
     Pre-committed direction: answer-BREAKING pairs fork earlier, i.e. have the higher
-    hazard, so the coefficient on answer-SURVIVAL is expected NEGATIVE.
+    hazard, so the coefficient on answer-SURVIVAL is expected NEGATIVE. That default is
+    H2's PRIMARY endpoint. `expected_direction` ("negative" | "positive") exists because
+    DEVIATIONS Amendment 6 adds a pre-registered SECONDARY contrast fitted in this same
+    model form -- `nl_break` vs `nl_minimal_orth`, indicator coded 1 for `nl_break`,
+    pre-committed POSITIVE (nl_break forks earlier). Setting it changes only which sign
+    counts as consistent with the pre-commitment; it does not change the model, and it
+    does not make the secondary a primary. `direction_note` overrides the reported text.
 
     `baseline` is the discrete-time baseline hazard in the layer index t:
         "linear" (default; t), "log" (log t), "dummy" (t indicators, first dropped),
@@ -212,6 +220,9 @@ def discrete_time_survival(
     returned alongside as `se_model`. This substitution is a judgment call and must be
     stated in the paper; the Part-B GLMM is where the random intercept belongs.
     """
+    if expected_direction not in ("negative", "positive"):
+        raise ValueError(
+            "expected_direction must be 'negative' or 'positive', got %r" % expected_direction)
     rows = person_period_expand(records, layers)
     if not rows:
         raise ValueError("no person-period rows: `records` was empty")
@@ -349,10 +360,18 @@ def discrete_time_survival(
     prim = dict(coefs[survival_key])
     prim["term"] = survival_key
     prim["hazard_ratio"] = math.exp(beta[terms.index(survival_key)])
-    prim["direction_precommitted"] = "negative (answer-breaking pairs fork earlier)"
-    prim["consistent_with_precommitted_direction"] = prim["coef"] < 0
+    prim["direction_precommitted"] = direction_note or (
+        "negative (answer-breaking pairs fork earlier)" if expected_direction == "negative"
+        else "positive (higher hazard, i.e. forks earlier)")
+    prim["expected_direction"] = expected_direction
+    prim["consistent_with_precommitted_direction"] = (
+        prim["coef"] < 0 if expected_direction == "negative" else prim["coef"] > 0)
+    hr_lo = math.exp(prim["coef"] - 1.959963985 * prim["se"]) if prim["se"] > 0 else float("nan")
+    hr_hi = math.exp(prim["coef"] + 1.959963985 * prim["se"]) if prim["se"] > 0 else float("nan")
+    prim["hazard_ratio_ci95"] = [hr_lo, hr_hi]
 
     return {
+        "fitted": True,
         "link": "cloglog",
         "model": "discrete-time survival, person-period expansion",
         "terms": terms,

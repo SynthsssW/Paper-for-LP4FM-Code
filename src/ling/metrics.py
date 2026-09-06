@@ -9,7 +9,9 @@ and computes the three retained metrics of DESIGN.md §A.8:
                     RIGHT-CENSORED when they never do
 
 plus the correlation matrix across those three that §A.8 requires ("a reviewer from the
-GNN-rewiring world assumes redundancy unless shown otherwise").
+GNN-rewiring world assumes redundancy unless shown otherwise"), and the style-normalized
+displacement of DEVIATIONS Amendment 6 (INTERPRETIVE SECONDARY; a guarded ratio that
+refuses to report itself through a near-zero denominator).
 
 No torch. No activations. numpy is used when importable, purely for speed; every
 computation has a pure-Python fallback so the analysis runs on a laptop with nothing
@@ -47,6 +49,10 @@ __all__ = [
     "transition_graph",
     "lambda2",
     "path_entropy",
+    "style_normalized_displacement",
+    "snd_range",
+    "SND_METRICS",
+    "SND_STATUS",
     "ForkResult",
     "fork_layer",
     "fork_layers",
@@ -616,6 +622,265 @@ def path_entropy(
         k = a.k_by_layer[p + 1]
         return h / math.log(k) if k > 1 else 0.0
     return h
+
+
+# --------------------------------------------------------------------------------------
+# Style-normalized displacement (DEVIATIONS Amendment 6) -- INTERPRETIVE SECONDARY
+# --------------------------------------------------------------------------------------
+
+
+SND_STATUS = (
+    "INTERPRETIVE SECONDARY (DEVIATIONS Amendment 6). The PRIMARY quantity is the raw "
+    "difference m(c) - m(base) with a problem-level bootstrap CI, reported here as "
+    "`raw_difference`. SND divides that by a second, also-estimated difference, and is "
+    "reported ONLY where the denominator's bootstrap CI excludes zero."
+)
+
+SND_METRICS = ("lambda2", "path_entropy")
+
+
+def _metric_value(assignments, metric, layer_pair, condition, problems, normalized_pe):
+    if metric == "lambda2":
+        return lambda2(assignments, layer_pair, condition, problems=problems)
+    if metric == "path_entropy":
+        return path_entropy(assignments, layer_pair, condition, problems=problems,
+                            normalized=normalized_pe)
+    raise ValueError("metric must be one of %r, got %r" % (SND_METRICS, metric))
+
+
+def _mean_displacement(assignments, metric, condition, base_condition, pairs, problems,
+                       normalized_pe):
+    """Mean over layer-pairs of m(condition) - m(base_condition), pooled over `problems`.
+
+    Same shape as H3's primary statistic: the metric is POOLED over problems at each
+    layer-pair (Amendment 2), and the average runs over LAYER-PAIRS (Amendment 3).
+    """
+    total = 0.0
+    for p in pairs:
+        total += (_metric_value(assignments, metric, p, condition, problems, normalized_pe)
+                  - _metric_value(assignments, metric, p, base_condition, problems,
+                                  normalized_pe))
+    return total / len(pairs)
+
+
+def style_normalized_displacement(
+    assignments,
+    metric: str,
+    condition: str,
+    floor_condition: str,
+    base_condition: str = "nl_base",
+    problems: Optional[Iterable[str]] = None,
+    layer_pairs: Optional[Sequence[int]] = None,
+    n_boot: int = 200,
+    alpha: float = 0.05,
+    seed: int = 0,
+    normalized_path_entropy: bool = True,
+    precommitted: Optional[str] = None,
+    cache: Optional[dict] = None,
+) -> dict:
+    """SND against ONE style floor (DEVIATIONS Amendment 6), with the ratio guard.
+
+        SND(c, m) = [ m(c) - m(base) ] / [ m(floor) - m(base) ]
+
+    both terms being the mean over layer-pairs of the pooled metric difference -- the
+    same statistic H3's primary endpoint uses, so the numerator IS the primary raw
+    difference and is returned as `raw_difference` with its own problem-level bootstrap
+    CI.
+
+    THE GUARD IS THE POINT, AND IT LIVES HERE RATHER THAN IN THE CALLER. A ratio whose
+    denominator is a small estimated difference is not a large effect, it is a division
+    artifact: as the denominator approaches zero the ratio diverges, and it diverges
+    most enthusiastically exactly when the style floor is least well measured. This
+    function therefore bootstraps the DENOMINATOR over PROBLEMS and computes the ratio
+    at all only inside the branch where that CI excludes zero. Where it does not, `snd`
+    is None and `undefined_reason` says why. There is no code path in which a
+    near-zero denominator produces a number, no keyword that disables the guard, and no
+    fallback value: a caller that ignores the guard gets None, not a big float.
+
+    `n_boot = 0` does not skip the guard, it fails it -- with no interval there is no
+    evidence the denominator is nonzero, so SND stays undefined.
+
+    `precommitted="abs_gt_1"` records Amendment 6's one directional pre-commitment for
+    this metric (|SND(formal)| > 1 for lambda2 against the UPPER bracket) and evaluates
+    it; when the guard fires the evaluation is None, not False -- an undefined ratio is
+    not evidence against the pre-commitment.
+    """
+    from . import stats as _stats  # local: keeps `metrics` importable with no cycle risk
+
+    a = Assignments.coerce(assignments)
+    for name in (condition, floor_condition, base_condition):
+        if name not in a.conditions:
+            raise InvariantViolation(
+                "condition %r is not present in the assignments (present: %r)"
+                % (name, list(a.conditions)))
+    if metric not in SND_METRICS:
+        raise ValueError("metric must be one of %r, got %r" % (SND_METRICS, metric))
+    if precommitted not in (None, "abs_gt_1"):
+        raise ValueError("precommitted must be None or 'abs_gt_1', got %r" % precommitted)
+    pairs = tuple(layer_pairs) if layer_pairs is not None else a.layer_pairs()
+    if not pairs:
+        raise ValueError("no layer-pairs available")
+    ids = sorted(a.problems) if problems is None else sorted(set(problems))
+
+    def numerator(problem_multiset):
+        return _mean_displacement(a, metric, condition, base_condition, pairs,
+                                  problem_multiset, normalized_path_entropy)
+
+    def denominator(problem_multiset):
+        return _mean_displacement(a, metric, floor_condition, base_condition, pairs,
+                                  problem_multiset, normalized_path_entropy)
+
+    num_point = numerator(list(ids))
+    den_point = denominator(list(ids))
+
+    def _boot(role, other_condition, stat, boot_seed):
+        # `cache` is a caller-supplied memo across floors and target conditions: the
+        # numerator bootstrap is identical for every floor and the denominator
+        # bootstrap for every target condition, and each draw rebuilds every pooled
+        # graph. Recomputing them is only expensive, never different.
+        key = (role, metric, other_condition, base_condition, normalized_path_entropy,
+               n_boot, alpha, boot_seed, tuple(pairs), tuple(ids))
+        if cache is not None and key in cache:
+            return cache[key]
+        res = _stats.bootstrap_ci(ids, stat, n_boot=n_boot, alpha=alpha, seed=boot_seed)
+        if cache is not None:
+            cache[key] = res
+        return res
+
+    num_ci = None
+    den_ci = None
+    snd = None
+    reason = None
+    guard_passed = False
+    if n_boot > 0:
+        num_ci = _boot("num", condition, numerator, seed)
+        den_ci = _boot("den", floor_condition, denominator, seed + 1)
+        guard_passed = den_ci["ci_low"] > 0.0 or den_ci["ci_high"] < 0.0
+        if guard_passed and den_point != 0.0:
+            snd = num_point / den_point
+        elif guard_passed:
+            guard_passed = False
+            reason = (
+                "the denominator's bootstrap CI excludes zero but its point estimate is "
+                "exactly 0.0; the ratio is undefined and is NOT reported as a number.")
+        else:
+            reason = (
+                "the denominator m(%s) - m(%s) = %.6g has a %d%% problem-level bootstrap "
+                "CI [%.6g, %.6g] that INCLUDES zero, so the style floor is not "
+                "distinguishable from no displacement at all. SND is undefined here. It "
+                "is not reported as a large number: a ratio through a near-zero "
+                "denominator is a division artifact, not an effect (Amendment 6)."
+                % (floor_condition, base_condition, den_point,
+                   int(round((1 - alpha) * 100)), den_ci["ci_low"], den_ci["ci_high"]))
+    else:
+        reason = (
+            "n_boot = 0, so the denominator has no bootstrap CI and the Amendment 6 "
+            "guard cannot be satisfied. SND is undefined by construction rather than "
+            "computed unguarded.")
+
+    out = {
+        "status": SND_STATUS,
+        "metric": metric,
+        "condition": condition,
+        "floor_condition": floor_condition,
+        "base_condition": base_condition,
+        "path_entropy_normalized": (normalized_path_entropy if metric == "path_entropy"
+                                    else None),
+        "raw_difference": {
+            "note": ("PRIMARY quantity: m(%s) - m(%s), mean over layer-pairs, with a "
+                     "problem-level bootstrap CI." % (condition, base_condition)),
+            "point": num_point,
+            "bootstrap_ci": num_ci,
+        },
+        "denominator": {
+            "note": "m(%s) - m(%s), mean over layer-pairs." % (floor_condition,
+                                                               base_condition),
+            "point": den_point,
+            "bootstrap_ci": den_ci,
+        },
+        "denominator_ci_excludes_zero": guard_passed,
+        "snd": snd,
+        "undefined_reason": reason,
+        "n_layer_pairs": len(pairs),
+        "n_problems": len(ids),
+        "n_boot": n_boot,
+        "alpha": alpha,
+        "seed": seed,
+        "resampling_unit": "problem",
+    }
+    if precommitted == "abs_gt_1":
+        out["direction_precommitted"] = (
+            "|SND| > 1 (Amendment 6): %s displaces the geometry more than a "
+            "semantically-null edit of the same kind does" % condition)
+        out["consistent_with_precommitted_direction"] = (
+            None if snd is None else abs(snd) > 1.0)
+    return out
+
+
+def snd_range(
+    assignments,
+    metric: str,
+    condition: str,
+    upper_floor: str = "nl_minimal_orth",
+    lower_floor: str = "nl_minimal_lex",
+    base_condition: str = "nl_base",
+    problems: Optional[Iterable[str]] = None,
+    layer_pairs: Optional[Sequence[int]] = None,
+    n_boot: int = 200,
+    alpha: float = 0.05,
+    seed: int = 0,
+    normalized_path_entropy: bool = True,
+    precommitted_upper: Optional[str] = None,
+    cache: Optional[dict] = None,
+) -> dict:
+    """SND against BOTH style floors, reported as a RANGE (Amendment 6).
+
+    Neither floor is trustworthy alone and Amendment 6 says so explicitly:
+    `nl_minimal_orth` re-renders a quantity as a number word ON the anchor, which may
+    be a genuinely different encoding and so gives a floor that is likely too HIGH;
+    `nl_minimal_lex` swaps a proper name, which is semantically null but OFF-anchor and
+    so gives a floor that is likely too LOW. They BRACKET the true style floor, which is
+    the reason both exist. A single-floor SND must never be quoted as "the" SND.
+
+    A floor whose guard fires contributes no endpoint of the range; the range is
+    reported only when BOTH floors pass, and the surviving one-sided value is still
+    shown per-floor with its reason. Which floor gives the higher SND is read off the
+    numbers, not assumed.
+    """
+    floors = [(upper_floor, "upper bracket (likely too HIGH a floor: on-anchor "
+                            "orthographic re-rendering may be genuinely differently "
+                            "encoded)", precommitted_upper),
+              (lower_floor, "lower bracket (likely too LOW a floor: semantically null "
+                            "but OFF-anchor)", None)]
+    by_floor = {}
+    for name, role, pre in floors:
+        block = style_normalized_displacement(
+            assignments, metric, condition, name, base_condition=base_condition,
+            problems=problems, layer_pairs=layer_pairs, n_boot=n_boot, alpha=alpha,
+            seed=seed, normalized_path_entropy=normalized_path_entropy,
+            precommitted=pre, cache=cache)
+        block["bracket_role"] = role
+        by_floor[name] = block
+
+    defined = {n: b["snd"] for n, b in by_floor.items() if b["snd"] is not None}
+    rng = None
+    if len(defined) == 2:
+        vals = sorted(defined.values())
+        rng = {"low": vals[0], "high": vals[1],
+               "note": ("SND is a RANGE bracketed by the two style floors, not a point "
+                        "estimate. Report it as a range (Amendment 6).")}
+    return {
+        "status": SND_STATUS,
+        "metric": metric,
+        "condition": condition,
+        "base_condition": base_condition,
+        "by_floor": by_floor,
+        "range": rng,
+        "range_available": rng is not None,
+        "range_unavailable_reason": None if rng is not None else (
+            "SND is undefined against %s; a range needs both floors."
+            % ", ".join(sorted(n for n, b in by_floor.items() if b["snd"] is None))),
+    }
 
 
 # --------------------------------------------------------------------------------------

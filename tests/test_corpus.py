@@ -539,6 +539,15 @@ class TestWrittenCorpusFile(unittest.TestCase):
             C.validate_record(r)
             for cond in C.CONDITIONS:
                 real = r["realizations"][cond]
+                # Amendment 6's style controls are recorded as an explicit
+                # `status: "unavailable"` hole -- no text, no anchors -- when the
+                # instance cannot support them. `validate_record` above already
+                # required that hole to be genuinely empty; there is nothing to
+                # span-check in it.
+                if not real.get("text"):
+                    self.assertIn(real.get("status"), ("pending", "unavailable"))
+                    self.assertFalse(real.get("anchors"))
+                    continue
                 for q in r["quantities"]:
                     s, e = real["anchors"][q["name"]]
                     self.assertTrue(real["text"][s:e].strip())

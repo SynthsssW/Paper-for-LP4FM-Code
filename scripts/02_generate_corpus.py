@@ -10,7 +10,7 @@ GSM-Symbolic `templates/symbolic/*.json`, vendored into
 `src/ling/templates.py` for exactly which parts are Apple's and which parts are
 our reconstruction). Nothing is fetched at run time.
 
-Emits all four realizations per problem:
+Emits all six realizations per problem:
 
     nl_base    NL rendering; values freshly sampled; ground truth COMPUTED by
                executing the template's own `#answer:` expression
@@ -23,6 +23,15 @@ Emits all four realizations per problem:
                and no answer expression, never executed)
     nl_break   exactly ONE quantity perturbed so the computed answer changes,
                kept as surface-similar to nl_base as the template allows
+    nl_minimal_orth
+               ONE quantity re-rendered as a number word, SAME value, so the
+               answer is unchanged by construction. Targets the slot nl_break
+               perturbs, which makes the two a matched-site contrast
+               (prereg/DEVIATIONS.md Amendment 6)
+    nl_minimal_lex
+               ONE proper name swapped for another from the same pool. Answer
+               unchanged; deliberately OFF-anchor. Together with nl_minimal_orth
+               it brackets the surface-perturbation floor
 
 Determinism: the same `--seed` reproduces byte-identical output. Each problem
 draws from its own RNG derived by SHA-256 from (seed, template_id), so adding,
@@ -177,6 +186,36 @@ def summarise(records) -> dict:
     for p in prof:
         marker_counts.update(p["clause_markers"])
 
+    minimal = {}
+    for cond in ("nl_minimal_orth", "nl_minimal_lex"):
+        avail = [
+            r["minimal_edits"][cond] for r in records
+            if r["minimal_edits"][cond].get("available")
+        ]
+        dists = [m["text_char_edit_distance"] for m in avail]
+        minimal[cond] = {
+            "n_available": len(avail),
+            "n_unavailable": len(records) - len(avail),
+            "unavailable_reasons": dict(sorted(collections.Counter(
+                r["minimal_edits"][cond].get("reason")
+                for r in records if not r["minimal_edits"][cond].get("available")
+            ).items(), key=str)),
+            "text_char_edit_distance": (
+                {
+                    "min": min(dists),
+                    "median": statistics.median(dists),
+                    "max": max(dists),
+                }
+                if dists else None
+            ),
+            "article_adjusted": sum(1 for m in avail if m.get("article_adjusted")),
+            "occurrences_rewritten": dict(sorted(collections.Counter(
+                m["occurrences_rewritten"] for m in avail).items())),
+        }
+        if cond == "nl_minimal_orth":
+            minimal[cond]["matches_nl_break_site"] = sum(
+                1 for m in avail if m["matches_nl_break_site"])
+
     lens = {
         cond: [len(r["realizations"][cond]["text"]) for r in records]
         for cond in CONDITIONS
@@ -205,6 +244,7 @@ def summarise(records) -> dict:
             "max": max(r["ground_truth"] for r in records),
             "n_integer": sum(1 for r in records if isinstance(r["ground_truth"], int)),
         },
+        "minimal_edits": minimal,
         "perturbation": {
             "template_conditions_still_satisfied": sum(
                 1 for p in pert if p["template_conditions_still_satisfied"]
@@ -337,6 +377,9 @@ def main(argv=None) -> int:
           % (n, summary["n_distinct_templates"]))
     print("realizations       : %d generated (nl_base, formal, nl_break)"
           % summary["n_realizations_generated"])
+    print("                     %d minimal style controls (Amendment 6)"
+          % sum(summary["minimal_edits"][c]["n_available"]
+                for c in ("nl_minimal_orth", "nl_minimal_lex")))
     print("                     %d paraphrased (nl_para, authored schemas)"
           % summary["n_realizations_paraphrased"])
     print("                     %d pending" % summary["n_realizations_pending"])
@@ -373,6 +416,23 @@ def main(argv=None) -> int:
         print("                     sentence-count delta: %s" % pp["sentence_count_delta"])
         print("                     answer unchanged in %d/%d (asserted)" % (pp["n"], pp["n"]))
         print()
+
+    for cond in ("nl_minimal_orth", "nl_minimal_lex"):
+        m = summary["minimal_edits"][cond]
+        d = m["text_char_edit_distance"]
+        print("%-19s: %d/%d available%s"
+              % (cond, m["n_available"], n,
+                 ("" if not m["n_unavailable"]
+                  else ", %d UNAVAILABLE (recorded, never faked)" % m["n_unavailable"])))
+        if d:
+            print("                     char edit vs nl_base: median %g (%g–%g)"
+                  % (d["median"], d["min"], d["max"]))
+        if cond == "nl_minimal_orth":
+            print("                     %d/%d edit the SAME quantity slot nl_break perturbs"
+                  % (m["matches_nl_break_site"], m["n_available"]))
+        print("                     answer unchanged in %d/%d (asserted)"
+              % (m["n_available"], m["n_available"]))
+    print()
 
     lv = summary["linguistic_variation"]
     print("linguistic variation (nl_base):")
