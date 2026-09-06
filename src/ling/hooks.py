@@ -87,9 +87,14 @@ directions.
 Consequence you must handle downstream, not here: because we take the
 un-normalized stream, the vector norms grow substantially with depth (Gemma also
 scales the embedding by sqrt(d_model) at the input).  Any affinity built on raw
-Euclidean distance will therefore be dominated by depth-dependent scale.  Build
-the affinity on cosine similarity, or standardize per layer — and state which,
-since lambda2 is not invariant to that choice.
+Euclidean distance will therefore be dominated by depth-dependent scale, and
+because the H3 endpoint averages across layer-pairs, that artifact accumulates
+along the exact axis the primary statistic sums over rather than averaging out.
+
+That choice is no longer open: prereg/DEVIATIONS.md Amendment 3 fixes the
+affinity as **cosine similarity** (scale-invariant by construction), with
+per-layer z-scoring as a reported appendix robustness check and raw-vector
+affinity not used at all.
 
 ===========================================================================
 BATCH SIZE 1, NO PADDING  --  §A.4, §A.11 item 3
@@ -919,6 +924,12 @@ def extract_aligned(
     problem_id, condition:
         Carried into :class:`AnchorDropError` so a driver can tally the drop
         under gate G3 instead of guessing which record failed.
+    allow_duplicate_positions:
+        Default **False**, and forwarded explicitly. Two anchors landing on one
+        token give two byte-identical rows — a cosine-affinity-1.0 node pair —
+        and the collision is condition-asymmetric (see
+        :class:`DuplicateAnchorPosition`), so it moves lambda2 for `formal`
+        only. Never set True for the primary run.
 
     Raises
     ------
@@ -958,8 +969,9 @@ def extract_aligned(
         strategy=strategy,
         add_special_tokens=add_special_tokens,
         allow_trailing_special=allow_trailing_special,
-        # Explicitly False, never left to the callee's default: a duplicate
-        # resolution is a loud, typed, countable DROP (§A.6), not a shrug.
+        # Passed explicitly (default False at BOTH levels) rather than left to
+        # the callee: a duplicate resolution is a loud, typed, countable DROP
+        # (§A.6), never a silent pair of identical rows in the graph.
         allow_duplicate_positions=allow_duplicate_positions,
     )
 
@@ -980,6 +992,79 @@ def extract_aligned(
     if return_meta:
         return out, res
     return out
+
+
+def extract_problem(
+    record: Dict[str, Any],
+    tokenizer: Any,
+    model: Any,
+    *,
+    conditions: Optional[Sequence[str]] = None,
+    strategy: str = "last",
+    add_special_tokens: bool = True,
+    dtype: str = "float32",
+) -> Tuple[Dict[str, Any], Dict[str, AnchorResolution], List[str]]:
+    """Extract ALL FOUR realizations of one corpus record, or none of them.
+
+    This is the production entry point, and the only place the §A.6
+    cross-condition invariant needs to be remembered: it calls
+    :func:`check_anchor_keys_consistent` once, then passes the resulting shared
+    key list to every one of the four extractions as ``expected_names``.
+
+    All-or-nothing is not a convenience. §A.6 restricts the analysis to
+    positions present in all four realizations; keeping the three conditions
+    that resolved cleanly and dropping the fourth would leave the pooled graphs
+    with different node counts per condition, which is the graph-size confound
+    the restriction exists to remove — and lambda2 is strongly node-count
+    dependent, so it would land directly on H3's endpoint.
+
+    Returns ``(arrays_by_condition, resolutions_by_condition, ordered_names)``.
+
+    Raises
+    ------
+    AnchorDropError
+        Any failure in any condition. The caller records
+        ``(exc.problem_id, exc.condition, exc.reason)`` and drops the whole
+        problem, counting it in the G3 drop rate::
+
+            try:
+                acts, meta, names = extract_problem(rec, tok, model)
+            except AnchorDropError as exc:
+                drops.append({"problem_id": exc.problem_id,
+                              "condition": exc.condition,
+                              "reason": exc.reason})
+                continue
+    """
+    problem_id = record.get("problem_id")
+    realizations = record["realizations"]
+    if conditions is not None:
+        realizations = {c: realizations[c] for c in conditions}
+
+    names = check_anchor_keys_consistent(realizations, problem_id=problem_id)
+
+    arrays: Dict[str, Any] = {}
+    metas: Dict[str, AnchorResolution] = {}
+    for cond in sorted(realizations):
+        real = realizations[cond]
+        arr, meta = extract_aligned(
+            real["text"], real["anchors"], tokenizer, model,
+            expected_names=names, problem_id=problem_id, condition=cond,
+            strategy=strategy, add_special_tokens=add_special_tokens,
+            dtype=dtype, return_meta=True,
+        )
+        arrays[cond] = arr
+        metas[cond] = meta
+
+    # Belt and braces: every condition must have contributed the SAME number of
+    # aligned positions. Guaranteed by the key check above, asserted anyway
+    # because it is the quantity H3's endpoint is sensitive to.
+    counts = {c: m.n_positions for c, m in metas.items()}
+    if len(set(counts.values())) > 1:
+        raise AnchorKeyMismatch(
+            "conditions contributed different numbers of aligned positions: {}. "
+            "lambda2 is node-count dependent (§A.6).".format(counts),
+            problem_id=problem_id, condition=",".join(sorted(counts)))
+    return arrays, metas, names
 
 
 # ==========================================================================

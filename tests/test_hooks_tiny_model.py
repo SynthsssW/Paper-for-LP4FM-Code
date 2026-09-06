@@ -36,16 +36,21 @@ try:
 except Exception:  # noqa: BLE001
     HAVE_STACK = False
 
-if HAVE_STACK:
-    from ling.hooks import (ExtractionError, FINAL, ResidualCapture,
-                            extract_aligned, forward_once)
-    from ling.model import LoadedModel, resolve_layers_path
+# ling.hooks and ling.model are import-safe without torch/numpy (that is
+# asserted in test_determinism_cpu.py), so these come in unconditionally —
+# class-level fixtures below reference FINAL at import time.
+from ling.hooks import (AnchorKeyMismatch, DuplicateAnchorPosition,  # noqa: E402
+                        ExtractionError, FINAL, ResidualCapture,
+                        extract_aligned, forward_once)
+from ling.model import LoadedModel, resolve_layers_path  # noqa: E402
 
 
 class TinyFastTokenizer:
     """Whitespace/digit tokenizer with a real offset mapping and small ids."""
 
     is_fast = True
+    #: resolve_anchor_positions requires this: FINAL is checked against it.
+    all_special_ids = [1]
 
     def __init__(self, vocab_size=64):
         self.vocab_size = vocab_size
@@ -219,6 +224,8 @@ class TestExtractAligned(unittest.TestCase):
     def setUpClass(cls):
         cls.loaded = build_tiny()
 
+    NAMES = ["n_clips_april", "n_clips_may", FINAL]
+
     def anchors(self):
         return {
             "n_clips_april": [TEXT.index("48"), TEXT.index("48") + 2],
@@ -229,17 +236,20 @@ class TestExtractAligned(unittest.TestCase):
     def test_shape_and_order(self):
         out, meta = extract_aligned(
             TEXT, self.anchors(), self.loaded.tokenizer, self.loaded,
+            expected_names=self.NAMES, problem_id="p0", condition="nl_base",
             return_meta=True)
         self.assertEqual(out.shape,
                          (self.loaded.n_layers, 3, self.loaded.d_model))
         self.assertEqual(out.dtype, np.float32)
         self.assertEqual(meta.names, ["n_clips_april", "n_clips_may", FINAL])
         self.assertEqual(meta.token_indices[-1], meta.n_tokens - 1)
+        self.assertEqual(meta.problem_id, "p0")
+        self.assertEqual(meta.condition, "nl_base")
 
     def test_values_match_the_captured_residuals_at_those_positions(self):
         out, meta = extract_aligned(
             TEXT, self.anchors(), self.loaded.tokenizer, self.loaded,
-            return_meta=True)
+            expected_names=self.NAMES, return_meta=True)
         ids = torch.tensor([meta.input_ids], dtype=torch.long)
         with ResidualCapture(self.loaded) as cap:
             forward_once(self.loaded, ids)
@@ -252,8 +262,49 @@ class TestExtractAligned(unittest.TestCase):
         """Sanity on §A.1: only the aligned slice comes back, not [L, T, d]."""
         out, meta = extract_aligned(
             TEXT, self.anchors(), self.loaded.tokenizer, self.loaded,
-            return_meta=True)
+            expected_names=self.NAMES, return_meta=True)
         self.assertLess(out.shape[1], meta.n_tokens)
+
+    # ---- F1 / F2 / F3 at the extraction entry point ------------------------
+    def test_expected_names_cannot_be_omitted(self):
+        """§A.6's cross-condition invariant is asserted on EVERY extraction."""
+        with self.assertRaises(TypeError):
+            extract_aligned(TEXT, self.anchors(), self.loaded.tokenizer,
+                            self.loaded)
+
+    def test_a_condition_missing_a_quantity_is_a_typed_drop(self):
+        short = self.anchors()
+        short.pop("n_clips_may")
+        with self.assertRaises(AnchorKeyMismatch) as cm:
+            extract_aligned(TEXT, short, self.loaded.tokenizer, self.loaded,
+                            expected_names=self.NAMES,
+                            problem_id="gsms_3", condition="formal")
+        self.assertEqual(cm.exception.problem_id, "gsms_3")
+        self.assertEqual(cm.exception.condition, "formal")
+
+    def test_extract_aligned_overrides_the_duplicate_default(self):
+        """It must pass allow_duplicate_positions=False, not inherit a permissive
+        callee default: two anchors on one token are two identical graph rows."""
+        pos = TEXT.index("48")
+        anchors = {"a": [pos, pos + 2], "b": [pos, pos + 2], FINAL: [-1, -1]}
+        with self.assertRaises(DuplicateAnchorPosition):
+            extract_aligned(TEXT, anchors, self.loaded.tokenizer, self.loaded,
+                            expected_names=["a", "b", FINAL], condition="formal")
+
+    def test_trailing_whitespace_is_normalised_before_tokenizing(self):
+        """A trailing newline must not change what is extracted (F3)."""
+        a, meta_a = extract_aligned(
+            TEXT, self.anchors(), self.loaded.tokenizer, self.loaded,
+            expected_names=self.NAMES, return_meta=True)
+        b, meta_b = extract_aligned(
+            TEXT + "\n\n  ", self.anchors(), self.loaded.tokenizer, self.loaded,
+            expected_names=self.NAMES, return_meta=True)
+        self.assertFalse(meta_a.text_was_rstripped)
+        self.assertTrue(meta_b.text_was_rstripped)
+        self.assertEqual(meta_a.token_indices, meta_b.token_indices)
+        self.assertEqual(meta_a.n_tokens, meta_b.n_tokens)
+        np.testing.assert_array_equal(a, b)
+        self.assertNotEqual(meta_b.token_text(FINAL).strip(), "")
 
 
 if __name__ == "__main__":
