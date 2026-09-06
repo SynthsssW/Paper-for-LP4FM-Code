@@ -617,8 +617,12 @@ class AlignedActivationStore:
       because §A.1 rule 1 is that raw activations are never *persisted* —
       extract, cluster, write assignments, discard.
 
-    Either way, ``iter_layers()`` yields one ``LayerBatch`` at a time and frees
-    it before yielding the next, so the caller's peak footprint is one layer.
+    Either way, ``iter_layers()`` yields one ``LayerBatch`` at a time, so the
+    CALLER never holds more than one layer: the spectral machinery sees
+    ``[N_states, d_model]``, not ``[n_layers, N_states, d_model]``. With
+    ``release=True`` the store also drops each layer's buffer after yielding it,
+    so total residency falls monotonically through the sweep (do that only if
+    nothing needs a second pass over the layers).
     """
 
     def __init__(self, n_layers: int, d_model: int, *, dtype: str = "float32",
@@ -631,6 +635,7 @@ class AlignedActivationStore:
         self._closed = False
         self._spill_dir = None
         self._buffers: Optional[List[List[Any]]] = None
+        self._released: set = set()
 
         if spill_dir is None:
             self._buffers = [[] for _ in range(self.n_layers)]
@@ -672,8 +677,13 @@ class AlignedActivationStore:
                 self._files[i].write(block.tobytes())
 
     # -- reading -----------------------------------------------------------
-    def iter_layers(self, layers: Optional[Iterable[int]] = None) -> Iterator[LayerBatch]:
-        """Yield one :class:`LayerBatch` at a time; the previous one is freed."""
+    def iter_layers(self, layers: Optional[Iterable[int]] = None,
+                    *, release: bool = False) -> Iterator[LayerBatch]:
+        """Yield one :class:`LayerBatch` at a time.
+
+        ``release=True`` frees each layer's stored buffer once it has been
+        yielded — one-shot consumption, lower peak residency, no second pass.
+        """
         if self._closed:
             raise ExtractionError("store is closed")
         if self._buffers is None:
@@ -682,11 +692,28 @@ class AlignedActivationStore:
         wanted = list(range(self.n_layers)) if layers is None else list(layers)
         for i in wanted:
             yield LayerBatch(layer=i, states=self._load_layer(i), rows=list(self.rows))
+            if release:
+                self._release_layer(i)
+
+    def _release_layer(self, i: int) -> None:
+        self._released.add(i)
+        if self._buffers is not None:
+            self._buffers[i] = []
+        elif self._spill_dir is not None:
+            try:
+                os.remove(os.path.join(self._spill_dir, "layer_{:03d}.raw".format(i)))
+            except OSError:
+                pass
 
     def layer(self, i: int) -> LayerBatch:
         return LayerBatch(layer=i, states=self._load_layer(i), rows=list(self.rows))
 
     def _load_layer(self, i: int) -> Any:
+        if i in self._released:
+            raise ExtractionError(
+                "layer {} was released after being streamed (release=True) and "
+                "cannot be read again. Use release=False if you need a second "
+                "pass over the layers.".format(i))
         if self._buffers is not None:
             bufs = self._buffers[i]
             if not bufs:

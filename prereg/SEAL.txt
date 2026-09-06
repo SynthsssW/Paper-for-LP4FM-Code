@@ -2,3 +2,9 @@ file: PRIMARY_ENDPOINTS.md
 sha256: d138968eab9b6b57e1e27b7239722d3a9ccbe5a0e56f21347233f8cfcd5f9501
 sealed_utc: 2026-09-06T20:47:45.458806+00:00
 bytes: 5579
+
+file: DEVIATIONS.md
+sha256: 9053def8e51516c72ae56efed43bc365bb6c9c0f95c62c851c711c3a85fd942d
+sealed_utc: 2026-09-06T21:09:56.935515+00:00
+bytes: 5314
+amendments: 2 (H1 demoted; H3 lambda2 pooled)

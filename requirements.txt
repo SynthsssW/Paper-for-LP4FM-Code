@@ -1,0 +1,33 @@
+# LP4FM spectral cluster-transition experiment — pinned, minimal.
+# DESIGN.md §A.2: "Do not spend the night on library compatibility."
+# No TransformerLens: it lags new architectures by months (§A.2). Raw HF hooks.
+#
+# torch is NOT pinned to a +cuXXX build here because the correct wheel depends
+# on the pod image's CUDA runtime. scripts/pod_bootstrap.sh installs torch from
+# the CUDA index matching the pod, or leaves a preinstalled torch alone.
+
+torch==2.7.1
+
+# transformers is a FLOOR, not an exact pin, and that is deliberate.
+# DESIGN.md §A.2: "the open-weights frontier churned monthly through 2026" and
+# the primary checkpoint (Gemma 4 12B) may need a release newer than anything
+# that existed when this file was written. An exact pin here is the failure mode
+# where the model loads as the wrong architecture or not at all at 2am. Verify
+# with AutoConfig.from_pretrained before the run (configs/model.yaml step 3);
+# if the pinned floor does not know the architecture, install from git.
+transformers>=4.51.0
+
+numpy==2.2.6
+scipy==1.15.3
+scikit-learn==1.6.1
+PyYAML==6.0.2
+
+# Not listed as direct deps but pulled in by transformers and required here:
+#   tokenizers  -> fast tokenizers, i.e. return_offsets_mapping, which the
+#                  anchor char-span mapping depends on (configs/corpus_schema.md)
+#   safetensors -> weight loading
+#   huggingface_hub -> download + HF_TOKEN auth
+#
+# If the chosen checkpoint ships only a SentencePiece tokenizer with no
+# tokenizer.json, `pip install sentencepiece` and convert once — a slow
+# tokenizer has no offset mapping and extraction will refuse to run.
