@@ -165,6 +165,16 @@ def analyze_h1(a, args):
             "cluster at extraction time; this script consumes assignments.jsonl and "
             "nothing else, and will not fabricate them." % " or ".join(missing))
         return out
+    all_null = [f for f in ("linguistic_label", "kmeans_cluster")
+                if all(rows[j][f] is None for j in idx)]
+    if all_null:
+        out["available"] = False
+        out["reason"] = (
+            "assignments.jsonl's %s field is present but every value is null for "
+            "condition %r. H1's AMI comparison needs real values, not an all-null "
+            "column; an AMI computed against an all-null field is a fabricated 0.0, "
+            "not a result." % (" and ".join(all_null), args.reference_condition))
+        return out
 
     spectral = [rows[j]["cluster"] for j in idx]
     kmeans = [rows[j]["kmeans_cluster"] for j in idx]

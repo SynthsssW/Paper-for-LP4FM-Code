@@ -245,3 +245,58 @@ the primary endpoint.
 
 **Reported per layer** in the assignments file: `kernel`, `sigma`, `laplacian` (normalized
 symmetric), and the eigengap.
+
+---
+
+## Amendment 6 — two style controls; style-normalized displacement
+
+**Timestamp:** 2026-09-07T00:20 UTC
+**Status:** pre-data. Adds conditions and a SECONDARY endpoint. **H2's and H3's primary
+endpoints are UNCHANGED.**
+
+**The problem being fixed.** Measured on the built corpus, the surface-dissimilarity control
+correlates r = 0.883 (lexical) / 0.868 (syntactic) with answer-survival status, and the
+ranges are effectively disjoint (`nl_break` lexical distance in [0.0017, 0.0222]; every
+`nl_para`/`formal` pair >= 0.1227). Cause: `nl_break` is the ONLY answer-breaking condition
+AND is a one-character edit by construction, so "surface dissimilarity" is close to a perfect
+proxy for "answer-preserving." H2's residual coefficient is therefore weakly identified —
+and that residual is precisely H2's contribution over Han et al.
+
+**Two new conditions, both answer-preserving, both minimal edits.**
+
+| condition | edit | property | floor it gives |
+|---|---|---|---|
+| `nl_minimal_orth` | one quantity re-rendered as a number word (`24` -> `twenty-four`) | ON-anchor; edit site matched to `nl_break` | likely too HIGH (digits and number-words may be genuinely differently encoded) |
+| `nl_minimal_lex` | one proper name swapped | semantically null, but OFF-anchor (names are not anchors) | likely too LOW |
+
+Together they BRACKET the true surface-perturbation floor. Neither alone is trustworthy, and
+this is stated as the reason both exist rather than presented as belt-and-braces.
+
+**Why this identifies H2.** `nl_minimal_orth` vs `nl_break` is a MATCHED-MAGNITUDE,
+MATCHED-SITE contrast: both change one token at a quantity anchor; they differ only in
+whether the value, and hence the answer, changes. That contrast is not confounded with
+surface dissimilarity the way the current design is.
+
+**New SECONDARY endpoint (pre-registered, does NOT replace H2's primary):**
+hazard ratio for fork layer, `nl_break` vs `nl_minimal_orth`, in the same cloglog model.
+**Direction pre-committed: `nl_break` forks EARLIER** (higher hazard) than a
+matched-magnitude style edit.
+
+**Style-normalized displacement (SND), INTERPRETIVE secondary:**
+
+```
+SND(c, m) = [ m(c) - m(nl_base) ] / [ m(nl_minimal, m) - m(nl_base) ]
+```
+
+Reported for lambda2 and path entropy, against BOTH floors, as a range.
+**Direction pre-committed: |SND(formal)| > 1 for lambda2 against the UPPER bracket**
+(`nl_minimal_orth`) — formal displaces the geometry more than a semantically-null edit of
+the same kind does.
+
+**Guard against the ratio artifact.** The raw difference with a problem-level bootstrap CI
+is PRIMARY. SND is reported ONLY where the denominator's bootstrap CI excludes zero; where
+it does not, SND is reported as undefined, never as a large number. A ratio with a
+near-zero denominator produces a spectacular artifact and this is the obvious way this
+metric fails.
+
+**Total corpus: 100 problems x 6 conditions = 600 prompts.**

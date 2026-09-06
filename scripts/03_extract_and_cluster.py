@@ -27,17 +27,30 @@ because scripts/04_analyze.py needs them and will not fabricate them:
 
   * `kmeans_cluster`    -- the K-means comparator at the same k, same layer,
                            same states (H1's descriptive note, Amendment 1).
-  * `linguistic_label`  -- OPTIONAL PASSTHROUGH from the corpus record, `null`
-                           when the corpus does not carry one. This script does
-                           NOT invent labels; the label set is another agent's
-                           output and an invented one would silently become the
-                           thing H1's AMI is scored against.
+  * `linguistic_label`  -- OPTIONAL PASSTHROUGH, `null` when no source carries
+                           one. Looked up from the corpus record itself (see
+                           `linguistic_label()` below) unless `--linguistic-labels
+                           PATH` is given, in which case it is looked up in that
+                           side file instead: {problem_id: {condition: {anchor:
+                           label}}}, e.g. data/corpus/linguistic_labels.json.
+                           That file is READ, never merged into problems.jsonl --
+                           the corpus is verified and byte-reproducible under a
+                           recorded sha256, and mutating it would invalidate both
+                           the verification run and the covariates. This script
+                           does NOT invent labels; the label set is another
+                           agent's output and an invented one would silently
+                           become the thing H1's AMI is scored against. When
+                           --linguistic-labels is given, a missing (problem,
+                           condition, anchor) key in it is a loud error, not a
+                           silent null.
 
 Usage:
     python scripts/03_extract_and_cluster.py --run-id pod01
     python scripts/03_extract_and_cluster.py --run-id pod01 --max-problems 8
     python scripts/03_extract_and_cluster.py --run-id pod01 --affinity per_layer_standardized
     python scripts/03_extract_and_cluster.py --run-id pod01 --assemble-only
+    python scripts/03_extract_and_cluster.py --run-id pod01 --assemble-only \\
+        --linguistic-labels data/corpus/linguistic_labels.json
 """
 
 from __future__ import annotations
@@ -92,10 +105,57 @@ def load_corpus(path, max_problems=None):
     return records
 
 
-def linguistic_label(record, condition, anchor):
-    """OPTIONAL passthrough of a corpus-supplied linguistic label. Never invented.
+def load_linguistic_labels(path):
+    """Load the side-file dependency-label table (--linguistic-labels PATH).
 
-    Looked up in order of specificity, most specific first:
+    Shape: {problem_id: {condition: {anchor_name: label}}}. This is READ, never
+    merged into data/corpus/problems.jsonl: the corpus is verified and
+    byte-reproducible under a recorded sha256, and mutating it would invalidate
+    both the verification run and the covariates.
+    """
+    with open(path, "r", encoding="utf-8") as fh:
+        try:
+            data = json.load(fh)
+        except ValueError as exc:
+            raise SystemExit("%s is not valid JSON: %s" % (path, exc))
+    if not isinstance(data, dict):
+        raise SystemExit(
+            "%s: expected a top-level object keyed by problem_id, got %s"
+            % (path, type(data).__name__))
+    return data
+
+
+def lookup_linguistic_label(labels_db, path, problem_id, condition, anchor):
+    """Look up one (problem_id, condition, anchor) label in the loaded side file.
+
+    A missing key is a loud error, not a silent null: this is only called when
+    --linguistic-labels was explicitly given, so a hole in that table should
+    fail the run rather than quietly degrade H1's covariate.
+    """
+    per_problem = labels_db.get(problem_id)
+    if not isinstance(per_problem, dict):
+        raise SystemExit("%s: no entry for problem_id %r" % (path, problem_id))
+    per_condition = per_problem.get(condition)
+    if not isinstance(per_condition, dict):
+        raise SystemExit(
+            "%s: problem %r has no entry for condition %r" % (path, problem_id, condition))
+    if anchor not in per_condition:
+        raise SystemExit(
+            "%s: problem %r condition %r has no entry for anchor %r"
+            % (path, problem_id, condition, anchor))
+    return per_condition[anchor]
+
+
+def linguistic_label(record, condition, anchor, labels_db=None, labels_path=None):
+    """OPTIONAL passthrough of a linguistic label. Never invented.
+
+    If `labels_db` is given (loaded from --linguistic-labels), the label comes
+    from there exclusively: labels_db[problem_id][condition][anchor], with a
+    missing key raised as a loud SystemExit (see lookup_linguistic_label) rather
+    than silently returned as None.
+
+    Otherwise, looked up on the corpus record itself, in order of specificity,
+    most specific first:
 
         realizations[cond]["linguistic_labels"][anchor]
         realizations[cond]["linguistic_label"]
@@ -105,13 +165,17 @@ def linguistic_label(record, condition, anchor):
 
     and `None` if none of those exist. H1's AMI is scored against this field, so
     a fabricated fallback (POS guessed from the anchor name, the anchor name
-    itself, the condition) would be the pipeline scoring its own construction —
-    Amendment 1 reason 2 with the label set chosen by whoever wrote the default.
-    `None` propagates to `null` in the JSON. Note that scripts/04_analyze.py:159
-    gates H1 on the FIELD being PRESENT, not on it being non-null, so an all-null
-    column makes it report AMI 0.0 vs 0.0 rather than "unavailable"; the assembly
-    step logs a loud WARNING when that is the case.
+    itself, the condition) would be the pipeline scoring its own construction
+    -- Amendment 1 reason 2 with the label set chosen by whoever wrote the
+    default. `None` propagates to `null` in the JSON. scripts/04_analyze.py
+    gates H1 on the field being present AND not all-null, so an all-null
+    column (the default when no labels source is available) reports
+    "unavailable" rather than a fabricated AMI 0.0 vs 0.0; the assembly step
+    also logs a loud WARNING when that is the case.
     """
+    if labels_db is not None:
+        return lookup_linguistic_label(labels_db, labels_path, record.get("problem_id"),
+                                       condition, anchor)
     real = (record.get("realizations") or {}).get(condition) or {}
     labels = real.get("linguistic_labels")
     if isinstance(labels, dict) and anchor in labels:
@@ -135,7 +199,8 @@ def linguistic_label(record, condition, anchor):
 # ======================================================================================
 
 
-def extract_all(records, loaded, *, conditions, dtype, spill_dir, log):
+def extract_all(records, loaded, *, conditions, dtype, spill_dir, log,
+                labels_db=None, labels_path=None):
     """Fill an AlignedActivationStore, all-four-or-none, tallying G3 drops.
 
     Returns ``(store, row_meta, drops)`` where ``row_meta`` is one dict per store
@@ -174,7 +239,9 @@ def extract_all(records, loaded, *, conditions, dtype, spill_dir, log):
                     "problem_id": pid,
                     "condition": cond,
                     "anchor": anchor,
-                    "linguistic_label": linguistic_label(rec, cond, anchor),
+                    "linguistic_label": linguistic_label(rec, cond, anchor,
+                                                         labels_db=labels_db,
+                                                         labels_path=labels_path),
                 })
         del arrays, metas
         kept += 1
@@ -420,6 +487,13 @@ def build_parser():
     ap.add_argument("--assemble-only", action="store_true",
                     help="rebuild assignments.jsonl from existing checkpoints; still needs "
                          "the corpus (for row identity and labels) but loads no model")
+    ap.add_argument("--linguistic-labels", default=None,
+                    help="path to a side file shaped {problem_id: {condition: {anchor: "
+                         "label}}} (e.g. data/corpus/linguistic_labels.json); attaches "
+                         "per-(problem, condition, anchor) dependency labels to assignment "
+                         "rows WITHOUT touching the corpus. If omitted, linguistic_label is "
+                         "written null for every row (unless the corpus record itself "
+                         "carries one). If given, a missing key in the file is a fatal error.")
     ap.add_argument("--strict-determinism", dest="strict", action="store_true", default=True)
     ap.add_argument("--no-strict-determinism", dest="strict", action="store_false")
     return ap
@@ -449,6 +523,11 @@ def main(argv=None):
     records = load_corpus(args.corpus, args.max_problems)
     log("corpus: %d problems from %s" % (len(records), args.corpus))
 
+    labels_db = None
+    if args.linguistic_labels:
+        labels_db = load_linguistic_labels(args.linguistic_labels)
+        log("linguistic labels: loaded from %s" % args.linguistic_labels)
+
     if args.assemble_only:
         # Rebuild row identity from the corpus WITHOUT a model. Anchor order is
         # hooks.anchor_order, the same order extraction uses.
@@ -459,7 +538,9 @@ def main(argv=None):
                 for anchor in names:
                     row_meta.append({"problem_id": rec.get("problem_id"), "condition": cond,
                                      "anchor": anchor,
-                                     "linguistic_label": linguistic_label(rec, cond, anchor)})
+                                     "linguistic_label": linguistic_label(
+                                         rec, cond, anchor, labels_db=labels_db,
+                                         labels_path=args.linguistic_labels)})
         writer = LayerCheckpointWriter(args.results_root, args.run_id,
                                        d_model=1, prefix="layer")
         n_layers = max(writer.completed_layers()) + 1 if writer.completed_layers() else 0
@@ -479,7 +560,8 @@ def main(argv=None):
     try:
         store, row_meta, drops = extract_all(
             records, loaded, conditions=conditions, dtype=args.dtype,
-            spill_dir=args.spill_dir, log=log)
+            spill_dir=args.spill_dir, log=log, labels_db=labels_db,
+            labels_path=args.linguistic_labels)
         kept_problems = sorted({m["problem_id"] for m in row_meta})
         drop_rate = len(drops) / float(len(records)) if records else 0.0
         log("G3 drop rate: %d/%d = %.3f (%d states kept)"
