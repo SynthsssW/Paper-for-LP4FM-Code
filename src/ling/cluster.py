@@ -112,6 +112,10 @@ DEFAULT_K_MAX = 20
 #: is "the run never finishes and nobody knows why".
 PURE_PY_MAX_ROWS = 250
 
+#: Eigengap flatness: the winning gap must be at least this many times the median
+#: of the other candidate gaps or the layer is flagged. See :func:`eigengap_k`.
+DEFAULT_FLAT_RATIO_THRESHOLD = 3.0
+
 #: Above this many rows the EXACT (dense n x n) path refuses to run without an
 #: explicit override; use Nystrom instead.
 DEFAULT_EXACT_MAX_ROWS = 3000
@@ -419,6 +423,14 @@ def choose_sigma(X: Any, ref_idx: Sequence[int], *, knn_sigma: int = 7) -> float
     ``ref_idx`` is the POOLED reference set (the Nystrom landmarks, or all rows on
     the exact path). A per-condition bandwidth is as forbidden as a per-condition
     landmark set, and for the same reason (§A.11 item 6).
+
+    The heuristic is density-adaptive — the knn-th neighbour distance shrinks as
+    the sample gets denser — which is what keeps one ``knn_sigma`` usable across
+    layers. It is nevertheless the one genuinely free parameter in this front
+    end: a bandwidth wider than the gap between two structures merges them. The
+    chosen sigma is recorded on every layer record so the choice is auditable,
+    and re-running the pipeline at a second ``--knn-sigma`` is the cheap
+    robustness check.
     """
     ref = take_rows(X, ref_idx)
     D2 = sqdist(X, ref)
@@ -709,7 +721,8 @@ class KSelection:
 
 
 def eigengap_k(laplacian_eigenvalues: Sequence[float], *, k_min: int = DEFAULT_K_MIN,
-               k_max: int = DEFAULT_K_MAX, flat_ratio_threshold: float = 1.5,
+               k_max: int = DEFAULT_K_MAX,
+               flat_ratio_threshold: float = DEFAULT_FLAT_RATIO_THRESHOLD,
                flat_abs_tol: float = 1e-4):
     """Pick *k* by the eigengap heuristic, and say whether the spectrum is flat.
 
@@ -722,6 +735,12 @@ def eigengap_k(laplacian_eigenvalues: Sequence[float], *, k_min: int = DEFAULT_K
     gap — ``best / median(other gaps) < flat_ratio_threshold`` — or when it is
     below ``flat_abs_tol`` in absolute terms. Flat means "this k is a coin toss";
     the layer is still clustered, at the argmax k, and the flag travels with it.
+
+    The default threshold is calibrated on synthetic references (tests/test_cluster.py):
+    three well-separated blobs give a ratio around 25, a uniformly sampled 1-D arc
+    with no cluster structure gives 1.6-2.1. This is a report-and-continue
+    diagnostic, not a gate — §A.6 says "flag flat-spectrum layers as planned", so
+    a layer that trips it is still clustered and still contributes.
     """
     mu = [float(v) for v in laplacian_eigenvalues]
     if k_min < 2:
@@ -768,7 +787,7 @@ def select_k(base_states: Any, base_row_conditions: Sequence[str], *,
              seed: int = 0, knn_sigma: int = 7,
              n_landmarks: Optional[int] = None,
              exact_max_rows: int = DEFAULT_EXACT_MAX_ROWS,
-             flat_ratio_threshold: float = 1.5,
+             flat_ratio_threshold: float = DEFAULT_FLAT_RATIO_THRESHOLD,
              flat_abs_tol: float = 1e-4,
              sigma: Optional[float] = None) -> KSelection:
     """Select *k* at one layer from the BASE CONDITION'S ROWS ONLY.
@@ -866,7 +885,10 @@ def _kmeans_pp_init(X: Any, k: int, rng: random.Random) -> List[int]:
     else:
         best = [row[0] for row in D2]
     for _ in range(1, k):
-        total = float(sum(best))
+        if np is not None and isinstance(best, np.ndarray):
+            total = float(np.sum(best))
+        else:
+            total = float(sum(best))
         if total <= _EPS:
             remaining = [i for i in range(n) if i not in centres]
             centres.append(rng.choice(remaining) if remaining else rng.randrange(n))

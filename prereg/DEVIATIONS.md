@@ -217,3 +217,31 @@ Enforced at build: every non-comment line is `<quantity> = <bare literal>` match
 sampled value; exactly one `answer = ?`; no compound answer expression; no scratch variable
 bound (three templates whose `#answer:` names a solved-for intermediate would otherwise have
 leaked the answer).
+
+---
+
+## Amendment 5 — kernel and bandwidth pre-committed
+
+**Timestamp:** 2026-09-06T23:55 UTC
+**Status:** operationalization, pre-data. No endpoint or direction changes.
+
+**Kernel.** Amendment 3 fixed the *representation* (cosine, scale-invariant) but not the
+kernel. A literal cosine gram matrix `A = X̂X̂ᵀ` makes normalized spectral clustering a
+LINEAR method, which cannot recover non-convex structure — the very capability that
+justifies the front end. The affinity is therefore a **Gaussian kernel on cosine distance**,
+strictly monotone in `1 - cos` and so equally scale-invariant. `kernel="cosine_linear"`
+exists for robustness only.
+
+**Bandwidth is the one free parameter, so it is pre-committed here.** `sigma` = median over
+rows of the k-th nearest reference distance, computed on the **pooled** set across all
+conditions. A per-condition bandwidth is as forbidden as per-condition landmarks (§A.11
+item 6) — it would build a between-condition difference in before measurement.
+
+`knn_sigma` is fixed at its default for the primary analysis. A second value is run as a
+robustness check and reported. **The primary endpoint is not selected across bandwidths.**
+A bandwidth wider than a between-structure gap merges that structure, so this parameter can
+move lambda2; choosing it after seeing lambda2 would be a researcher degree of freedom on
+the primary endpoint.
+
+**Reported per layer** in the assignments file: `kernel`, `sigma`, `laplacian` (normalized
+symmetric), and the eigengap.
