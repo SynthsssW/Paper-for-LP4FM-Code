@@ -309,8 +309,9 @@ WORD_POOLS: Dict[str, List[Any]] = {
         "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
     ],
     "colors": ["red", "blue", "green", "yellow", "purple", "orange"],
-    "fruits": ["apples", "bananas", "oranges", "pears", "plums", "peaches"],
-    "sports": ["soccer", "basketball", "tennis", "hockey", "cricket", "volleyball"],
+    # Singular: the templates pluralise in the literal text ("{fruit,\n    # pineapple}s per {area,hectare}"), so a plural pool yields "peachess".
+    "fruits": ["apple", "banana", "orange", "pear", "plum", "peach", "pineapple"],
+    "sports": ["soccer", "basketball", "tennis", "hockey", "cricket", "volleyball"],  # singular, used bare
     "currencies_sym": ["$", "€", "£", "¥"],
     # Unit pools: the members observed in the official generated data are kept
     # first so that the common case matches published instances exactly.
@@ -319,12 +320,15 @@ WORD_POOLS: Dict[str, List[Any]] = {
     "length_lg": ["mile", "km", "kilometer"],
     # (surface, value) pools. Values are exact Fractions so that the templates'
     # `is_int(n * frac)` conditions behave, rather than drifting on 1/3.
+    # Surfaces carry their determiner because the templates use them bare
+    # ("{frac_1, half} of the balls are ..."), where "Fifth of the balls" would
+    # be ungrammatical but "A fifth of the balls" is not.
     "fractions": [
         ("half", Fraction(1, 2)),
-        ("third", Fraction(1, 3)),
-        ("quarter", Fraction(1, 4)),
-        ("fifth", Fraction(1, 5)),
-        ("sixth", Fraction(1, 6)),
+        ("a third", Fraction(1, 3)),
+        ("a quarter", Fraction(1, 4)),
+        ("a fifth", Fraction(1, 5)),
+        ("a sixth", Fraction(1, 6)),
     ],
     "fraction_alph": [
         ("a half", Fraction(1, 2)),
@@ -440,6 +444,38 @@ def normalise_answer(value: Any) -> Optional[float]:
 
 
 _SENTENCE_END_RE = re.compile(r"(?:^|[.!?:]|\n)\s*$")
+_ARTICLE_RE = re.compile(r"(?<![A-Za-z])([Aa])n?(\s+)$")
+#: Words whose written initial letter disagrees with their initial sound.
+_AN_DESPITE_CONSONANT = ("hour", "honest", "honou", "honor", "heir")
+_A_DESPITE_VOWEL = ("one", "once", "uni", "use", "usu", "euro", "ewe", "ubiq")
+
+
+def _needs_an(word: str) -> bool:
+    w = word.lstrip("\"'(").lower()
+    if not w:
+        return False
+    if w.startswith(_AN_DESPITE_CONSONANT):
+        return True
+    if w.startswith(_A_DESPITE_VOWEL):
+        return False
+    return w[0] in "aeiou"
+
+
+def _fix_article(literal: str, following: str) -> str:
+    """Make a trailing indefinite article agree with the word about to follow.
+
+    Applied while the literal is being emitted and BEFORE any span is recorded
+    for the placeholder that follows it, so the recorded offsets always describe
+    the final string. The templates hard-code "a", which yields "a agent fee" or
+    "a hour" once a sampled noun lands there.
+    """
+    m = _ARTICLE_RE.search(literal)
+    if not m or not following:
+        return literal
+    want = "an" if _needs_an(following) else "a"
+    if m.group(1).isupper():
+        want = want.capitalize()
+    return literal[: m.start()] + want + m.group(2)
 
 
 def _starts_sentence(parts: Sequence[str]) -> bool:
@@ -471,7 +507,12 @@ class VarSpec:
     targets: List[str]
     pool: List[Any]
     draw: str  # "one" | "many" | "sequential"
-    declared_numeric: bool  # the `$` sigil
+    #: whether the template marked this binding with the `$` sigil. Recorded for
+    #: provenance only: quantity detection deliberately goes by the bound
+    #: VALUE's type instead, because several templates (0023, 0026, 0050) omit
+    #: the sigil on slots that are plainly numeric and whose positions we still
+    #: need to anchor.
+    declared_numeric: bool
 
 
 @dataclass
@@ -515,14 +556,6 @@ class Instance:
     bindings: Dict[str, Any]
     quantities: List[str]  # ordered by first appearance in the question body
     answer: float
-
-    def value_of(self, name: str) -> Any:
-        return self.bindings[name]
-
-    def replaced(self, name: str, value: Any) -> Dict[str, Any]:
-        b = dict(self.bindings)
-        b[name] = value
-        return b
 
 
 @dataclass
@@ -771,12 +804,34 @@ class Template:
                 names.append(node.id)
         return names
 
+    @staticmethod
+    def _lexically_coherent(bindings: Dict[str, Any]) -> bool:
+        """Reject draws where two distinct lexical slots land on the same word.
+
+        Several templates draw a "real" and a "decoy" noun from overlapping
+        inline lists (template 0061 draws `objects` and `fake_object` both able
+        to yield "coins"), which produces "they weren't coins, but actually
+        coins". Apple's own generator evidently allows this; we do not, because
+        an incoherent prompt is a silently broken item in a 100-item corpus.
+        Only plain-string bindings are compared -- two numeric slots holding the
+        same value is normal and stays legal.
+        """
+        seen = set()
+        for value in bindings.values():
+            if type(value) is str:
+                key = value.lower()
+                if key in seen:
+                    return False
+                seen.add(key)
+        return True
+
     def sample(
         self,
         rng: random.Random,
         max_tries: int = 200000,
         require_positive: bool = True,
         require_integer: bool = False,
+        require_lexical_coherence: bool = True,
     ) -> Instance:
         """Rejection-sample values until #conditions hold and the answer is clean.
 
@@ -787,6 +842,8 @@ class Template:
         """
         for _ in range(max_tries):
             bindings = self._draw(rng)
+            if require_lexical_coherence and not self._lexically_coherent(bindings):
+                continue
             if not self.conditions_hold(bindings):
                 continue
             ans = self.answer(bindings)
@@ -817,26 +874,40 @@ class Template:
         so a quantity whose surface happens to repeat elsewhere in the prose
         cannot be mis-anchored.
         """
+        # Pass 1: resolve every chunk. Placeholder surfaces depend on whether
+        # the prose so far ends a sentence; literals may need their trailing
+        # indefinite article adjusted to the surface that follows. Neither
+        # depends on the other, so one pass settles both.
+        chunks: List[str] = []
+        for i, seg in enumerate(self.segments):
+            if seg.kind == "lit":
+                chunks.append(seg.text)
+            else:
+                chunks.append(
+                    self._surface(
+                        bindings[seg.var],
+                        seg.default,
+                        sentence_initial=_starts_sentence(chunks),
+                    )
+                )
+        for i, seg in enumerate(self.segments):
+            if seg.kind == "lit" and i + 1 < len(chunks):
+                chunks[i] = _fix_article(chunks[i], chunks[i + 1])
+
+        # Pass 2: build the string and record spans AS EACH CHUNK IS APPENDED.
         parts: List[str] = []
         pos = 0
         anchors: Dict[str, List[int]] = {}
         literals: Dict[str, str] = {}
         wanted = set(quantities)
 
-        for seg in self.segments:
-            if seg.kind == "lit":
-                parts.append(seg.text)
-                pos += len(seg.text)
-                continue
-            surface = self._surface(
-                bindings[seg.var], seg.default, sentence_initial=_starts_sentence(parts)
-            )
+        for seg, chunk in zip(self.segments, chunks):
             start = pos
-            parts.append(surface)
-            pos += len(surface)
-            if seg.var in wanted and seg.var not in anchors:
+            parts.append(chunk)
+            pos += len(chunk)
+            if seg.kind == "ph" and seg.var in wanted and seg.var not in anchors:
                 anchors[seg.var] = [start, pos]
-                literals[seg.var] = surface
+                literals[seg.var] = chunk
 
         text = "".join(parts)
         assert pos == len(text)  # emitted-length bookkeeping must match reality
@@ -940,9 +1011,6 @@ class Template:
         if isinstance(value, tuple):
             return repr(tuple(value))
         return '"%s"' % str(value).replace("\\", "\\\\").replace('"', '\\"')
-
-    def python_program(self, bindings: Dict[str, Any], quantities: Sequence[str]) -> str:
-        return self.render_python(bindings, quantities).text
 
 
 # ---------------------------------------------------------------------------

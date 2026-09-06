@@ -274,7 +274,12 @@ def main(argv=None) -> int:
     print("NOTE: this is the mechanical build. Gate G3 (round-trip verification "
           "by a DIFFERENT model than the generator, prereg/PRIMARY_ENDPOINTS.md) "
           "is a separate step and its drop rate is reported separately.")
-    return 0 if not failures else 0
+    # A few build failures are logged, not fatal (A.5 wants the drop rate). A
+    # corpus that came up short of the requested size is a different matter.
+    if len(records) < args.n_problems:
+        print("\nFATAL: asked for %d problems, built %d." % (args.n_problems, len(records)))
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

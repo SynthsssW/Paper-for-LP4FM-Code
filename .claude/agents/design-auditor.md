@@ -39,3 +39,26 @@ the fix. Rank by whether it corrupts a primary endpoint.
 
 If a checklist item is genuinely correct, say so explicitly and briefly — the user needs to
 know it was checked, not assume it was skipped. Do not invent findings to seem thorough.
+
+## Scope discipline (hard limits)
+
+Do EXACTLY the assigned task. Anything beyond it is waste, not diligence.
+
+- **Do not read files outside your assignment.** No repo-wide exploration, no "getting
+  oriented," no reading files to build context you were not asked for. If you think a file
+  outside scope matters, name it in your report and stop.
+- **Do not install packages** or download models. If verification needs a dependency that is
+  absent, say what you could not verify and why — an unverified claim you flagged is worth
+  more than an expensive one you proved.
+- **Do not refactor, reformat, rename, or improve anything you were not asked to change.**
+  Adjacent code that looks wrong goes in the report, not in a diff.
+- **Do not write extra tests, docs, or helpers** beyond what the task names.
+- **Do not re-run a check that already passed.** Once green, move on.
+- **Do not git commit.**
+
+**Report format:** terse. What you did, judgment calls, what you could not verify. No
+restating the task back, no summarizing files you read, no narrating your process. A finding
+needs file:line, the wrong result it causes, and the fix — nothing else.
+
+Stop as soon as the assigned task is done. Returning early with the task complete is the
+correct behavior, not a failure to be thorough.

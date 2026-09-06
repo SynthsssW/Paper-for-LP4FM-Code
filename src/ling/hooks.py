@@ -23,6 +23,39 @@ of block 13.  §A.11 lists the input-vs-output off-by-one as a silent-corruption
 bug; this is the single place the convention is defined.
 
 ===========================================================================
+LAYER-PAIR INDEX CONVENTION  --  prereg/DEVIATIONS.md Amendment 3
+===========================================================================
+lambda2 and path entropy are computed on a cluster-TRANSITION graph, which is a
+statistic of two ADJACENT layers, not of one layer.  Amendment 2 makes the H3
+primary endpoint a mean paired difference across LAYER-PAIRS (the pairing unit
+is the layer-pair, n ~ 40, not the problem), so the pair index is now part of
+the primary endpoint's definition and an off-by-one in it is exactly the §A.11
+item-2 failure mode one level up.
+
+    Layer-pair ``p`` = (output of block ``p``, output of block ``p+1``).
+
+    * ``p`` ranges over ``0 .. n_layers-2`` inclusive.
+    * A model with ``L`` blocks therefore has exactly ``L - 1`` layer-pairs.
+      For gemma-4-12B-it, ``L = 48`` gives **47 layer-pairs**, and 47 is the
+      ``n`` for H3's Wilcoxon signed-rank test — NOT 48, and NOT 40.
+    * The "source"/"earlier" member of pair ``p`` is ``residuals[p]``; the
+      "target"/"later" member is ``residuals[p+1]``.  A cluster transition is
+      read in that direction: the state at pair ``p`` moves FROM its cluster at
+      the output of block ``p`` TO its cluster at the output of block ``p+1``.
+    * There is no pair ``n_layers-1``: block ``n_layers-1`` has no successor
+      block.  There is no pair involving the embedding output either — the
+      embedding is not in ``residuals`` at all (see above), so pair 0 is
+      (output of block 0, output of block 1) and never (embeddings, block 0).
+    * ``k`` for BOTH members of a pair is the ``k`` selected on nl_base at that
+      member's own layer (prereg decision 1), i.e. pair ``p`` uses ``k[p]`` for
+      the source partition and ``k[p+1]`` for the target partition.
+
+:func:`n_layer_pairs`, :func:`layer_pair_indices` and
+:meth:`AlignedActivationStore.iter_layer_pairs` are the only sanctioned way to
+enumerate pairs; do not write ``range(n_layers)`` and index ``i-1`` in a
+closure.
+
+===========================================================================
 WHICH SIDE OF THE LAYERNORM  --  §A.11 item 1
 ===========================================================================
 We take the residual stream **post-block and pre-normalization**: the raw value
@@ -102,6 +135,86 @@ class AnchorError(ValueError):
     """Raised when an anchor character span cannot be resolved to a token."""
 
 
+class AnchorDropError(AnchorError):
+    """An anchor failure that makes the whole PROBLEM undroppable-in-place.
+
+    Every subclass names the ``problem_id`` and the offending ``condition``, so
+    the extraction driver can do::
+
+        try:
+            acts = extract_aligned(...)
+        except AnchorDropError as exc:
+            drops.append({"problem_id": exc.problem_id,
+                          "condition": exc.condition,
+                          "reason": exc.reason})
+            continue          # drop the PROBLEM, all four realizations
+
+    and report the drop rate under gate G3 (prereg/PRIMARY_ENDPOINTS.md).
+
+    A problem is dropped in ALL FOUR conditions or none: §A.6 restricts the
+    analysis to positions present in all four realizations, so keeping the three
+    conditions that resolved cleanly would reintroduce exactly the graph-size
+    confound the restriction exists to remove.
+    """
+
+    #: Short machine-readable code, for tallying drops by cause.
+    reason = "anchor_error"
+
+    def __init__(self, message: str, *, problem_id: Optional[str] = None,
+                 condition: Optional[str] = None):
+        self.problem_id = problem_id
+        self.condition = condition
+        super().__init__("[problem_id={} condition={}] {}".format(
+            problem_id if problem_id is not None else "<unset>",
+            condition if condition is not None else "<unset>",
+            message))
+
+
+class AnchorKeyMismatch(AnchorDropError):
+    """The realization's anchor keys are not exactly the expected key set.
+
+    §A.6: if ``formal`` is missing one quantity it contributes fewer token
+    states per problem than ``nl_base``.  lambda2 is strongly node-count
+    dependent, so the H3 endpoint would absorb a pure graph-size difference —
+    the precise confound §A.6 exists to prevent.
+    """
+
+    reason = "anchor_key_mismatch"
+
+    def __init__(self, message: str, *, problem_id=None, condition=None,
+                 missing: Optional[Sequence[str]] = None,
+                 unexpected: Optional[Sequence[str]] = None):
+        self.missing = list(missing or [])
+        self.unexpected = list(unexpected or [])
+        super().__init__(message, problem_id=problem_id, condition=condition)
+
+
+class DuplicateAnchorPosition(AnchorDropError):
+    """Two anchors of one realization resolved to the SAME token index.
+
+    Asymmetric across conditions and therefore not a wash: with
+    ``strategy="last"`` a Python line ending ``num_clips_may = 24`` collapses
+    FINAL and the ``num_clips_may`` anchor onto one token, while the prose
+    ``"... and 24 in May."`` ends on punctuation and does not.  The formal
+    pooled graph would gain a cosine-affinity-1.0 node pair per affected
+    problem, shifting the degree distribution, lambda2 and the node count that
+    path entropy normalises by.
+    """
+
+    reason = "duplicate_anchor_position"
+
+    def __init__(self, message: str, *, problem_id=None, condition=None,
+                 duplicates: Optional[Sequence[str]] = None):
+        self.duplicates = list(duplicates or [])
+        super().__init__(message, problem_id=problem_id, condition=condition)
+
+
+class FinalTokenError(AnchorDropError):
+    """FINAL did not resolve to a real, non-whitespace, non-special token."""
+
+    reason = "final_token_invalid"
+
+
 class ExtractionError(RuntimeError):
     pass
 
@@ -110,6 +223,40 @@ def _require_numpy():
     if np is None:
         raise ExtractionError("numpy is required for activation extraction")
     return np
+
+
+# ==========================================================================
+# 0. Layer-pair index convention  (Amendment 3; see the module docstring)
+# ==========================================================================
+def n_layer_pairs(n_layers: int) -> int:
+    """Number of adjacent layer-pairs for a model with ``n_layers`` blocks.
+
+    Amendment 3: pair ``p`` = (output of block ``p``, output of block ``p+1``),
+    ``p`` in ``0 .. n_layers-2``.  So ``n_layers - 1`` pairs; L=48 -> 47.  This
+    number is the ``n`` of H3's Wilcoxon signed-rank test.
+    """
+    n_layers = int(n_layers)
+    if n_layers < 2:
+        raise ExtractionError(
+            "a layer-pair statistic needs at least 2 blocks; got {}".format(n_layers))
+    return n_layers - 1
+
+
+def layer_pair_indices(n_layers: int) -> List[int]:
+    """``[0, 1, ..., n_layers-2]`` — the sanctioned pair index enumeration."""
+    return list(range(n_layer_pairs(n_layers)))
+
+
+def layer_pair_members(pair: int, n_layers: int) -> Tuple[int, int]:
+    """``pair`` -> ``(source_layer, target_layer)`` = ``(pair, pair + 1)``."""
+    pair = int(pair)
+    if pair < 0 or pair >= n_layer_pairs(n_layers):
+        raise ExtractionError(
+            "layer-pair index {} out of range: a {}-block model has pairs 0..{} "
+            "(Amendment 3). There is no pair {} — block {} has no successor."
+            .format(pair, n_layers, n_layer_pairs(n_layers) - 1,
+                    n_layers - 1, n_layers - 1))
+    return pair, pair + 1
 
 
 # ==========================================================================
@@ -139,7 +286,8 @@ def anchor_order(anchors: Dict[str, Sequence[int]]) -> List[str]:
     return names + [FINAL]
 
 
-def check_anchor_keys_consistent(realizations: Dict[str, Dict[str, Any]]) -> List[str]:
+def check_anchor_keys_consistent(realizations: Dict[str, Dict[str, Any]],
+                                 *, problem_id: Optional[str] = None) -> List[str]:
     """Enforce the corpus invariant across the four realizations of one problem.
 
     configs/corpus_schema.md: "every quantity key appears in the `anchors` of all
@@ -147,8 +295,10 @@ def check_anchor_keys_consistent(realizations: Dict[str, Dict[str, Any]]) -> Lis
     a lambda2 difference between a 60-token NL prompt and a 28-token Python
     prompt is not confounded with length.
 
-    Returns the shared ordered key list. Raises if any condition is missing a
-    key — the caller drops the problem and counts it in the drop rate (G3).
+    Returns the shared ordered key list — which is exactly the ``expected_names``
+    that :func:`extract_aligned` requires for every one of the four conditions.
+    Raises :class:`AnchorKeyMismatch` if any condition is missing a key; the
+    caller drops the whole problem and counts it in the drop rate (G3).
     """
     keysets = {cond: set(r["anchors"]) for cond, r in realizations.items()}
     if not keysets:
@@ -157,11 +307,129 @@ def check_anchor_keys_consistent(realizations: Dict[str, Dict[str, Any]]) -> Lis
     union = set.union(*keysets.values())
     if shared != union:
         missing = {c: sorted(union - k) for c, k in keysets.items() if k != union}
-        raise AnchorError(
+        raise AnchorKeyMismatch(
             "anchor keys differ across realizations; missing per condition: {}. "
             "configs/corpus_schema.md makes this a DROP, counted in the drop "
-            "rate — do not silently intersect.".format(missing))
+            "rate — do not silently intersect: a condition with fewer anchors "
+            "contributes fewer nodes to the pooled graph, and lambda2 is "
+            "node-count dependent (§A.6).".format(missing),
+            problem_id=problem_id,
+            condition=",".join(sorted(missing)) or None,
+            missing=sorted(union - shared),
+        )
     return anchor_order(dict.fromkeys(shared, None))
+
+
+def normalize_prompt_text(text: str, *, problem_id: Optional[str] = None,
+                          condition: Optional[str] = None) -> str:
+    """The ONE place prompt text is normalised before tokenization.
+
+    Strips trailing whitespace, and nothing else.
+
+    Why this exists (and why it is not optional).  ``FINAL`` is defined as the
+    last token of the prompt, and it is one of only ~4-6 aligned positions per
+    problem — the one most likely to carry the answer state, and the position
+    H2's fork layer is read at.  A trailing ``"\\n"`` is a token in its own
+    right with a REAL, non-zero-width offset span, so the "trailing special
+    token" guard does not see it: FINAL would land on ``"\\n"`` for a Python
+    rewrite that ends with a newline and on ``"."`` for prose that does not.
+    That is a systematic, condition-correlated difference in what FINAL means,
+    injected straight into the H3 endpoint and the H2 fork layer.
+
+    Only trailing whitespace is removed, so every anchor character span stays
+    valid: ``rstrip`` cannot shift any offset before the cut.  An anchor whose
+    span extended INTO the stripped tail will now fail to match, loudly, which
+    is the correct outcome — that span was pointing at whitespace.
+
+    Leading whitespace is deliberately NOT stripped: it would shift every
+    character offset in the record and silently invalidate every anchor span.
+    A prompt with leading whitespace is a corpus bug, and is rejected here
+    rather than papered over.
+    """
+    if text is None:
+        raise AnchorError("prompt text is None")
+    out = text.rstrip()
+    if not out:
+        raise AnchorError("prompt text is empty after stripping trailing whitespace")
+    if out[0].isspace():
+        raise AnchorError(
+            "prompt text begins with whitespace. Leading whitespace cannot be "
+            "stripped here without shifting every anchor character span in the "
+            "corpus record; fix the record (problem_id={}, condition={}) "
+            "instead.".format(problem_id, condition))
+    return out
+
+
+def _token_text(offsets: Sequence[Tuple[int, int]], text: Optional[str], idx: int) -> str:
+    if text is None:
+        return ""
+    s, e = offsets[idx]
+    return text[int(s):int(e)]
+
+
+def validate_final_token(
+    idx: int,
+    offsets: Sequence[Tuple[int, int]],
+    *,
+    text: Optional[str] = None,
+    input_ids: Optional[Sequence[int]] = None,
+    special_ids: Optional[Sequence[int]] = None,
+    allow_trailing_special: bool = False,
+    problem_id: Optional[str] = None,
+    condition: Optional[str] = None,
+) -> None:
+    """POSITIVE check that the resolved FINAL token is a real content token.
+
+    The zero-width-span check alone is not sufficient (see
+    :func:`normalize_prompt_text`): a trailing newline has a real span and would
+    sail through it.  This asserts what we actually need — that the token
+    FINAL landed on carries content:
+
+    1. its offset span is non-empty (catches an appended special token), and
+    2. the text it covers is not whitespace-only, and
+    3. its token id is not in ``tokenizer.all_special_ids``.
+
+    ``allow_trailing_special`` relaxes (1) and (3) only, never (2): a
+    whitespace FINAL is never acceptable in any condition.
+    """
+    ts, te = (int(offsets[idx][0]), int(offsets[idx][1]))
+    if te <= ts and not allow_trailing_special:
+        raise FinalTokenError(
+            "FINAL resolves to token {} which has a zero-width offset span {} — "
+            "the tokenizer appended a trailing special token (EOS / "
+            "end-of-turn). The final position must be a real content token, and "
+            "a trailing special can differ in presence across the four "
+            "realizations, silently breaking the §A.6 alignment. Tokenize with "
+            "add_special_tokens=False, or strip the chat template, or pass "
+            "allow_trailing_special=True if you have verified it is present "
+            "identically in all four conditions.".format(idx, (ts, te)),
+            problem_id=problem_id, condition=condition)
+
+    if text is not None and te > ts:
+        covered = text[ts:te]
+        if covered.strip() == "":
+            raise FinalTokenError(
+                "FINAL resolves to token {} whose text is whitespace-only "
+                "({!r}). A trailing newline is a real token with a real span, "
+                "so the zero-width guard does not catch it: FINAL would mean "
+                "'the newline' in a Python rewrite ending in \\n and 'the "
+                "sentence-final period' in prose, which is a systematic, "
+                "condition-correlated difference in the single most important "
+                "aligned position (§A.6, and the position H2's fork layer is "
+                "read at). Prompt text must be passed through "
+                "normalize_prompt_text() before tokenization."
+                .format(idx, covered),
+                problem_id=problem_id, condition=condition)
+
+    if input_ids is not None and special_ids and not allow_trailing_special:
+        tid = int(input_ids[idx])
+        if tid in set(int(s) for s in special_ids):
+            raise FinalTokenError(
+                "FINAL resolves to token {} whose id {} is one of the "
+                "tokenizer's all_special_ids. Special tokens are not content "
+                "positions and their presence can differ across the four "
+                "realizations (§A.6).".format(idx, tid),
+                problem_id=problem_id, condition=condition)
 
 
 def _spans_overlap(tok: Tuple[int, int], span: Tuple[int, int]) -> bool:
@@ -182,6 +450,11 @@ def char_span_to_token_index(
     name: str = "<anchor>",
     n_tokens: Optional[int] = None,
     allow_trailing_special: bool = False,
+    text: Optional[str] = None,
+    input_ids: Optional[Sequence[int]] = None,
+    special_ids: Optional[Sequence[int]] = None,
+    problem_id: Optional[str] = None,
+    condition: Optional[str] = None,
 ) -> int:
     """Map one anchor character span to a single token index.
 
@@ -224,17 +497,14 @@ def char_span_to_token_index(
     # --- FINAL sentinel ---------------------------------------------------
     if start < 0 or end < 0:
         idx = n - 1
-        ts, te = offsets[idx]
-        if te <= ts and not allow_trailing_special:
-            raise AnchorError(
-                "FINAL resolves to token {} which has a zero-width offset span "
-                "{} — the tokenizer appended a trailing special token (EOS / "
-                "end-of-turn). The final position must be a real content token, "
-                "and a trailing special can differ in presence across the four "
-                "realizations, silently breaking the §A.6 alignment. Tokenize "
-                "with add_special_tokens=False, or strip the chat template, or "
-                "pass allow_trailing_special=True if you have verified it is "
-                "present identically in all four conditions.".format(idx, (ts, te)))
+        # Both the zero-width (negative) guard and the POSITIVE content check
+        # live in validate_final_token, so there is exactly one definition of
+        # "FINAL landed somewhere legitimate".
+        validate_final_token(
+            idx, offsets, text=text, input_ids=input_ids, special_ids=special_ids,
+            allow_trailing_special=allow_trailing_special,
+            problem_id=problem_id, condition=condition,
+        )
         return idx
 
     matches = [i for i in range(n) if _spans_overlap(tuple(offsets[i]), (start, end))]
@@ -243,10 +513,11 @@ def char_span_to_token_index(
             "anchor {!r} span [{}, {}) matches no token. Either the span is "
             "stale relative to the text (regenerate the corpus record), or it "
             "covers only whitespace that this tokenizer folds into a "
-            "neighbouring token's leading space. Do NOT work around this by "
-            "re-tokenizing the substring — that gives a different tokenization "
-            "than the in-context one (configs/corpus_schema.md).".format(
-                name, start, end))
+            "neighbouring token's leading space, or it pointed into trailing "
+            "whitespace that normalize_prompt_text() removed. Do NOT work "
+            "around this by re-tokenizing the substring — that gives a "
+            "different tokenization than the in-context one "
+            "(configs/corpus_schema.md).".format(name, start, end))
     return matches[-1] if strategy == "last" else matches[0]
 
 
@@ -260,10 +531,64 @@ class AnchorResolution:
     offsets: List[Tuple[int, int]]
     n_tokens: int
     strategy: str
+    text: str = ""                   # the NORMALISED text actually tokenized
+    problem_id: Optional[str] = None
+    condition: Optional[str] = None
+    text_was_rstripped: bool = False
 
     @property
     def n_positions(self) -> int:
         return len(self.names)
+
+    def token_text(self, name: str) -> str:
+        """The text covered by the token that anchor ``name`` resolved to."""
+        return _token_text(self.offsets, self.text or None,
+                           self.token_indices[self.names.index(name)])
+
+
+def _check_expected_names(names: Sequence[str], expected_names: Sequence[str],
+                          *, problem_id, condition) -> None:
+    """§A.6 cross-condition invariant, asserted on EVERY resolution.
+
+    ``expected_names`` is the shared, ordered key list of the problem — the
+    return value of :func:`check_anchor_keys_consistent`.  It is a REQUIRED
+    parameter of the extraction entry points precisely so that this cannot be
+    skipped by a caller who forgot to call the checker: an invariant that is
+    only enforced when someone remembers to enforce it is not an invariant.
+    """
+    if expected_names is None:
+        raise TypeError(
+            "expected_names is required (§A.6). Pass the shared ordered key "
+            "list returned by check_anchor_keys_consistent(problem['realizations']) "
+            "— the SAME list for all four conditions of a problem.")
+    exp = list(expected_names)
+    if not exp:
+        raise AnchorError("expected_names is empty")
+    if FINAL not in exp:
+        raise AnchorError(
+            "expected_names must contain the {!r} sentinel; got {}".format(FINAL, exp))
+    canonical = anchor_order(dict.fromkeys(exp, None))
+    if canonical != exp:
+        raise AnchorError(
+            "expected_names {} is not in canonical order; use "
+            "anchor_order()/check_anchor_keys_consistent() so that column j "
+            "means the same quantity in all four realizations (§A.6). "
+            "Canonical order is {}.".format(exp, canonical))
+    if list(names) != exp:
+        missing = [n for n in exp if n not in names]
+        unexpected = [n for n in names if n not in exp]
+        raise AnchorKeyMismatch(
+            "anchor keys for this realization are {} but the problem's shared "
+            "key list is {} (missing here: {}; unexpected here: {}). §A.6 "
+            "restricts the analysis to positions present in ALL FOUR "
+            "realizations; a condition contributing fewer aligned positions "
+            "contributes fewer nodes to the pooled cluster-transition graph, "
+            "and lambda2 is strongly node-count dependent — the H3 endpoint "
+            "would absorb a pure graph-size difference. DROP the whole problem "
+            "and count it in the G3 drop rate."
+            .format(list(names), exp, missing, unexpected),
+            problem_id=problem_id, condition=condition,
+            missing=missing, unexpected=unexpected)
 
 
 def resolve_anchor_positions(
@@ -271,10 +596,13 @@ def resolve_anchor_positions(
     anchors: Dict[str, Sequence[int]],
     tokenizer: Any,
     *,
+    expected_names: Sequence[str],          # REQUIRED — §A.6, see below
+    problem_id: Optional[str] = None,
+    condition: Optional[str] = None,
     strategy: str = "last",
     add_special_tokens: bool = True,
     allow_trailing_special: bool = False,
-    allow_duplicate_positions: bool = True,
+    allow_duplicate_positions: bool = False,
 ) -> AnchorResolution:
     """Tokenize ``text`` once and resolve every anchor span to a token index.
 
@@ -284,11 +612,30 @@ def resolve_anchor_positions(
     grouping, byte fallback), so a substring's tokenization does not in general
     appear in the full sequence's tokenization, and matching on it produces
     positions that are quietly wrong.
+
+    Parameters
+    ----------
+    expected_names:
+        **Required.** The problem's shared, ordered anchor key list, i.e. the
+        return value of :func:`check_anchor_keys_consistent`, passed identically
+        for all four conditions. Validated on every call — see
+        :func:`_check_expected_names` for why it is not optional. Omitting it
+        raises ``TypeError``.
+    allow_duplicate_positions:
+        Default **False**. Two anchors resolving to one token produce two
+        byte-identical rows in the graph; see :class:`DuplicateAnchorPosition`
+        for why that is asymmetric across conditions rather than a wash. Set to
+        True only for a deliberate diagnostic, never for the primary run.
     """
     if not getattr(tokenizer, "is_fast", False):
         raise AnchorError(
             "a fast tokenizer is required for offset mapping; got {}".format(
                 type(tokenizer).__name__))
+
+    # ONE place where prompt text is normalised, applied identically to all four
+    # conditions (F3 / §A.6).
+    raw = text
+    text = normalize_prompt_text(text, problem_id=problem_id, condition=condition)
 
     enc = tokenizer(
         text,
@@ -303,24 +650,56 @@ def resolve_anchor_positions(
     if len(offsets) != len(input_ids):
         raise AnchorError("offset_mapping length != input_ids length")
 
+    if not hasattr(tokenizer, "all_special_ids"):
+        raise AnchorError(
+            "tokenizer {} does not expose `all_special_ids`, so the FINAL "
+            "position cannot be checked against the special-token set. Every "
+            "HF fast tokenizer has it; a test double must provide it too — the "
+            "check is not optional (§A.6).".format(type(tokenizer).__name__))
+    special_ids = list(getattr(tokenizer, "all_special_ids") or [])
+
     names = anchor_order(anchors)
+    _check_expected_names(names, expected_names,
+                          problem_id=problem_id, condition=condition)
+
     idxs: List[int] = []
     for nm in names:
         idxs.append(char_span_to_token_index(
             offsets, anchors[nm], strategy=strategy, name=nm,
             n_tokens=len(input_ids),
             allow_trailing_special=allow_trailing_special,
+            text=text, input_ids=input_ids, special_ids=special_ids,
+            problem_id=problem_id, condition=condition,
         ))
+
+    # Positive FINAL check, again, unconditionally: char_span_to_token_index can
+    # be reached with strategy/params that skip it, this call site cannot.
+    validate_final_token(
+        idxs[names.index(FINAL)], offsets, text=text, input_ids=input_ids,
+        special_ids=special_ids, allow_trailing_special=allow_trailing_special,
+        problem_id=problem_id, condition=condition)
 
     if not allow_duplicate_positions and len(set(idxs)) != len(idxs):
         dup = [nm for nm, i in zip(names, idxs) if idxs.count(i) > 1]
-        raise AnchorError(
-            "anchors {} resolved to the same token index; the corresponding "
-            "token states would be exact duplicates in the graph".format(dup))
+        collided = sorted({i for i in idxs if idxs.count(i) > 1})
+        raise DuplicateAnchorPosition(
+            "anchors {} resolved to the same token index(es) {}; the "
+            "corresponding token states would be byte-identical rows in the "
+            "graph (cosine affinity exactly 1.0). This is ASYMMETRIC across "
+            "conditions — with strategy='last' a Python line ending "
+            "`num_clips_may = 24` collapses FINAL onto the quantity anchor, "
+            "while prose ending '... and 24 in May.' ends on punctuation and "
+            "does not — so it shifts the degree distribution, lambda2, and the "
+            "node count path entropy normalises by, for `formal` only. DROP "
+            "the whole problem and count it in the G3 drop rate."
+            .format(dup, collided),
+            problem_id=problem_id, condition=condition, duplicates=dup)
 
     return AnchorResolution(
         names=names, token_indices=idxs, input_ids=input_ids,
         offsets=offsets, n_tokens=len(input_ids), strategy=strategy,
+        text=text, problem_id=problem_id, condition=condition,
+        text_was_rstripped=(raw != text),
     )
 
 
@@ -478,10 +857,19 @@ def forward_once(loaded: Any, input_ids: Any, *, attention_mask: Any = None) -> 
     return out.logits
 
 
-def encode(loaded: Any, text: str, *, add_special_tokens: bool = True) -> Any:
-    """Tokenize one prompt into a ``[1, T]`` tensor. No padding, no truncation."""
+def encode(loaded: Any, text: str, *, add_special_tokens: bool = True,
+           normalize: bool = True) -> Any:
+    """Tokenize one prompt into a ``[1, T]`` tensor. No padding, no truncation.
+
+    ``normalize=True`` (default) routes the text through
+    :func:`normalize_prompt_text`, the same single normalisation the extraction
+    path applies, so that a probe or a behavioural prompt cannot end on a
+    trailing-newline token that the aligned extraction would never see.
+    """
     import torch
 
+    if normalize:
+        text = normalize_prompt_text(text)
     enc = loaded.tokenizer(
         text, add_special_tokens=add_special_tokens, return_tensors=None,
         padding=False, truncation=False,
@@ -498,8 +886,13 @@ def extract_aligned(
     tokenizer: Any,
     model: Any,
     *,
+    expected_names: Sequence[str],          # REQUIRED — §A.6, see below
+    problem_id: Optional[str] = None,
+    condition: Optional[str] = None,
     strategy: str = "last",
     add_special_tokens: bool = True,
+    allow_trailing_special: bool = False,
+    allow_duplicate_positions: bool = False,
     dtype: str = "float32",
     return_meta: bool = False,
 ):
@@ -510,6 +903,29 @@ def extract_aligned(
     confounded with length before semantics enter. The fix is to restrict to
     aligned positions — the final token plus the position at which each quantity
     is introduced — which are present in all four realizations.
+
+    Parameters
+    ----------
+    expected_names:
+        **Required.** The problem's shared, ordered anchor key list — the return
+        value of ``check_anchor_keys_consistent(problem["realizations"])`` —
+        passed identically for every one of the four conditions. It is required
+        rather than optional because the §A.6 cross-condition invariant has to
+        be asserted on every extraction, not on the ones a caller remembered to
+        check: if ``formal`` silently contributes one fewer aligned position
+        than ``nl_base``, its pooled graph has fewer nodes, and lambda2 is
+        strongly node-count dependent, so H3's endpoint absorbs a pure
+        graph-size difference in its pre-committed direction.
+    problem_id, condition:
+        Carried into :class:`AnchorDropError` so a driver can tally the drop
+        under gate G3 instead of guessing which record failed.
+
+    Raises
+    ------
+    AnchorDropError
+        (:class:`AnchorKeyMismatch`, :class:`DuplicateAnchorPosition`,
+        :class:`FinalTokenError`) — the problem must be dropped in ALL FOUR
+        conditions and counted in the G3 drop rate.
 
     Returns
     -------
@@ -536,8 +952,15 @@ def extract_aligned(
             RuntimeWarning, stacklevel=2)
 
     res = resolve_anchor_positions(
-        text, anchors, tokenizer, strategy=strategy,
+        text, anchors, tokenizer,
+        expected_names=expected_names,
+        problem_id=problem_id, condition=condition,
+        strategy=strategy,
         add_special_tokens=add_special_tokens,
+        allow_trailing_special=allow_trailing_special,
+        # Explicitly False, never left to the callee's default: a duplicate
+        # resolution is a loud, typed, countable DROP (§A.6), not a shrug.
+        allow_duplicate_positions=allow_duplicate_positions,
     )
 
     input_ids = torch.tensor([res.input_ids], dtype=torch.long, device=model.device)
@@ -621,6 +1044,54 @@ class LayerBatch:
         return out
 
 
+@dataclass
+class LayerPair:
+    """Two ADJACENT layers, handed to a pair-consuming callback together.
+
+    Amendment 3 convention (module docstring): pair ``p`` = (output of block
+    ``p``, output of block ``p+1``).  ``source.layer == pair`` and
+    ``target.layer == pair + 1``, asserted here rather than assumed, because
+    lambda2 and path entropy are two-layer statistics and an off-by-one in the
+    pair index is §A.11 item 2 one level up.
+
+    This exists so that no caller has to carry "layer i-1" in a closure over
+    :meth:`AlignedActivationStore.iter_layers`.  That pattern is where the
+    off-by-one gets written, and it is invisible in the output: a transition
+    graph built from (i-1, i) instead of (i, i+1) still produces a perfectly
+    plausible lambda2.
+    """
+
+    pair: int
+    source: "LayerBatch"        # output of block `pair`
+    target: "LayerBatch"        # output of block `pair + 1`
+
+    def __post_init__(self):
+        if self.source.layer != self.pair or self.target.layer != self.pair + 1:
+            raise ExtractionError(
+                "layer-pair {} must be (output of block {}, output of block {}) "
+                "but got batches for layers ({}, {}). Amendment 3."
+                .format(self.pair, self.pair, self.pair + 1,
+                        self.source.layer, self.target.layer))
+        if len(self.source.rows) != len(self.target.rows):
+            raise ExtractionError(
+                "pair {}: source has {} rows, target has {} — the two members of "
+                "a pair must be the SAME token states at two depths, or the "
+                "transition graph is meaningless".format(
+                    self.pair, len(self.source.rows), len(self.target.rows)))
+
+    @property
+    def n_states(self) -> int:
+        return self.source.n_states
+
+    @property
+    def rows(self) -> List["StateRow"]:
+        """Row provenance, shared by both members of the pair."""
+        return self.source.rows
+
+    def layers(self) -> Tuple[int, int]:
+        return (self.pair, self.pair + 1)
+
+
 class AlignedActivationStore:
     """Collect aligned activations prompt-by-prompt, hand them back layer-by-layer.
 
@@ -650,6 +1121,19 @@ class AlignedActivationStore:
     ``release=True`` the store also drops each layer's buffer after yielding it,
     so total residency falls monotonically through the sweep (do that only if
     nothing needs a second pass over the layers).
+
+    **Two-layer statistics use** ``iter_layer_pairs()``, not ``iter_layers()``.
+    lambda2 and path entropy are properties of a cluster-TRANSITION graph
+    between adjacent layers, so they need both members of a pair at once;
+    ``iter_layer_pairs()`` yields them together with the pair index defined by
+    Amendment 3 (module docstring), instead of leaving the caller to stash the
+    previous batch in a closure and get the index off by one.
+
+    ``release=True`` on ``iter_layers()`` makes a subsequent PAIR sweep
+    impossible — the earlier member of every pair has been freed.
+    ``iter_layer_pairs()`` refuses up front rather than failing halfway
+    through; if both sweeps are needed, run the pair sweep first, or run the
+    single-layer sweep with ``release=False``.
     """
 
     def __init__(self, n_layers: int, d_model: int, *, dtype: str = "float32",
@@ -721,6 +1205,86 @@ class AlignedActivationStore:
             yield LayerBatch(layer=i, states=self._load_layer(i), rows=list(self.rows))
             if release:
                 self._release_layer(i)
+
+    # -- two-layer affordance (Amendment 3) --------------------------------
+    def iter_layer_pairs(self, pairs: Optional[Iterable[int]] = None,
+                         *, release: bool = False) -> Iterator[LayerPair]:
+        """Yield adjacent layer-pairs, one :class:`LayerPair` at a time.
+
+        Pair ``p`` = (output of block ``p``, output of block ``p+1``), for
+        ``p`` in ``0 .. n_layers-2`` (Amendment 3).  A full sweep therefore
+        yields ``n_layers - 1`` pairs — 47 for a 48-block model, which is the
+        ``n`` of H3's Wilcoxon.
+
+        This is the sanctioned way to consume a TWO-layer statistic (lambda2 of
+        the cluster-transition graph, path entropy).  ``iter_layers`` hands the
+        callback one layer at a time, which forces a pair-consuming caller to
+        stash the previous batch in a closure — that is where the off-by-one
+        gets written, and nothing downstream can see it.
+
+        Residency: at most TWO layers are resident at once, not the whole stack.
+        The source batch of pair ``p`` is the target batch of pair ``p-1``,
+        loaded once and reused.
+
+        ``release=True`` frees layer ``p`` after pair ``p`` has been yielded —
+        the last point at which it is needed, since layer ``p`` appears only in
+        pairs ``p-1`` (as target) and ``p`` (as source).  The final layer is
+        freed when the sweep completes.  Only use it for a one-shot sweep.
+
+        Raises
+        ------
+        ExtractionError
+            If any layer the requested pairs need was already released by an
+            earlier ``release=True`` sweep.  This is checked UP FRONT, before
+            any work is done, rather than letting the sweep die halfway: a
+            partially completed pair sweep is the shape of bug that gets
+            "fixed" by narrowing the layer range.
+        """
+        if self._closed:
+            raise ExtractionError("store is closed")
+        if self._buffers is None:
+            for fh in self._files:
+                fh.flush()
+
+        wanted = (layer_pair_indices(self.n_layers) if pairs is None
+                  else [int(p) for p in pairs])
+        for p in wanted:
+            layer_pair_members(p, self.n_layers)      # range check, Amendment 3
+
+        needed = sorted({l for p in wanted for l in (p, p + 1)})
+        gone = [l for l in needed if l in self._released]
+        if gone:
+            raise ExtractionError(
+                "layer-pair sweep needs layers {} but {} were already released "
+                "by an earlier iter_layers(release=True)/iter_layer_pairs("
+                "release=True) sweep. lambda2 and path entropy are TWO-layer "
+                "statistics (Amendment 3): a release=True single-layer sweep "
+                "makes the previous layer unreadable and therefore makes the "
+                "pair sweep impossible. Re-run the single-layer sweep with "
+                "release=False, or do the pair sweep first."
+                .format(needed, gone))
+
+        if release and wanted != sorted(wanted):
+            raise ExtractionError(
+                "iter_layer_pairs(release=True) requires ascending pair indices "
+                "(a released layer cannot be re-read); got {}".format(wanted))
+
+        prev: Optional[LayerBatch] = None
+        for p in wanted:
+            if prev is not None and prev.layer == p:
+                source = prev
+            else:
+                source = LayerBatch(layer=p, states=self._load_layer(p),
+                                    rows=list(self.rows))
+            target = LayerBatch(layer=p + 1, states=self._load_layer(p + 1),
+                                rows=list(self.rows))
+            yield LayerPair(pair=p, source=source, target=target)
+            if release:
+                # layer p is needed by pairs p-1 and p only; pair p is done.
+                self._release_layer(p)
+            prev = target
+        if release and prev is not None:
+            self._release_layer(prev.layer)
 
     def _release_layer(self, i: int) -> None:
         self._released.add(i)
@@ -798,61 +1362,184 @@ class LayerCheckpointWriter:
     ~20 positions are a few hundred KB, raw activations are several GB.
 
     That rule is enforced, not documented: :meth:`write_layer` rejects any array
-    whose trailing dimension looks like ``d_model``, and any float array bigger
-    than ``max_float_elems``.
+    whose trailing dimension looks like ``d_model``, any float or COMPLEX array
+    bigger than ``max_float_elems``, and the same shapes expressed as nested
+    python lists — a ``.tolist()`` is still a raw activation matrix, it is just
+    a slower one. The guard RECURSES into nested dicts and lists, because the
+    payload is written with ``json.dump`` which recurses too.
+
+    ``d_model`` is REQUIRED. It used to default to ``None``, which silently
+    disabled the strongest of the three guards for every caller that forgot it.
+
+    Parameters
+    ----------
+    prefix:
+        Checkpoint filename stem. ``"layer"`` (default) for the per-layer sweep,
+        ``"pair"`` for the per-layer-PAIR sweep (Amendment 3). They must differ:
+        layer ``p`` and pair ``p`` are different quantities over different
+        index ranges, and writing both as ``layer_007.json`` in one run
+        directory would have each silently resume from the other.
     """
 
-    def __init__(self, root: str, run_id: str, *, d_model: Optional[int] = None,
-                 max_float_elems: int = 200_000):
+    def __init__(self, root: str, run_id: str, *, d_model: int,
+                 max_float_elems: int = 200_000, prefix: str = "layer"):
         self.dir = os.path.join(root, run_id)
         os.makedirs(self.dir, exist_ok=True)
-        self.d_model = d_model
-        self.max_float_elems = max_float_elems
+        if d_model is None:
+            raise ExtractionError(
+                "d_model is required: it is what lets the checkpoint guard "
+                "recognise a raw activation matrix (§A.1 rule 1). Passing None "
+                "used to disable the check silently.")
+        self.d_model = int(d_model)
+        if self.d_model <= 0:
+            raise ExtractionError("d_model must be positive, got {}".format(d_model))
+        self.max_float_elems = int(max_float_elems)
+        if prefix not in ("layer", "pair"):
+            raise ExtractionError(
+                "prefix must be 'layer' or 'pair', got {!r}".format(prefix))
+        self.prefix = prefix
 
     def path(self, layer: int) -> str:
-        return os.path.join(self.dir, "layer_{:03d}.json".format(layer))
+        return os.path.join(self.dir, "{}_{:03d}.json".format(self.prefix, layer))
 
     def is_done(self, layer: int) -> bool:
         return os.path.exists(self.path(layer))
 
     def completed_layers(self) -> List[int]:
         out = []
-        for p in glob.glob(os.path.join(self.dir, "layer_*.json")):
+        stem = self.prefix + "_"
+        for p in glob.glob(os.path.join(self.dir, stem + "*.json")):
             base = os.path.basename(p)
             try:
-                out.append(int(base[len("layer_"):-len(".json")]))
+                out.append(int(base[len(stem):-len(".json")]))
             except ValueError:
                 continue
         return sorted(out)
 
+    # -- the §A.1 rule-1 guard --------------------------------------------
+    @staticmethod
+    def _scan_sequence(val: Any) -> Tuple[int, bool, set, int]:
+        """-> (n_leaves, has_float_leaf, innermost_lengths, depth).
+
+        ``json.dump`` will happily serialise a nested list of floats, so the
+        guard has to see the same structure json does. A ``.tolist()`` on an
+        activation matrix arrives here as depth-2 nesting whose innermost
+        length is ``d_model``.
+        """
+        n_leaves = 0
+        has_float = False
+        inner: set = set()
+        depth = 0
+
+        def rec(v, d):
+            nonlocal n_leaves, has_float, depth
+            if isinstance(v, (list, tuple)):
+                depth = max(depth, d + 1)
+                if v and not any(isinstance(x, (list, tuple, dict)) for x in v):
+                    inner.add(len(v))
+                for item in v:
+                    rec(item, d + 1)
+            elif isinstance(v, dict):
+                depth = max(depth, d + 1)
+                for item in v.values():
+                    rec(item, d + 1)
+            else:
+                n_leaves += 1
+                if isinstance(v, float) or (
+                        np is not None and isinstance(v, (np.floating, np.complexfloating))):
+                    has_float = True
+                elif isinstance(v, complex):
+                    has_float = True
+
+        rec(val, 0)
+        return n_leaves, has_float, inner, depth
+
+    def _guard_value(self, key: str, val: Any) -> None:
+        if np is not None and isinstance(val, np.ndarray):
+            # complex included: np.linalg.eig on a non-symmetric transition
+            # matrix returns complex128, whose .kind is "c", not "f".
+            is_floatish = val.dtype.kind in ("f", "c")
+            if val.ndim >= 2 and val.shape[-1] == self.d_model:
+                raise ExtractionError(
+                    "refusing to checkpoint {!r}: trailing dimension is d_model="
+                    "{}, i.e. this is a raw activation matrix. DESIGN.md §A.1 "
+                    "rule 1 — extract, cluster, write ASSIGNMENTS, discard."
+                    .format(key, self.d_model))
+            if val.ndim == 1 and is_floatish and val.size == self.d_model:
+                raise ExtractionError(
+                    "refusing to checkpoint {!r}: a length-{} float vector is a "
+                    "single raw activation (d_model={}). §A.1 rule 1."
+                    .format(key, val.size, self.d_model))
+            if is_floatish and val.size > self.max_float_elems:
+                raise ExtractionError(
+                    "refusing to checkpoint {!r}: {} float/complex elements "
+                    "exceeds the {} guard. Checkpoints hold assignments and "
+                    "metrics, not activations (§A.1 rule 1).".format(
+                        key, val.size, self.max_float_elems))
+            return
+
+        if isinstance(val, dict):
+            for sub, subval in val.items():
+                self._guard_value("{}.{}".format(key, sub), subval)
+            return
+
+        if isinstance(val, (list, tuple)):
+            n_leaves, has_float, inner, depth = self._scan_sequence(val)
+            if depth >= 2 and self.d_model in inner:
+                raise ExtractionError(
+                    "refusing to checkpoint {!r}: a nested list whose innermost "
+                    "length is d_model={} is a raw activation matrix that has "
+                    "been through .tolist(). §A.1 rule 1 — write ASSIGNMENTS, "
+                    "not activations.".format(key, self.d_model))
+            if depth == 1 and has_float and self.d_model in inner:
+                raise ExtractionError(
+                    "refusing to checkpoint {!r}: a flat list of {} floats is a "
+                    "single raw activation (d_model={}). §A.1 rule 1."
+                    .format(key, self.d_model, self.d_model))
+            if has_float and n_leaves > self.max_float_elems:
+                raise ExtractionError(
+                    "refusing to checkpoint {!r}: {} float elements exceeds the "
+                    "{} guard. Checkpoints hold assignments and metrics, not "
+                    "activations (§A.1 rule 1).".format(
+                        key, n_leaves, self.max_float_elems))
+            # a list can still hold dicts/arrays deeper down
+            for i, item in enumerate(val):
+                if isinstance(item, (dict,)) or (
+                        np is not None and isinstance(item, np.ndarray)):
+                    self._guard_value("{}[{}]".format(key, i), item)
+            return
+
     def _guard(self, payload: Dict[str, Any]) -> None:
+        if not isinstance(payload, dict):
+            raise ExtractionError("checkpoint payload must be a dict")
         for key, val in payload.items():
-            arr = val
-            if np is not None and isinstance(arr, np.ndarray):
-                if self.d_model is not None and arr.ndim >= 2 and arr.shape[-1] == self.d_model:
-                    raise ExtractionError(
-                        "refusing to checkpoint {!r}: trailing dimension is d_model="
-                        "{}, i.e. this is a raw activation matrix. DESIGN.md §A.1 "
-                        "rule 1 — extract, cluster, write ASSIGNMENTS, discard."
-                        .format(key, self.d_model))
-                if arr.dtype.kind == "f" and arr.size > self.max_float_elems:
-                    raise ExtractionError(
-                        "refusing to checkpoint {!r}: {} float elements exceeds the "
-                        "{} guard. Checkpoints hold assignments and metrics, not "
-                        "activations (§A.1 rule 1).".format(
-                            key, arr.size, self.max_float_elems))
+            self._guard_value(str(key), val)
+
+    @staticmethod
+    def _jsonable(val: Any) -> Any:
+        if np is not None and isinstance(val, np.ndarray):
+            return val.tolist()
+        if np is not None and isinstance(val, (np.integer, np.floating)):
+            return val.item()
+        if np is not None and isinstance(val, np.bool_):
+            return bool(val)
+        if isinstance(val, dict):
+            return {k: LayerCheckpointWriter._jsonable(v) for k, v in val.items()}
+        if isinstance(val, (list, tuple)):
+            return [LayerCheckpointWriter._jsonable(v) for v in val]
+        return val
 
     def write_layer(self, layer: int, payload: Dict[str, Any]) -> str:
-        """Atomically write one layer's checkpoint. Returns the path."""
+        """Atomically write one layer's (or pair's) checkpoint. Returns the path."""
         self._guard(payload)
-        body = {"layer": layer}
+        body: Dict[str, Any] = {self.prefix: layer}
+        if self.prefix == "pair":
+            # Amendment 3: make the convention explicit in the artifact itself,
+            # so a downstream reader cannot mistake pair p for layer p.
+            body["source_layer"] = layer
+            body["target_layer"] = layer + 1
         for key, val in payload.items():
-            if np is not None and isinstance(val, np.ndarray):
-                body[key] = val.tolist()
-            elif np is not None and isinstance(val, (np.integer, np.floating)):
-                body[key] = val.item()
-            else:
-                body[key] = val
+            body[key] = self._jsonable(val)
         tmp = self.path(layer) + ".tmp"
         with open(tmp, "w", encoding="utf-8") as fh:
             json.dump(body, fh, sort_keys=True)
@@ -873,6 +1560,7 @@ def stream_layers_with_checkpoints(
     *,
     resume: bool = True,
     log=None,
+    release: bool = False,
 ) -> List[int]:
     """Drive the layer loop: for each layer, compute, checkpoint, free.
 
@@ -881,15 +1569,28 @@ def stream_layers_with_checkpoints(
     only that layer's states resident. Layers already checkpointed are skipped
     when ``resume=True`` (§A.1 rule 3).
 
+    The skip set is computed BEFORE the sweep and the skipped layers are never
+    asked for, so a resume does not pay to concatenate (or, on the spill
+    backend, to read off disk) forty layers it is about to discard. That cost
+    is exactly what §A.1 rule 3 exists to avoid.
+
+    ``release=True`` frees each layer as it is consumed. Default False, and
+    deliberately so: a released layer cannot be re-read, which makes a
+    subsequent :meth:`AlignedActivationStore.iter_layer_pairs` sweep — i.e.
+    lambda2 and path entropy, both TWO-layer statistics (Amendment 3) —
+    impossible. Only pass True when this single-layer sweep is the last thing
+    that touches the store.
+
     Returns the list of layer indices actually computed this call.
     """
     done = set(writer.completed_layers()) if resume else set()
+    wanted = [i for i in range(store.n_layers) if i not in done]
+    if log:
+        for i in sorted(done & set(range(store.n_layers))):
+            log("layer {:3d}: checkpoint exists, skipping".format(i))
+
     computed: List[int] = []
-    for batch in store.iter_layers():
-        if batch.layer in done:
-            if log:
-                log("layer {:3d}: checkpoint exists, skipping".format(batch.layer))
-            continue
+    for batch in store.iter_layers(wanted, release=release):
         payload = fn(batch)
         writer.write_layer(batch.layer, payload)
         computed.append(batch.layer)
@@ -897,4 +1598,51 @@ def stream_layers_with_checkpoints(
             log("layer {:3d}: {} states -> {}".format(
                 batch.layer, batch.n_states, writer.path(batch.layer)))
         del batch
+    return computed
+
+
+def stream_layer_pairs_with_checkpoints(
+    store: "AlignedActivationStore",
+    writer: "LayerCheckpointWriter",
+    fn,
+    *,
+    resume: bool = True,
+    log=None,
+    release: bool = False,
+) -> List[int]:
+    """Drive the layer-PAIR loop: for each pair, compute, checkpoint, free.
+
+    ``fn(pair: LayerPair) -> dict`` returns the per-pair payload (lambda2, path
+    entropy, transition counts, ...). Pair ``p`` = (output of block ``p``,
+    output of block ``p+1``), ``p`` in ``0 .. n_layers-2`` — Amendment 3.
+
+    ``writer`` must have been built with ``prefix="pair"``. A pair checkpoint
+    written into the layer namespace would make layer ``p`` and pair ``p``
+    resume from each other's file, which is §A.11 item 2 with a filesystem
+    attached.
+    """
+    if getattr(writer, "prefix", "layer") != "pair":
+        raise ExtractionError(
+            "stream_layer_pairs_with_checkpoints needs a LayerCheckpointWriter "
+            "built with prefix='pair'; got prefix={!r}. Pair p and layer p are "
+            "different quantities over different index ranges (pairs run 0..L-2, "
+            "layers 0..L-1) and must not share checkpoint filenames."
+            .format(getattr(writer, "prefix", "layer")))
+
+    all_pairs = layer_pair_indices(store.n_layers)
+    done = set(writer.completed_layers()) if resume else set()
+    wanted = [p for p in all_pairs if p not in done]
+    if log:
+        for p in sorted(done & set(all_pairs)):
+            log("pair  {:3d}: checkpoint exists, skipping".format(p))
+
+    computed: List[int] = []
+    for lp in store.iter_layer_pairs(wanted, release=release):
+        payload = fn(lp)
+        writer.write_layer(lp.pair, payload)
+        computed.append(lp.pair)
+        if log:
+            log("pair  {:3d} (blocks {}->{}): {} states -> {}".format(
+                lp.pair, lp.pair, lp.pair + 1, lp.n_states, writer.path(lp.pair)))
+        del lp
     return computed

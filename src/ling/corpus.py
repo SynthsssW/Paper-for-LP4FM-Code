@@ -44,6 +44,7 @@ Pure standard library.
 
 from __future__ import annotations
 
+import hashlib
 import itertools
 import json
 import random
@@ -497,6 +498,19 @@ def build_problem(
         },
     }
     validate_record(record)
+    # Belt and braces: re-assert `text[start:end] == literal` against the
+    # SERIALISED record, using the literals the renderers emitted. Rendered
+    # .validate() already did this at render time; this repeats it after the
+    # record has been assembled, so a bug in record assembly cannot slip a bad
+    # span through.
+    assert_span_literals(
+        record,
+        {
+            "nl_base": nl.literals,
+            "formal": formal.literals,
+            "nl_break": brk.literals,
+        },
+    )
     return record
 
 
@@ -626,8 +640,6 @@ def problem_rng(seed: int, template_id: str) -> random.Random:
     Derived rather than shared so that adding, dropping or reordering templates
     cannot change the values sampled for any other problem.
     """
-    import hashlib
-
     digest = hashlib.sha256(("%d|%s" % (seed, template_id)).encode("utf-8")).digest()
     return random.Random(int.from_bytes(digest[:8], "big"))
 

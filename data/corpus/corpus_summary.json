@@ -104,7 +104,7 @@
     "total_anchors": 400
   },
   "seed": 20260906,
-  "sha256": "58ccf4dee8cdfa501816b7de40966d2a943c98bae695f0db25d5958605a5ad54",
+  "sha256": "28185911251c644e6c518ff4bd2eca987842f6d98da8545a2108252dc0516473",
   "template_commit": "b6a1625025fc857300203bac9f617e5d8ec99f65",
   "template_route": "OFFICIAL",
   "text_length_chars": {
@@ -116,13 +116,13 @@
     },
     "nl_base": {
       "max": 586,
-      "mean": 241.8,
+      "mean": 241.9,
       "median": 220.0,
       "min": 96
     },
     "nl_break": {
       "max": 586,
-      "mean": 241.7,
+      "mean": 241.8,
       "median": 220.0,
       "min": 96
     }
