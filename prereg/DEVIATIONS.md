@@ -125,3 +125,57 @@ block *p+1*), for p in 0 .. L-2. With L = 48 for gemma-4-12B-it, that is **47 la
 which is the n for H3's Wilcoxon. This convention is stated in `src/ling/hooks.py`'s
 convention block alongside the existing layer convention, because an off-by-one here is
 exactly the §A.11 item-2 failure mode applied one level up.
+
+---
+
+## Amendment 4 — `formal` is GIVENS + GOAL, with no derivation
+
+**Timestamp:** 2026-09-06T21:40 UTC
+**Status:** corpus definition change, made before any activation exists. H3's endpoint and
+direction unchanged.
+
+**The defect.** As first generated, the `formal` condition emitted the full program
+including the answer expression (`answer = int((k*y)/(x*12)*100)`). That is not a
+re-notation of the problem — it is the solution. Under it:
+
+- H3 would compare a prompt containing the derivation against a prompt containing a word
+  problem. Any lambda2 difference is then trivially attributable to one prompt containing
+  the answer, not to formal notation.
+- Gate G2 would be near-ceiling for a reason unrelated to notation. "Formal beats NL" would
+  mean "we handed the model the program."
+
+DESIGN.md §B.8 is explicit that our formal condition is **input notation with no execution**.
+Emitting the derivation contradicts that.
+
+**Decision.** `formal` renders **givens and goal only**, in formal notation, with NO
+derivation and no answer expression. The model must still do the reasoning; only the
+notation changes. That is the intervention H3 is about.
+
+**What this costs and why it costs nothing.** The build-time check "the formal program
+executes to ground truth" is lost, because givens-plus-goal is not executable. This is not a
+real loss: ground truth comes from the TEMPLATE's `#answer:` expression (Apple's verbatim)
+evaluated on our sampled values, and always did. The formal program was never the source of
+truth, only a redundant confirmation of it.
+
+**Retained check.** The verifier still confirms every quantity value in `formal` matches the
+sampled value it claims, and that the goal names the quantity the template asks for.
+
+---
+
+## Recorded corpus caveats (for Methods, not amendments)
+
+1. **The contamination claim must be weaker than DESIGN.md §A.5 implies.** GSM-Symbolic
+   templates derive from GSM8K problems and have been public since Dec 2024. The
+   *instantiations* are fresh; the surface frames are not uncontaminated. The defensible
+   sentence is "fresh instantiations of published templates," never "uncontaminated."
+2. **G3's "different model than the generator" is trivially satisfied and should be stated
+   as such.** No model generated `nl_base`, `formal`, or `nl_break` — they are emitted from
+   templates. Claiming independent verification we did not have to earn would be misleading.
+   Only `nl_para` is model-written, and it is the item under human review.
+3. **The DSL interpreter and lexical pools are OURS, not Apple's.** Apple published the
+   templates but never the generator or the word pools. Numeric pools, `#conditions:` and
+   `#answer:` expressions are verbatim; surface noun pools are a reconstruction. This must
+   be stated.
+4. **10 of 100 problems have only 2 quantities** (3 aligned positions including FINAL).
+   Amendment 2 assumed 3-5. Pooled lambda2 handles the low tail, but it is real and the
+   distribution should be reported.

@@ -34,10 +34,20 @@ import sys
 import warnings
 from typing import Any, Dict, Optional, Sequence, Tuple
 
+class DeterminismError(RuntimeError):
+    """Raised when a determinism precondition or a bitwise assertion fails."""
+
+
 # --------------------------------------------------------------------------
 # Step 0: environment, BEFORE torch is imported anywhere in this process.
 # --------------------------------------------------------------------------
 CUBLAS_WORKSPACE_CONFIG = ":4096:8"
+
+#: The only two values cuBLAS accepts for a deterministic workspace. Anything
+#: else — including the empty string — leaves cuBLAS free to pick a workspace
+#: whose reduction order varies, and makes
+#: ``torch.use_deterministic_algorithms(True)`` raise at the first GEMM.
+LEGAL_CUBLAS_WORKSPACE_CONFIGS = (":4096:8", ":16:8")
 
 #: True if *we* were the ones who put CUBLAS_WORKSPACE_CONFIG in the environment
 #: (as opposed to it already being exported by e.g. scripts/pod_bootstrap.sh).
@@ -47,9 +57,28 @@ _CUBLAS_SET_BY_US = False
 #: a warning sign that some other module may already have touched CUDA.
 _TORCH_ALREADY_IMPORTED = "torch" in sys.modules
 
-if os.environ.get("CUBLAS_WORKSPACE_CONFIG") is None:
+# `export CUBLAS_WORKSPACE_CONFIG=` (empty) is NOT None, so a naive `is None`
+# test leaves the empty value in place AND records that we did not set it —
+# which in turn disables the CUDA-ordering precondition check below, because
+# that check only fires when `_CUBLAS_SET_BY_US`. A typo'd export would
+# therefore have silently switched off both the workspace pinning and the guard
+# that notices it. Treat empty/whitespace as unset, and validate anything else.
+_cublas_env = os.environ.get("CUBLAS_WORKSPACE_CONFIG")
+if _cublas_env is None or _cublas_env.strip() == "":
     os.environ["CUBLAS_WORKSPACE_CONFIG"] = CUBLAS_WORKSPACE_CONFIG
     _CUBLAS_SET_BY_US = True
+elif _cublas_env.strip() not in LEGAL_CUBLAS_WORKSPACE_CONFIGS:
+    raise DeterminismError(
+        "CUBLAS_WORKSPACE_CONFIG={!r} is not one of the values cuBLAS accepts "
+        "for deterministic operation ({}). It is read once, when the CUDA "
+        "context is created, so an invalid value cannot be repaired later in "
+        "the process: torch.use_deterministic_algorithms(True) will raise at "
+        "the first cuBLAS GEMM, or on some builds silently use a "
+        "non-deterministic workspace. Unset it (this module then sets {}), or "
+        "export a legal value — scripts/pod_bootstrap.sh does.".format(
+            _cublas_env, LEGAL_CUBLAS_WORKSPACE_CONFIGS, CUBLAS_WORKSPACE_CONFIG))
+else:
+    os.environ["CUBLAS_WORKSPACE_CONFIG"] = _cublas_env.strip()
 
 #: Value actually in force for this process.
 CUBLAS_WORKSPACE_CONFIG_EFFECTIVE = os.environ["CUBLAS_WORKSPACE_CONFIG"]
@@ -65,10 +94,6 @@ try:  # pragma: no cover
     import numpy as _np
 except Exception:  # noqa: BLE001
     _np = None
-
-
-class DeterminismError(RuntimeError):
-    """Raised when a determinism precondition or a bitwise assertion fails."""
 
 
 def torch_available() -> bool:
@@ -195,17 +220,28 @@ def enforce_determinism(seed: int, *, strict: bool = True) -> Dict[str, Any]:
     applied["cuda.matmul.allow_tf32"] = False
     applied["cudnn.allow_tf32"] = False
 
+    # Record the OUTCOME, not the intention. A control that this torch build
+    # does not expose must appear in `applied` as unavailable, not vanish: the
+    # methods sentence is generated from this dict and the G1 gate's pass/fail
+    # predicate reads it, so a missing key used to mean "we claimed it in the
+    # paper and never set it".
     for flag in (
         "allow_bf16_reduced_precision_reduction",
         "allow_fp16_reduced_precision_reduction",
     ):
+        key = "cuda.matmul." + flag
         if hasattr(torch.backends.cuda.matmul, flag):
             setattr(torch.backends.cuda.matmul, flag, False)
-            applied["cuda.matmul." + flag] = False
+            # read back, do not assume the setattr took
+            applied[key] = bool(getattr(torch.backends.cuda.matmul, flag))
+        else:
+            applied[key] = UNAVAILABLE
 
     if hasattr(torch, "set_float32_matmul_precision"):
         torch.set_float32_matmul_precision("highest")
         applied["float32_matmul_precision"] = "highest"
+    else:
+        applied["float32_matmul_precision"] = UNAVAILABLE
 
     # Attention backend selection: SDPA dispatches to flash / mem-efficient
     # kernels whose reduction order depends on sequence length and head layout,
@@ -213,14 +249,19 @@ def enforce_determinism(seed: int, *, strict: bool = True) -> Dict[str, Any]:
     # attn_implementation="eager" (see ling.model) which bypasses SDPA entirely;
     # these flags are belt-and-braces in case some submodule calls SDPA directly.
     sdpa = getattr(getattr(torch.backends, "cuda", None), "enable_flash_sdp", None)
-    if sdpa is not None:
+    if sdpa is None:
+        applied["sdpa_backend"] = UNAVAILABLE
+    else:
         try:
             torch.backends.cuda.enable_flash_sdp(False)
             torch.backends.cuda.enable_mem_efficient_sdp(False)
             torch.backends.cuda.enable_math_sdp(True)
             applied["sdpa_backend"] = "math_only"
         except Exception as exc:  # noqa: BLE001  - version dependent
-            applied["sdpa_backend"] = "unset ({})".format(type(exc).__name__)
+            # NOT swallowed into a claim: this string is what the summary line
+            # prints and what the gate predicate tests.
+            applied["sdpa_backend"] = "FAILED ({}: {})".format(
+                type(exc).__name__, exc)
 
     applied["torch_version"] = torch.__version__
     applied["cuda_available"] = bool(torch.cuda.is_available())
