@@ -91,3 +91,37 @@ many problems, not a per-problem observable.
 **Consequence to report in the paper.** Because lambda2 is pooled, the effective sample size
 for H3's paired test is the number of layer-pairs, not the number of problems. This must be
 stated plainly rather than left for a reviewer to infer from the degrees of freedom.
+
+---
+
+## Amendment 3 — affinity is COSINE; layer-pair index convention fixed
+
+**Timestamp:** 2026-09-06T21:47 UTC
+**Status:** operationalization decision, made before any activation exists. No endpoint or
+direction changes.
+
+**Why this must be decided now.** The extraction captures the post-block, PRE-normalization
+residual stream (correct, and mechanically verified). A consequence: activation norms grow
+monotonically with depth. lambda2 is NOT invariant to whether the affinity is built on raw
+vectors, cosine similarity, or per-layer standardized vectors.
+
+Under Amendment 2 the H3 primary endpoint is averaged **across layer-pairs**. A
+depth-dependent scale artifact therefore does not average out — it accumulates along the
+exact axis the primary statistic sums over. Choosing the affinity after seeing lambda2 would
+be a researcher degree of freedom on the primary endpoint.
+
+**Decision.** The affinity is **cosine similarity**, which is scale-invariant by
+construction and therefore immune to depth-dependent norm growth. This is the conventional
+choice in this literature.
+
+- **Primary:** cosine affinity.
+- **Appendix robustness check:** per-layer standardization (z-score within layer), reported
+  alongside. If the two disagree, that disagreement is reported, not resolved in favour of
+  whichever supports H3.
+- Raw-vector affinity is NOT used at all; it confounds depth with geometry.
+
+**Layer-pair index convention (was undefined).** Pair *p* = (output of block *p*, output of
+block *p+1*), for p in 0 .. L-2. With L = 48 for gemma-4-12B-it, that is **47 layer-pairs**,
+which is the n for H3's Wilcoxon. This convention is stated in `src/ling/hooks.py`'s
+convention block alongside the existing layer convention, because an off-by-one here is
+exactly the §A.11 item-2 failure mode applied one level up.

@@ -1,0 +1,130 @@
+{
+  "answers": {
+    "max": 137200,
+    "min": 1,
+    "n_integer": 100
+  },
+  "build_failures": [],
+  "conditions": [
+    "nl_base",
+    "nl_para",
+    "formal",
+    "nl_break"
+  ],
+  "linguistic_variation": {
+    "clause_marker_frequency": {
+      "after": 12,
+      "but": 8,
+      "if": 37,
+      "since": 2,
+      "so": 10,
+      "that": 22,
+      "then": 7,
+      "when": 5,
+      "which": 7,
+      "while": 5
+    },
+    "distinct_clause_marker_signatures": 32,
+    "first_quantity_rel_pos_quartiles": [
+      0.0764,
+      0.1303,
+      0.2258
+    ],
+    "has_currency": 25,
+    "has_enumeration": 18,
+    "has_word_numeral": 41,
+    "n_clause_markers": {
+      "0": 27,
+      "1": 44,
+      "2": 20,
+      "3": 5,
+      "4": 4
+    },
+    "n_sentences": {
+      "1": 2,
+      "2": 19,
+      "3": 38,
+      "4": 20,
+      "5": 11,
+      "6": 9,
+      "7": 1
+    },
+    "n_words": {
+      "max": 107,
+      "median": 37.0,
+      "min": 19
+    },
+    "opens_with_proper_name": {
+      "false": 35,
+      "true": 65
+    },
+    "question_form": {
+      "how long": 2,
+      "how many": 54,
+      "how much": 28,
+      "how old": 2,
+      "imperative:calculate": 3,
+      "imperative:find": 1,
+      "none": 2,
+      "what": 8
+    },
+    "question_is_final_sentence": {
+      "true": 100
+    }
+  },
+  "n_distinct_templates": 100,
+  "n_problems": 100,
+  "n_realizations_generated": 300,
+  "n_realizations_pending": 100,
+  "perturbation": {
+    "median_text_char_edit_distance": 1.0,
+    "occurrences_rewritten": {
+      "1": 100
+    },
+    "single_char_edit": 98,
+    "template_conditions_still_satisfied": 97,
+    "text_char_edit_distance": {
+      "1": 98,
+      "3": 1,
+      "8": 1
+    }
+  },
+  "quantities": {
+    "max": 9,
+    "min": 2,
+    "per_problem": {
+      "2": 10,
+      "3": 32,
+      "4": 29,
+      "5": 15,
+      "6": 9,
+      "7": 3,
+      "9": 2
+    },
+    "total_anchors": 400
+  },
+  "seed": 20260906,
+  "sha256": "58ccf4dee8cdfa501816b7de40966d2a943c98bae695f0db25d5958605a5ad54",
+  "template_commit": "b6a1625025fc857300203bac9f617e5d8ec99f65",
+  "template_route": "OFFICIAL",
+  "text_length_chars": {
+    "formal": {
+      "max": 298,
+      "mean": 103.7,
+      "median": 94.0,
+      "min": 45
+    },
+    "nl_base": {
+      "max": 586,
+      "mean": 241.8,
+      "median": 220.0,
+      "min": 96
+    },
+    "nl_break": {
+      "max": 586,
+      "mean": 241.7,
+      "median": 220.0,
+      "min": 96
+    }
+  }
+}
