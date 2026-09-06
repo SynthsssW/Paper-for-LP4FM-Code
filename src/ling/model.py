@@ -234,6 +234,67 @@ def resolve_layers_path(model: Any, expected_n_layers: Optional[int],
     )
 
 
+#: Sub-config attributes that can carry their own attention implementation.
+#: A multimodal / wrapped checkpoint (several Gemma-family instruct releases are
+#: one) builds its text tower from `config.text_config`, and that sub-config can
+#: keep an `_attn_implementation` of its own — so the decoder blocks we hook can
+#: be running SDPA while the top-level config says "eager".
+_ATTN_SUBCONFIGS = ("text_config", "vision_config", "audio_config", "decoder")
+
+
+def _read_attn_implementation(cfg_obj: Any) -> Optional[str]:
+    """Read back the attention implementation a config OBJECT actually holds.
+
+    transformers stores the resolved value on the private
+    ``_attn_implementation`` attribute; the public ``attn_implementation``
+    property exists on some versions and is a plain attribute on others. We try
+    both and return None if neither is present, rather than guessing "eager".
+    """
+    for attr in ("_attn_implementation", "attn_implementation",
+                 "_attn_implementation_internal"):
+        val = getattr(cfg_obj, attr, None)
+        if isinstance(val, str) and val:
+            return val
+    return None
+
+
+def read_back_attn_implementations(model: Any) -> Dict[str, Optional[str]]:
+    """``{"config": <str|None>, "text_config": ..., ...}`` — what is IN FORCE.
+
+    §A.4 / gate G1 depend on eager attention: SDPA and flash kernels choose a
+    reduction order that depends on sequence length and head tiling, so they are
+    not bitwise reproducible across shapes. Checking the value we *requested* is
+    not the same check — some transformers releases fall back to a different
+    implementation with only a warning, and a wrapped checkpoint's sub-config
+    can keep its own. This reads the resolved value back off the loaded model.
+    """
+    out: Dict[str, Optional[str]] = {"config": _read_attn_implementation(model.config)}
+    for name in _ATTN_SUBCONFIGS:
+        sub = getattr(model.config, name, None)
+        if sub is not None and not isinstance(sub, (str, int, float, bool)):
+            out[name] = _read_attn_implementation(sub)
+    return out
+
+
+def assert_attn_implementation(model: Any, requested: str) -> Dict[str, Optional[str]]:
+    """Raise unless every config in force reports ``requested``. Returns them."""
+    got = read_back_attn_implementations(model)
+    bad = {k: v for k, v in got.items() if v != requested}
+    if bad:
+        raise ModelLoadError(
+            "attention implementation mismatch: requested {!r} but the loaded "
+            "model reports {}. (None means the config exposes no resolved "
+            "attention attribute at all, which is equally unverifiable.) "
+            "DESIGN.md A.4 / gate G1 require bitwise-identical forward passes, "
+            "and SDPA/flash kernels pick a reduction order that depends on "
+            "sequence length and head tiling — some transformers releases fall "
+            "back with only a warning, and a wrapped/multimodal checkpoint's "
+            "text_config can keep its own setting while the top-level config "
+            "says eager. Fix the checkpoint/transformers version rather than "
+            "loosening this check.".format(requested, bad))
+    return got
+
+
 def _resolve_n_layers(hf_config: Any) -> int:
     for attr in ("num_hidden_layers", "n_layer", "num_layers"):
         if hasattr(hf_config, attr):
@@ -377,6 +438,13 @@ def load_model(config_path: Optional[str] = None,
     model.eval()
     model.requires_grad_(False)
 
+    # READ BACK the attention implementation actually in force, on the top-level
+    # config AND on every sub-config, after .to(device). Checking the value we
+    # asked for tells us nothing about what the decoder blocks will run.
+    requested_attn = str(cfg["attn_implementation"])
+    attn_readback = assert_attn_implementation(model, requested_attn)
+    effective_attn = attn_readback["config"]
+
     n_layers = _resolve_n_layers(model.config)
     d_model = _resolve_d_model(model.config)
     layers_path = resolve_layers_path(model, n_layers, cfg.get("layers_path"))
@@ -388,7 +456,14 @@ def load_model(config_path: Optional[str] = None,
         "checkpoint_verified": bool(cfg["checkpoint_verified"]),
         "dtype": str(dtype),
         "device": device_str,
-        "attn_implementation": str(cfg["attn_implementation"]),
+        # Requested vs READ-BACK. The gate reads the effective one; nothing in
+        # the record should be the value we merely asked for.
+        "attn_implementation_requested": requested_attn,
+        "attn_implementation_effective": effective_attn,
+        "attn_implementation_subconfigs": {
+            k: v for k, v in attn_readback.items() if k != "config"},
+        # kept for backwards compatibility; it is the EFFECTIVE value
+        "attn_implementation": effective_attn,
         "n_layers": n_layers,
         "d_model": d_model,
         "layers_path": layers_path,
@@ -397,10 +472,10 @@ def load_model(config_path: Optional[str] = None,
         "determinism": det_info,
     }
     sys.stderr.write(
-        "[ling.model] {mid}: {n} blocks, d_model={d}, {dt} on {dev}, attn={attn}, "
-        "layers at model.{lp}\n".format(
+        "[ling.model] {mid}: {n} blocks, d_model={d}, {dt} on {dev}, "
+        "attn={attn} (read back; requested {req}), layers at model.{lp}\n".format(
             mid=cfg["model_id"], n=n_layers, d=d_model, dt=dtype, dev=device_str,
-            attn=cfg["attn_implementation"], lp=layers_path)
+            attn=effective_attn, req=requested_attn, lp=layers_path)
     )
 
     return LoadedModel(

@@ -283,20 +283,166 @@ def enforce_determinism(seed: int, *, strict: bool = True) -> Dict[str, Any]:
     return applied
 
 
-def determinism_summary_line(applied: Dict[str, Any]) -> str:
-    """One-line methods sentence, for pasting into the paper."""
-    return (
-        "Determinism: torch {tv} (CUDA {cv}), {dev}, bf16, eager attention, batch size 1, "
-        "no padding; deterministic algorithms on, cuDNN deterministic, cuDNN benchmark off, "
-        "TF32 off for matmul and cuDNN, reduced-precision reductions off, "
-        "CUBLAS_WORKSPACE_CONFIG={cw}, seed={seed}."
-    ).format(
+# --------------------------------------------------------------------------
+# What the paper is allowed to claim
+# --------------------------------------------------------------------------
+#: The controls the methods sentence names, mapped to the value that counts as
+#: "in force". Every one of them is read back out of the `applied` dict rather
+#: than asserted as a string literal, and every one of them is in the G1 gate's
+#: pass/fail predicate (:func:`determinism_controls_status`). If a control is
+#: not actually active, the gate must not pass — the alternative is a methods
+#: paragraph that claims a control the run did not have.
+REQUIRED_CONTROLS: Dict[str, Any] = {
+    "use_deterministic_algorithms": True,
+    "cudnn.deterministic": True,
+    "cudnn.benchmark": False,
+    "cuda.matmul.allow_tf32": False,
+    "cudnn.allow_tf32": False,
+    "cuda.matmul.allow_bf16_reduced_precision_reduction": False,
+    "cuda.matmul.allow_fp16_reduced_precision_reduction": False,
+    "float32_matmul_precision": "highest",
+    "sdpa_backend": "math_only",
+}
+
+#: Human-readable clause for each control, used to build the methods sentence.
+_CONTROL_CLAUSES = (
+    ("use_deterministic_algorithms", "deterministic algorithms",
+     "deterministic algorithms on", "deterministic algorithms NOT ENABLED"),
+    ("cudnn.deterministic", "cuDNN determinism",
+     "cuDNN deterministic", "cuDNN NOT deterministic"),
+    ("cudnn.benchmark", "cuDNN autotuner",
+     "cuDNN benchmark off", "cuDNN benchmark ON"),
+    ("cuda.matmul.allow_tf32", "matmul TF32",
+     "TF32 off for matmul", "TF32 ON for matmul"),
+    ("cudnn.allow_tf32", "cuDNN TF32",
+     "TF32 off for cuDNN", "TF32 ON for cuDNN"),
+    ("cuda.matmul.allow_bf16_reduced_precision_reduction",
+     "bf16 reduced-precision reductions",
+     "bf16 reduced-precision reductions off",
+     "bf16 reduced-precision reductions ON"),
+    ("cuda.matmul.allow_fp16_reduced_precision_reduction",
+     "fp16 reduced-precision reductions",
+     "fp16 reduced-precision reductions off",
+     "fp16 reduced-precision reductions ON"),
+    ("float32_matmul_precision", "float32 matmul precision",
+     "float32 matmul precision=highest", "float32 matmul precision NOT highest"),
+    ("sdpa_backend", "SDPA backend",
+     "SDPA restricted to the math backend", "SDPA backend NOT restricted"),
+)
+
+#: Marker written into ``applied`` when a control does not exist on this build.
+UNAVAILABLE = "not available on this torch build"
+
+
+def determinism_controls_status(applied: Dict[str, Any]) -> Dict[str, Any]:
+    """Check the controls the methods sentence claims are actually in force.
+
+    Returns ``{"ok": bool, "missing": [...], "unavailable": [...],
+    "wrong": [(key, expected, got), ...], "detail": str}``.
+
+    ``missing``      — the key is absent from ``applied`` entirely, i.e.
+                       ``enforce_determinism`` never reached that control.
+    ``unavailable``  — the control does not exist on this torch build. Reported
+                       separately, and still a FAILURE: the paper cannot say
+                       "reduced-precision reductions off" on a build with no
+                       such switch.
+    ``wrong``        — the control exists and is set to the wrong value.
+
+    ``ok`` is True only if all three lists are empty AND the cuBLAS workspace
+    config is legal AND ``enforce_determinism`` reported no preconditions
+    problems.
+    """
+    missing, unavailable, wrong = [], [], []
+    for key, want in REQUIRED_CONTROLS.items():
+        if key not in applied:
+            missing.append(key)
+            continue
+        got = applied[key]
+        if got == UNAVAILABLE:
+            unavailable.append(key)
+        elif got != want or type(got) is not type(want):
+            wrong.append((key, want, got))
+
+    cw = applied.get("CUBLAS_WORKSPACE_CONFIG")
+    if cw not in LEGAL_CUBLAS_WORKSPACE_CONFIGS:
+        wrong.append(("CUBLAS_WORKSPACE_CONFIG", LEGAL_CUBLAS_WORKSPACE_CONFIGS, cw))
+
+    problems = list(applied.get("problems") or [])
+
+    ok = not (missing or unavailable or wrong or problems)
+    bits = []
+    if missing:
+        bits.append("never applied: {}".format(", ".join(missing)))
+    if unavailable:
+        bits.append("{}: {}".format(UNAVAILABLE, ", ".join(unavailable)))
+    if wrong:
+        bits.append("wrong value: " + "; ".join(
+            "{} expected {!r} got {!r}".format(k, w, g) for k, w, g in wrong))
+    if problems:
+        bits.append("preconditions: " + " | ".join(problems))
+
+    return {
+        "ok": bool(ok),
+        "missing": missing,
+        "unavailable": unavailable,
+        "wrong": wrong,
+        "problems": problems,
+        "detail": "; ".join(bits) if bits else "all named controls in force",
+    }
+
+
+def determinism_summary_line(applied: Dict[str, Any],
+                             load_info: Optional[Dict[str, Any]] = None) -> str:
+    """One-line methods sentence, for pasting into the paper.
+
+    Every clause is DERIVED from ``applied`` (and, for dtype and attention
+    implementation, from the model's ``load_info``). Nothing here is a fixed
+    string literal asserting a control that was not verified: this sentence is
+    written into ``results/gate_g1_determinism.json`` and from there into the
+    paper's methods paragraph, so a hardcoded "TF32 off, eager attention" would
+    be an unverified claim about the run that produced the numbers.
+
+    Where a control does not exist on this torch build, the clause says so
+    explicitly rather than claiming it.
+    """
+    clauses = []
+    for key, name, on_text, off_text in _CONTROL_CLAUSES:
+        if key not in applied:
+            clauses.append("{} NOT APPLIED".format(name))
+            continue
+        got = applied[key]
+        want = REQUIRED_CONTROLS[key]
+        if got == UNAVAILABLE:
+            clauses.append("{}: {}".format(name, UNAVAILABLE))
+        elif got == want and type(got) is type(want):
+            clauses.append(on_text)
+        else:
+            clauses.append("{} (value={!r})".format(off_text, got))
+
+    head = "Determinism: torch {tv} (CUDA {cv}), {dev}".format(
         tv=applied.get("torch_version", "?"),
         cv=applied.get("cuda_version", "n/a"),
         dev=applied.get("cuda_device_name", "cpu"),
+    )
+    if load_info:
+        head += ", {dt}, attention implementation {attn} (read back from "
+        head = head.format(
+            dt=load_info.get("dtype", "?"),
+            attn=load_info.get("attn_implementation_effective", "?"),
+        )
+        head += "model.config._attn_implementation; requested {})".format(
+            load_info.get("attn_implementation_requested", "?"))
+    head += ", batch size 1, no padding"
+
+    status = determinism_controls_status(applied)
+    tail = "CUBLAS_WORKSPACE_CONFIG={cw}, seed={seed}.".format(
         cw=applied.get("CUBLAS_WORKSPACE_CONFIG", "?"),
         seed=applied.get("seed", "?"),
     )
+    line = "{}; {}, {}".format(head, ", ".join(clauses), tail)
+    if not status["ok"]:
+        line += "  [CONTROLS NOT FULLY IN FORCE: {}]".format(status["detail"])
+    return line
 
 
 # --------------------------------------------------------------------------

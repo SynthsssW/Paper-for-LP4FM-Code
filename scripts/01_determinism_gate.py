@@ -44,6 +44,7 @@ sys.path.insert(0, os.path.join(_REPO, "src"))
 from ling.determinism import (  # noqa: E402
     DeterminismError,
     assert_bitwise_identical,
+    determinism_controls_status,
     determinism_summary_line,
     max_abs_difference,
     tensor_digest,
@@ -73,8 +74,15 @@ DEFAULT_PROBES = [
     "pages does he write a year?",
     "num_clips_april = 48\nnum_clips_may = num_clips_april / 2\ntotal = "
     "num_clips_april + num_clips_may\n# total = ?",
+    # NOTE: no trailing newline. A trailing "\n" is a token in its own right
+    # with a real, non-zero-width offset span, so it is NOT caught by the
+    # trailing-special-token guard: the probe's final position would be the
+    # newline for these code-shaped probes and the sentence-final period for the
+    # prose ones, which is exactly the condition-correlated FINAL drift §A.6
+    # forbids. ling.hooks.encode() also normalises, so this is belt-and-braces —
+    # but the literal should not model the wrong thing.
     "def solve():\n    bolts_blue = 2\n    bolts_white = bolts_blue / 2\n    "
-    "return bolts_blue + bolts_white\n",
+    "return bolts_blue + bolts_white",
 ]
 
 
@@ -133,15 +141,34 @@ def main() -> int:
     det = loaded.load_info["determinism"]
 
     # attn_implementation is load-bearing for this gate: SDPA/flash reduction
-    # order depends on sequence length and head tiling.
-    attn = loaded.load_info["attn_implementation"]
-    if attn != "eager":
-        log("FAIL: attn_implementation is {!r}, not 'eager'. SDPA and flash "
-            "kernels are not bitwise reproducible across shapes; this gate "
-            "cannot pass honestly with them enabled.".format(attn))
+    # order depends on sequence length and head tiling. Check the EFFECTIVE
+    # value read back off model.config (and every sub-config), never the value
+    # we requested — a fallback is a warning, not an exception, in some
+    # transformers releases, and a wrapped checkpoint's text_config keeps its
+    # own.
+    attn = loaded.load_info.get("attn_implementation_effective")
+    attn_subs = loaded.load_info.get("attn_implementation_subconfigs", {})
+    bad_attn = ({"config": attn} if attn != "eager" else {})
+    bad_attn.update({k: v for k, v in attn_subs.items() if v != "eager"})
+    if bad_attn:
+        log("FAIL: effective attention implementation is {} (requested {!r}), "
+            "not 'eager' everywhere. SDPA and flash kernels are not bitwise "
+            "reproducible across shapes; this gate cannot pass honestly with "
+            "them enabled.".format(
+                bad_attn, loaded.load_info.get("attn_implementation_requested")))
         return 1
 
-    log(determinism_summary_line(det))
+    # F4: the summary line is the paper's methods claim. Verify each control it
+    # names is actually in force, and make that part of the pass predicate —
+    # the gate must not pass while a named control is silently inactive.
+    controls = determinism_controls_status(det)
+    if not controls["ok"]:
+        log("FAIL: determinism controls are not all in force: {}".format(
+            controls["detail"]))
+        log("This gate's summary line is the paper's methods sentence. It may "
+            "not claim a control that this run did not have.")
+
+    log(determinism_summary_line(det, loaded.load_info))
     log("model: {} | {} blocks | d_model={} | layers at model.{}".format(
         loaded.model_id, loaded.n_layers, loaded.d_model, loaded.layers_path))
     if not loaded.load_info["checkpoint_verified"]:
@@ -240,8 +267,17 @@ def main() -> int:
     max_r = max((r["max_abs_residual_diff"] for r in per_prompt), default=0.0)
     max_l = max((r["max_abs_logit_diff"] for r in per_prompt), default=0.0)
     n_greedy = sum(1 for r in per_prompt if r["greedy_token_match"])
+
+    if not controls["ok"]:
+        failures.append(
+            "determinism controls named in the methods sentence are not all in "
+            "force: {}. Every clause of that sentence is a claim about the run "
+            "that produced these numbers; the gate cannot pass while one of "
+            "them is inactive (DESIGN.md A.4).".format(controls["detail"]))
+
     passed = (not failures) and max_r == 0.0 and max_l == 0.0 and \
-             n_greedy == len(per_prompt) and (order_ok is not False)
+             n_greedy == len(per_prompt) and (order_ok is not False) and \
+             controls["ok"] and attn == "eager" and not bad_attn
 
     summary = (
         "G1 determinism gate: {n} probe prompts x 2 passes, {L} layers each; "
@@ -253,7 +289,7 @@ def main() -> int:
         order="" if order_ok is None else
               ("; results invariant to prompt ordering" if order_ok
                else "; ORDER-DEPENDENT"),
-        det=determinism_summary_line(det),
+        det=determinism_summary_line(det, loaded.load_info),
     )
 
     record = {
@@ -262,6 +298,9 @@ def main() -> int:
         "summary": summary,
         "elapsed_s": round(elapsed, 1),
         "model": loaded.load_info,
+        "determinism_controls": controls,
+        "attn_implementation_effective": attn,
+        "attn_implementation_subconfigs": attn_subs,
         "n_probes": len(per_prompt),
         "max_abs_residual_diff": max_r,
         "max_abs_logit_diff": max_l,
