@@ -1,5 +1,16 @@
 # Protocol deviations
 
+> **On timestamps.** The times below were originally typed by hand and several drifted from
+> the real clock; one was stamped an hour in the future. They have been corrected to the
+> **git commit time of the commit that introduced each amendment**, which is the
+> authoritative record — a hand-typed timestamp in a pre-registration is worth nothing,
+> since it is exactly the field a motivated author would backdate. Verify any entry with
+> `git log --format='%h %cd' --date=iso -- prereg/DEVIATIONS.md`. The sha256 seals in
+> `prereg/SEAL.txt` were machine-generated throughout and were always correct.
+>
+> **Every amendment below was made before any model was loaded and before any activation
+> existed.** The first GPU run had not occurred when the last of them was sealed.
+
 Amendments to `prereg/PRIMARY_ENDPOINTS.md` (sealed 2026-09-06T20:47:45Z,
 sha256 d138968eab9b6b57e1e27b7239722d3a9ccbe5a0e56f21347233f8cfcd5f9501).
 
@@ -15,7 +26,7 @@ motivated them.
 
 ## Amendment 1 — H1 demoted from hypothesis to methods note
 
-**Timestamp:** 2026-09-06T21:02 UTC
+**Timestamp:** 2026-09-06T21:09 UTC (git commit `89b6967` — authoritative)
 **Status:** H1 no longer has a primary endpoint. Two primary endpoints remain (H2, H3).
 
 **Change.** H1 ("purely geometric spectral clusters align with linguistic structure better
@@ -50,7 +61,7 @@ layer is still identified — H3 and the k-selection procedure both depend on it
 
 ## Amendment 2 — H3 endpoint respecified: lambda2 is a POOLED statistic
 
-**Timestamp:** 2026-09-06T21:02 UTC
+**Timestamp:** 2026-09-06T21:09 UTC (git commit `89b6967` — authoritative)
 **Status:** endpoint quantity and direction UNCHANGED. Unit of pairing and source of
 uncertainty changed.
 
@@ -96,7 +107,7 @@ stated plainly rather than left for a reviewer to infer from the degrees of free
 
 ## Amendment 3 — affinity is COSINE; layer-pair index convention fixed
 
-**Timestamp:** 2026-09-06T21:47 UTC
+**Timestamp:** 2026-09-06T21:22 UTC (git commit `ea6615f` — authoritative)
 **Status:** operationalization decision, made before any activation exists. No endpoint or
 direction changes.
 
@@ -130,7 +141,7 @@ exactly the §A.11 item-2 failure mode applied one level up.
 
 ## Amendment 4 — `formal` is GIVENS + GOAL, with no derivation
 
-**Timestamp:** 2026-09-06T21:40 UTC
+**Timestamp:** 2026-09-06T21:30 UTC (git commit `6c78efe` — authoritative)
 **Status:** corpus definition change, made before any activation exists. H3's endpoint and
 direction unchanged.
 
@@ -182,7 +193,7 @@ sampled value it claims, and that the goal names the quantity the template asks 
 
 ### Amendment 4, clarification — what `formal` actually is
 
-**Timestamp:** 2026-09-06T23:05 UTC
+**Timestamp:** 2026-09-06T22:45 UTC (git commit `cb221bf` — authoritative)
 
 The implemented `formal` condition is:
 
@@ -222,7 +233,7 @@ leaked the answer).
 
 ## Amendment 5 — kernel and bandwidth pre-committed
 
-**Timestamp:** 2026-09-06T23:55 UTC
+**Timestamp:** 2026-09-06T22:54 UTC (git commit `4f23984` — authoritative)
 **Status:** operationalization, pre-data. No endpoint or direction changes.
 
 **Kernel.** Amendment 3 fixed the *representation* (cosine, scale-invariant) but not the
@@ -250,7 +261,7 @@ symmetric), and the eigengap.
 
 ## Amendment 6 — two style controls; style-normalized displacement
 
-**Timestamp:** 2026-09-07T00:20 UTC
+**Timestamp:** 2026-09-06T23:00 UTC (git commit `8fd8b4d` — authoritative)
 **Status:** pre-data. Adds conditions and a SECONDARY endpoint. **H2's and H3's primary
 endpoints are UNCHANGED.**
 
@@ -303,7 +314,7 @@ metric fails.
 
 ### Amendment 6, correction — the contrast is matched-SITE, not matched-magnitude
 
-**Timestamp:** 2026-09-07T00:45 UTC
+**Timestamp:** 2026-09-06T23:09 UTC (git commit `f234dd6` — authoritative)
 
 Amendment 6 as written called `nl_minimal_orth` vs `nl_break` a "matched-magnitude,
 matched-site" contrast. **The matched-magnitude half is wrong and is corrected here before
