@@ -467,6 +467,26 @@ class TestAlignedActivationStore(unittest.TestCase):
                     tempfile.gettempdir(), bad))
             self.assertIn("A.1", str(cm.exception))
 
+    def test_problem_and_condition_indices(self):
+        """Resampling unit is the PROBLEM (§A.9.2, prereg decision 3)."""
+        store = hooks.AlignedActivationStore(2, 4)
+        names = ["a", hooks.FINAL]
+        for p in ("p0", "p1"):
+            for cond in ("nl_base", "nl_para", "formal", "nl_break"):
+                store.add(p, cond, names, np.zeros((2, 2, 4), dtype=np.float32))
+        batch = store.layer(0)
+        pidx = batch.problem_index()
+        self.assertEqual(sorted(pidx), ["p0", "p1"])
+        # each problem contributes 4 conditions x 2 anchors = 8 rows
+        self.assertEqual([len(v) for v in pidx.values()], [8, 8])
+        # and a resampled problem carries all four conditions with it
+        conds = {batch.rows[i].condition for i in pidx["p0"]}
+        self.assertEqual(conds, {"nl_base", "nl_para", "formal", "nl_break"})
+        cidx = batch.condition_index()
+        self.assertEqual(sorted(cidx), ["formal", "nl_base", "nl_break", "nl_para"])
+        self.assertEqual([len(v) for v in cidx.values()], [4, 4, 4, 4])
+        store.close()
+
     def test_release_frees_layers_as_they_are_consumed(self):
         store = hooks.AlignedActivationStore(3, 4)
         store.add("p0", "nl_base", ["a", hooks.FINAL],

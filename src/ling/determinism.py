@@ -283,16 +283,15 @@ def _is_torch_tensor(x: Any) -> bool:
 def _flatten_to_list(x: Any):
     """Flatten a nested sequence of numbers into a flat python list."""
     out = []
-    stack = [x]
-    # depth-first, preserving order
+
     def rec(v):
         if isinstance(v, (list, tuple)):
             for item in v:
                 rec(item)
         else:
             out.append(v)
+
     rec(x)
-    del stack
     return out
 
 

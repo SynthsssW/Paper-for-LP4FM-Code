@@ -593,6 +593,33 @@ class LayerBatch:
     def index_of(self, problem_id: str, condition: str, anchor_name: str) -> int:
         return self.rows.index(StateRow(problem_id, condition, anchor_name))
 
+    def problem_index(self) -> Dict[str, List[int]]:
+        """problem_id -> the row indices contributed by that problem.
+
+        Exists so that the resampling unit can be the PROBLEM and never the
+        token state (§A.9.2, §A.11, prereg decision 3). A bootstrap draws
+        problem ids, unions their row indices, and rebuilds the graph from those
+        rows; a bootstrap that drew rows directly would treat the ~4-6
+        dependent states within a problem as independent and give intervals far
+        too narrow. Note that a problem's rows span all four conditions, which
+        is what keeps a resample balanced across conditions.
+        """
+        out: Dict[str, List[int]] = {}
+        for i, r in enumerate(self.rows):
+            out.setdefault(r.problem_id, []).append(i)
+        return out
+
+    def condition_index(self) -> Dict[str, List[int]]:
+        """condition -> row indices. For building the per-condition graphs.
+
+        k is NOT selected here: §A.6 and prereg decision 1 require k to be
+        chosen once per layer on nl_base and reused for all four conditions.
+        """
+        out: Dict[str, List[int]] = {}
+        for i, r in enumerate(self.rows):
+            out.setdefault(r.condition, []).append(i)
+        return out
+
 
 class AlignedActivationStore:
     """Collect aligned activations prompt-by-prompt, hand them back layer-by-layer.
