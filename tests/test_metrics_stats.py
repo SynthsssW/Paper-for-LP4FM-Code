@@ -829,5 +829,430 @@ class TestAnalyzeScript(unittest.TestCase):
                                places=9)
 
 
+# --------------------------------------------------------------------------------------
+# Style-normalized displacement (DEVIATIONS Amendment 6)
+# --------------------------------------------------------------------------------------
+
+
+def snd_fixture(cond_trans, n_problems=6, k=4, skip=()):
+    """Two layers (one layer-pair); every problem repeats the same transitions.
+
+    `cond_trans` maps condition -> [(src_cluster, dst_cluster)] with one entry per
+    anchor. `skip` is a set of (condition, problem_index) cells to leave OUT entirely --
+    an Amendment 6 unavailable cell, which is an absent row, never a placeholder.
+
+    Repeating one transition multiset across problems scales every edge weight by the
+    number of problems, and the symmetric normalized Laplacian is invariant to that, so
+    the pooled lambda2 has a closed form independent of n_problems.
+    """
+    rows = []
+    for i in range(n_problems):
+        pid = "P%02d" % i
+        for cond, trans in cond_trans.items():
+            if (cond, i) in skip:
+                continue
+            for j, (s, d) in enumerate(trans):
+                rows.append((pid, cond, "a%d" % j, [s, d]))
+    return M.Assignments(build(rows, [k, k]))
+
+
+# nl_base    : s0-d0, s1-d0, s1-d1 -> the path P4, normalized spectrum {0, 1/2, 3/2, 2}
+# orth floor : one edge of weight 3   -> spectrum {0, 2}
+# lex floor  : star centred on d0     -> spectrum {0, 1, 2}
+# formal     : s0-d0 and s1-d1        -> TWO components, so lambda2 is exactly 0
+SND_BASE = [(0, 0), (1, 0), (1, 1)]
+SND_ORTH = [(0, 0), (0, 0), (0, 0)]
+SND_LEX = [(0, 0), (1, 0), (0, 0)]
+SND_FORMAL = [(0, 0), (1, 1), (0, 0)]
+SND_CONDS = {"nl_base": SND_BASE, "formal": SND_FORMAL,
+             "nl_minimal_orth": SND_ORTH, "nl_minimal_lex": SND_LEX}
+
+
+class TestStyleNormalizedDisplacement(unittest.TestCase):
+
+    def test_the_closed_form_lambda2_values_the_ratios_are_built_from(self):
+        a = snd_fixture(SND_CONDS)
+        self.assertAlmostEqual(M.lambda2(a, 0, "nl_base"), 0.5, places=12)
+        self.assertAlmostEqual(M.lambda2(a, 0, "nl_minimal_orth"), 2.0, places=12)
+        self.assertAlmostEqual(M.lambda2(a, 0, "nl_minimal_lex"), 1.0, places=12)
+        self.assertEqual(M.lambda2(a, 0, "formal"), 0.0)
+
+    def test_snd_matches_the_hand_computed_ratio_against_each_floor(self):
+        a = snd_fixture(SND_CONDS)
+        # (0 - 1/2) / (2 - 1/2) = -1/3
+        up = M.style_normalized_displacement(
+            a, "lambda2", "formal", "nl_minimal_orth", n_boot=40, seed=3)
+        self.assertTrue(up["denominator_ci_excludes_zero"])
+        self.assertAlmostEqual(up["raw_difference"]["point"], -0.5, places=12)
+        self.assertAlmostEqual(up["denominator"]["point"], 1.5, places=12)
+        self.assertAlmostEqual(up["snd"], -1.0 / 3.0, places=12)
+        # (0 - 1/2) / (1 - 1/2) = -1
+        lo = M.style_normalized_displacement(
+            a, "lambda2", "formal", "nl_minimal_lex", n_boot=40, seed=3)
+        self.assertAlmostEqual(lo["snd"], -1.0, places=12)
+
+    def test_snd_for_path_entropy_hand_computed(self):
+        # normalized H: base = (2/3)log2 / log4 = 1/3; every other condition routes
+        # deterministically, so H = 0. Both floors give (0 - 1/3)/(0 - 1/3) = 1.
+        a = snd_fixture(SND_CONDS)
+        self.assertAlmostEqual(
+            M.path_entropy(a, 0, "nl_base", normalized=True), 1.0 / 3.0, places=12)
+        r = M.style_normalized_displacement(
+            a, "path_entropy", "formal", "nl_minimal_orth", n_boot=40, seed=3)
+        self.assertAlmostEqual(r["snd"], 1.0, places=12)
+
+    def test_range_reports_both_floors_and_their_span(self):
+        a = snd_fixture(SND_CONDS)
+        r = M.snd_range(a, "lambda2", "formal", n_boot=40, seed=3)
+        self.assertTrue(r["range_available"])
+        self.assertAlmostEqual(r["range"]["low"], -1.0, places=12)
+        self.assertAlmostEqual(r["range"]["high"], -1.0 / 3.0, places=12)
+        self.assertEqual(set(r["by_floor"]), {"nl_minimal_orth", "nl_minimal_lex"})
+        self.assertIn("INTERPRETIVE SECONDARY", r["status"])
+        for block in r["by_floor"].values():
+            self.assertIn("bracket", block["bracket_role"])
+            self.assertNotIn("matched magnitude", block["bracket_role"].lower())
+
+    def test_precommitted_abs_gt_1_is_evaluated_not_assumed(self):
+        a = snd_fixture(SND_CONDS)
+        small = M.style_normalized_displacement(
+            a, "lambda2", "formal", "nl_minimal_orth", n_boot=40, seed=3,
+            precommitted="abs_gt_1")
+        self.assertFalse(small["consistent_with_precommitted_direction"])   # |−1/3| < 1
+        # (2 - 1/2) / (1 - 1/2) = 3
+        big = M.style_normalized_displacement(
+            a, "lambda2", "nl_minimal_orth", "nl_minimal_lex", n_boot=40, seed=3,
+            precommitted="abs_gt_1")
+        self.assertAlmostEqual(big["snd"], 3.0, places=12)
+        self.assertTrue(big["consistent_with_precommitted_direction"])
+
+
+class TestSNDNearZeroDenominatorGuard(unittest.TestCase):
+    """The ratio artifact is how this metric fails, so the guard is tested directly."""
+
+    def test_zero_denominator_returns_null_with_a_reason(self):
+        conds = dict(SND_CONDS)
+        conds["nl_minimal_orth"] = list(SND_BASE)        # floor == base: denominator 0
+        a = snd_fixture(conds)
+        r = M.style_normalized_displacement(
+            a, "lambda2", "formal", "nl_minimal_orth", n_boot=40, seed=3)
+        self.assertIsNone(r["snd"])
+        self.assertFalse(r["denominator_ci_excludes_zero"])
+        self.assertIn("INCLUDES zero", r["undefined_reason"])
+        self.assertEqual(r["denominator"]["point"], 0.0)
+
+    def test_near_zero_denominator_is_null_and_not_a_spectacular_number(self):
+        # The floor differs from nl_base for ONE problem in eight, so the denominator is
+        # small but nonzero and its problem-level bootstrap CI straddles zero. The naive
+        # ratio is enormous; the guard must return null instead of that number.
+        n = 30
+        rows = []
+        for i in range(n):
+            pid = "P%02d" % i
+            for cond, trans in (("nl_base", SND_BASE), ("formal", SND_FORMAL),
+                                ("nl_minimal_lex", SND_LEX)):
+                for j, (s, d) in enumerate(trans):
+                    rows.append((pid, cond, "a%d" % j, [s, d]))
+            floor = list(SND_BASE)
+            if i == 0:
+                floor[2] = (0, 1)                        # one problem perturbs one edge
+            for j, (s, d) in enumerate(floor):
+                rows.append((pid, "nl_minimal_orth", "a%d" % j, [s, d]))
+        a = M.Assignments(build(rows, [4, 4]))
+
+        r = M.style_normalized_displacement(
+            a, "lambda2", "formal", "nl_minimal_orth", n_boot=200, seed=5)
+        den = r["denominator"]["point"]
+        num = r["raw_difference"]["point"]
+        self.assertNotEqual(den, 0.0)
+        self.assertGreater(abs(num / den), 10.0)         # the artifact the guard prevents
+        self.assertIsNone(r["snd"])
+        self.assertFalse(r["denominator_ci_excludes_zero"])
+        self.assertIn("division artifact", r["undefined_reason"])
+        # and the raw difference -- the PRIMARY quantity -- is still reported
+        self.assertIsNotNone(r["raw_difference"]["bootstrap_ci"])
+
+    def test_no_bootstrap_means_no_snd_rather_than_an_unguarded_ratio(self):
+        a = snd_fixture(SND_CONDS)
+        r = M.style_normalized_displacement(
+            a, "lambda2", "formal", "nl_minimal_orth", n_boot=0)
+        self.assertIsNone(r["snd"])
+        self.assertIn("guard", r["undefined_reason"])
+
+    def test_a_failing_floor_removes_the_range_but_keeps_the_other_floor(self):
+        conds = dict(SND_CONDS)
+        conds["nl_minimal_orth"] = list(SND_BASE)
+        a = snd_fixture(conds)
+        r = M.snd_range(a, "lambda2", "formal", n_boot=40, seed=3)
+        self.assertFalse(r["range_available"])
+        self.assertIsNone(r["range"])
+        self.assertIn("nl_minimal_orth", r["range_unavailable_reason"])
+        self.assertAlmostEqual(r["by_floor"]["nl_minimal_lex"]["snd"], -1.0, places=12)
+
+
+class TestUnavailableStyleControlCells(unittest.TestCase):
+    """Amendment 6: 31 problem x condition cells are genuine holes."""
+
+    def test_problems_for_and_availability(self):
+        a = snd_fixture(SND_CONDS, n_problems=6,
+                        skip={("nl_minimal_lex", 0), ("nl_minimal_lex", 1),
+                              ("nl_minimal_orth", 5)})
+        self.assertEqual(len(a.problems_for("nl_base")), 6)
+        self.assertEqual(len(a.problems_for("nl_minimal_lex")), 4)
+        self.assertEqual(len(a.problems_for("nl_minimal_lex", "nl_minimal_orth")), 3)
+        av = a.availability("nl_minimal_lex")
+        self.assertEqual((av["n_available"], av["n_unavailable"]), (4, 2))
+        self.assertEqual(av["unavailable_problems"], ["P00", "P01"])
+
+    def test_snd_uses_the_common_problem_set_and_counts_the_exclusions(self):
+        a = snd_fixture(SND_CONDS, n_problems=6, skip={("nl_minimal_lex", 0),
+                                                       ("nl_minimal_lex", 1)})
+        r = M.style_normalized_displacement(
+            a, "lambda2", "formal", "nl_minimal_lex", n_boot=40, seed=3)
+        self.assertEqual(r["n_problems"], 4)
+        self.assertEqual(r["n_problems_excluded_unavailable"], 2)
+        self.assertAlmostEqual(r["snd"], -1.0, places=12)      # ratio is unchanged
+
+    def test_fork_layers_skips_cells_with_no_realization(self):
+        a = snd_fixture(SND_CONDS, n_problems=6, skip={("nl_minimal_orth", 3)})
+        forks = M.fork_layers(a, ("nl_base", "nl_minimal_orth"))
+        self.assertEqual(len(forks), 5)
+        self.assertNotIn("P03", [f.problem_id for f in forks])
+
+
+# --------------------------------------------------------------------------------------
+# H2's pre-registered SECONDARY contrast, and the no-events degradation
+# --------------------------------------------------------------------------------------
+
+
+def _load_analyze(name):
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        name, os.path.join(_REPO, "scripts", "04_analyze.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def six_condition_corpus(path, fork_at, n_layers=10, k=4, seed=1,
+                         randomize_formal=True):
+    """`fork_at(cond, i)` -> the layer at which condition `cond` of problem i diverges
+    from nl_base, or None for a pair that never forks (right-censored)."""
+    rng = random.Random(seed)
+    conds = ("nl_base", "nl_para", "formal", "nl_break", "nl_minimal_orth",
+             "nl_minimal_lex")
+    rows = []
+    for i in range(24):
+        pid = "P%02d" % i
+        for cond in conds:
+            L = None if cond == "nl_base" else fork_at(cond, i)
+            if L == "absent":
+                continue
+            for an in ("q1", "FINAL"):
+                seq = [0 if (L is None or layer < L) else 1 for layer in range(n_layers)]
+                if cond == "formal" and randomize_formal:
+                    seq = [s if layer < 1 else rng.randrange(2)
+                           for layer, s in enumerate(seq)]
+                rows.append((pid, cond, an, seq))
+    recs = build(rows, [k] * n_layers,
+                 eigengaps=[0.01 * (L + 1) for L in range(n_layers)])
+    with open(path, "w", encoding="utf-8") as fh:
+        for r in recs:
+            fh.write(json.dumps(r) + "\n")
+
+
+class TestH2SecondaryHazardContrast(unittest.TestCase):
+
+    def _run(self, fork_at, extra=()):
+        mod = _load_analyze("analyze04_sec")
+        with tempfile.TemporaryDirectory() as d:
+            src = os.path.join(d, "assignments.jsonl")
+            out = os.path.join(d, "analysis.json")
+            six_condition_corpus(src, fork_at)
+            rc = mod.main(["--assignments", src, "--out", out, "--n-boot", "10",
+                           "--n-perm", "0"] + list(extra))
+            self.assertEqual(rc, 0)
+            with open(out, encoding="utf-8") as fh:
+                return json.load(fh)
+
+    @staticmethod
+    def _ordering(cond, i):
+        rng = random.Random(1000 + i)
+        if cond == "nl_break":
+            return rng.choice([1, 2, 3])            # breaks fork EARLY
+        if cond == "nl_minimal_orth":
+            return rng.choice([5, 6, 7, None])      # the style floor forks LATE
+        if cond == "nl_minimal_lex":
+            return "absent" if i % 8 == 0 else rng.choice([5, 6, None])
+        return rng.choice([4, 5, 6, None])
+
+    def test_known_ordering_gives_a_hazard_ratio_above_one(self):
+        res = self._run(self._ordering)
+        sec = res["secondary_endpoints"]["h2_fork_hazard_break_vs_style_floor"]
+        self.assertTrue(sec["status"].startswith("PRE-REGISTERED SECONDARY"))
+        self.assertTrue(sec["available"])
+        self.assertTrue(sec["model_fitted"])
+        self.assertGreater(sec["hazard_ratio"], 1.0)
+        self.assertGreater(sec["fit"]["primary"]["coef"], 0.0)
+        self.assertTrue(sec["consistent_with_precommitted_direction"])
+        self.assertLess(sec["p"], 0.01)
+        self.assertEqual(sec["fit"]["link"], "cloglog")
+
+    def test_the_secondary_never_sits_among_the_primary_endpoints(self):
+        res = self._run(self._ordering)
+        self.assertEqual(res["primary_endpoints"]["count"], 2)
+        self.assertEqual(set(res["primary_endpoints"]) - {"count", "note"}, {"h2", "h3"})
+        sec = res["secondary_endpoints"]["h2_fork_hazard_break_vs_style_floor"]
+        self.assertFalse(sec["replaces_primary"])
+        self.assertIn("does NOT replace", sec["status"])
+        self.assertEqual(res["primary_endpoints"]["h2"]["status"], "PRIMARY")
+        self.assertTrue(res["primary_endpoints"]["h2"]["model_fitted"])
+        for block in res["secondary_endpoints"].values():
+            if isinstance(block, dict):
+                self.assertNotEqual(block.get("status"), "PRIMARY")
+
+    def test_the_contrast_is_labelled_matched_site_never_matched_magnitude(self):
+        res = self._run(self._ordering)
+        sec = res["secondary_endpoints"]["h2_fork_hazard_break_vs_style_floor"]
+        blob = json.dumps(sec).lower()
+        self.assertNotIn("matched-magnitude", blob)
+        self.assertNotIn("matched magnitude", blob.replace("not on edit magnitude", ""))
+        self.assertIn("site", sec["matching"].lower())
+
+    def test_unavailable_cells_are_excluded_and_counted(self):
+        res = self._run(self._ordering)
+        h2 = res["primary_endpoints"]["h2"]
+        lex = h2["availability"]["by_condition"]["nl_minimal_lex"]
+        self.assertEqual(lex["n_excluded_no_realization"], 3)      # i % 8 == 0 of 24
+        self.assertEqual(lex["n_entered"], 21)
+        self.assertEqual(h2["availability"]["total_cells_excluded"], 3)
+        meta = res["meta"]["availability"]
+        self.assertEqual(meta["total_cells_unavailable"], 3)
+        self.assertEqual(meta["by_condition"]["nl_minimal_lex"]["n_available"], 21)
+
+    def test_metric_correlation_matrix_covers_every_non_reference_condition(self):
+        res = self._run(self._ordering)
+        corr = res["exploratory"]["metric_correlation_matrix"]
+        self.assertEqual(corr["n_conditions_covered"], 5)
+        self.assertEqual(corr["conditions_covered"],
+                         ["formal", "nl_break", "nl_minimal_lex", "nl_minimal_orth",
+                          "nl_para"])
+        for cond, block in corr["by_condition"].items():
+            self.assertEqual(block["metrics"],
+                             ["lambda2", "path_entropy", "forked_fraction"], cond)
+
+    def test_snd_block_is_present_and_labelled_interpretive_secondary(self):
+        res = self._run(self._ordering)
+        snd = res["secondary_endpoints"]["style_normalized_displacement"]
+        self.assertTrue(snd["available"])
+        self.assertIn("INTERPRETIVE SECONDARY", snd["status"])
+        self.assertEqual(sorted(snd["by_metric"]), ["lambda2", "path_entropy"])
+        for metric, by_cond in snd["by_metric"].items():
+            self.assertEqual(sorted(by_cond), ["formal", "nl_break", "nl_para"])
+            for block in by_cond.values():
+                for floor in block["by_floor"].values():
+                    # never a number without the guard having passed
+                    if floor["snd"] is not None:
+                        self.assertTrue(floor["denominator_ci_excludes_zero"])
+                    else:
+                        self.assertIsNotNone(floor["undefined_reason"])
+
+
+class TestSurvivalWithNoForkEvents(unittest.TestCase):
+    """A 3am crash after the pod is torn down costs a GPU rental to recover from."""
+
+    def test_analysis_reports_an_unfittable_model_and_keeps_going(self):
+        mod = _load_analyze("analyze04_noevents")
+        with tempfile.TemporaryDirectory() as d:
+            src = os.path.join(d, "assignments.jsonl")
+            out = os.path.join(d, "analysis.json")
+            # every condition tracks nl_base at every layer: nothing ever forks
+            six_condition_corpus(src, lambda cond, i: None,
+                                 randomize_formal=False)
+            rc = mod.main(["--assignments", src, "--out", out, "--n-boot", "10",
+                           "--n-perm", "0"])
+            self.assertEqual(rc, 0)
+            with open(out, encoding="utf-8") as fh:
+                res = json.load(fh)
+
+        h2 = res["primary_endpoints"]["h2"]
+        self.assertTrue(h2["available"])
+        self.assertFalse(h2["model_fitted"])
+        self.assertFalse(h2["fit"]["fitted"])
+        self.assertEqual(h2["fit"]["n_events"], 0)
+        self.assertIn("no fork events", h2["fit"]["unfittable_reason"])
+        self.assertNotIn("primary", h2["fit"])          # no coefficient is invented
+        sec = res["secondary_endpoints"]["h2_fork_hazard_break_vs_style_floor"]
+        self.assertFalse(sec["model_fitted"])
+        self.assertEqual(sec["fit"]["n_events"], 0)
+        # ...and the rest of the analysis was still computed and written
+        self.assertTrue(res["primary_endpoints"]["h3"]["available"])
+        self.assertIn("lambda2_by_condition", res["exploratory"])
+        self.assertTrue(res["secondary_endpoints"]["style_normalized_displacement"]
+                        ["available"])
+
+    def test_the_statistics_layer_itself_still_refuses(self):
+        # the graceful path belongs to the SCRIPT; the library still says no, loudly
+        recs = [{"problem_id": "P%d" % i, "fork_layer": None, "censored": True,
+                 "answer_survival": 1.0} for i in range(5)]
+        with self.assertRaises(ValueError):
+            S.discrete_time_survival(recs, layers=[0, 1, 2])
+
+
+
+class TestUnavailableCovariateCells(unittest.TestCase):
+    """The corpus builder omits unavailable cells from covariates.json entirely."""
+
+    def _run(self, covariates):
+        mod = _load_analyze("analyze04_cov")
+        with tempfile.TemporaryDirectory() as d:
+            src = os.path.join(d, "assignments.jsonl")
+            cov = os.path.join(d, "covariates.json")
+            out = os.path.join(d, "analysis.json")
+            six_condition_corpus(
+                src, lambda cond, i: (1 + (i % 3) if cond == "nl_break"
+                                      else 5 + (i % 4)))
+            with open(cov, "w", encoding="utf-8") as fh:
+                json.dump(covariates, fh)
+            rc = mod.main(["--assignments", src, "--out", out, "--covariates", cov,
+                           "--n-boot", "0", "--n-perm", "0"])
+            self.assertEqual(rc, 0)
+            with open(out, encoding="utf-8") as fh:
+                return json.load(fh)
+
+    @staticmethod
+    def _covariates(omit=()):
+        out = {}
+        for i in range(24):
+            pid = "P%02d" % i
+            for cond in ("nl_para", "formal", "nl_break", "nl_minimal_orth",
+                         "nl_minimal_lex"):
+                if (cond, i) in omit:
+                    continue
+                rng = random.Random("%s/%d" % (cond, i))
+                out.setdefault(pid, {})[cond] = {"lex_dissim": rng.random(),
+                                                 "syn_dissim": rng.random()}
+        return out
+
+    def test_a_missing_covariate_entry_is_an_excluded_hole_not_a_crash(self):
+        omit = {("nl_minimal_lex", i) for i in range(5)} | {("nl_minimal_orth", 7)}
+        res = self._run(self._covariates(omit))
+        h2 = res["primary_endpoints"]["h2"]
+        self.assertTrue(h2["model_fitted"])
+        self.assertEqual(h2["covariates_entered"], ["lex_dissim", "syn_dissim"])
+        self.assertTrue(h2["primary_endpoint_complete"])
+        by_cond = h2["availability"]["by_condition"]
+        self.assertEqual(by_cond["nl_minimal_lex"]["n_excluded_no_covariate_entry"], 5)
+        self.assertEqual(by_cond["nl_minimal_orth"]["n_excluded_no_covariate_entry"], 1)
+        self.assertEqual(h2["availability"]["total_cells_excluded"], 6)
+        self.assertEqual(h2["n_pairs_entered"], 24 * 5 - 6)
+
+    def test_a_partial_covariate_entry_is_still_refused(self):
+        cov = self._covariates()
+        del cov["P03"]["formal"]["syn_dissim"]
+        with self.assertRaises(SystemExit):
+            self._run(cov)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -46,6 +46,10 @@ Optional inputs (never fabricated when absent):
                       Absent -> H2 is fitted WITHOUT controls and flagged
                       "primary_endpoint_complete": false. The uncontrolled coefficient is
                       NOT the pre-registered endpoint and is labelled as such.
+                      A wholly absent (problem, condition) entry is an Amendment 6
+                      unavailable cell: it is EXCLUDED upstream of the model and counted
+                      under h2.availability, never imputed. An entry that exists but is
+                      missing one control is an inconsistency and still stops the run.
   H1 needs per-row "linguistic_label" and "kmeans_cluster" fields at the max-eigengap
   layer. Absent -> H1 reports status "unavailable" with the reason. It is never faked.
 
@@ -301,8 +305,23 @@ def analyze_h2(a, args, covariates):
 
     records = []
     censored = 0
+    excluded = {}
     for cond in others:
-        for f in M.fork_layers(a, (ref, cond)):
+        # Amendment 6: the style-control conditions are ragged (nl_minimal_orth 99/100,
+        # nl_minimal_lex 70/100, 31 unavailable cells in all). A cell with no
+        # realization has no prompt, no activation and no fork layer, so it is excluded
+        # HERE, upstream of the model, rather than entering the person-period expansion
+        # as a row with a missing covariate. The counts are reported below.
+        avail = M.fork_layers(a, (ref, cond))
+        no_rows = [p for p in a.problems if (p, cond) not in a.index_by_pc]
+        no_covariate = []
+        for f in avail:
+            vals = (covariates.get(f.problem_id, {}) or {}).get(cond) if cov_names else {}
+            if cov_names and not vals:
+                # The covariates builder skips unavailable realizations the same way, so
+                # an absent ENTRY is the same hole, not an inconsistency.
+                no_covariate.append(f.problem_id)
+                continue
             rec = {
                 "problem_id": f.problem_id,
                 "condition": cond,
@@ -310,17 +329,28 @@ def analyze_h2(a, args, covariates):
                 # answer_survival = 1 when the realization PRESERVES the answer.
                 "answer_survival": 0.0 if cond in breaking else 1.0,
             }
-            if cov_names:
-                vals = (covariates.get(f.problem_id, {}) or {}).get(cond, {})
-                for name in cov_names:
-                    if name not in vals:
-                        raise SystemExit(
-                            "covariates file is missing %r for (%s, %s); a control that "
-                            "is present for some pairs and absent for others cannot be "
-                            "entered as a covariate" % (name, f.problem_id, cond))
-                    rec[name] = float(vals[name])
+            for name in cov_names:
+                if name not in vals:
+                    raise SystemExit(
+                        "covariates file has an entry for (%s, %s) but it is missing %r; "
+                        "a control that is present for some pairs and absent for others "
+                        "cannot be entered as a covariate. (A wholly absent entry is an "
+                        "Amendment 6 unavailable cell and is excluded instead.)"
+                        % (f.problem_id, cond, name))
+                rec[name] = float(vals[name])
             records.append(rec)
             censored += 1 if f.censored else 0
+        excluded[cond] = {
+            "n_problems": len(a.problems),
+            "n_entered": sum(1 for r in records if r["condition"] == cond),
+            "n_excluded": len(no_rows) + len(no_covariate),
+            "n_excluded_no_realization": len(no_rows),
+            "n_excluded_no_covariate_entry": len(no_covariate),
+            "excluded_problems": sorted(set(no_rows) | set(no_covariate)),
+        }
+    if not records:
+        return {"status": "PRIMARY", "hypothesis": "H2", "available": False,
+                "reason": "every problem x condition cell was excluded as unavailable"}
 
     fit = _fit_survival_or_report(
         records,
@@ -344,6 +374,16 @@ def analyze_h2(a, args, covariates):
         "n_censored_pairs": censored,
         "censoring_handling": ("right-censored pairs contribute all non-fork rows; none "
                                "dropped, no fabricated event layer (DESIGN.md §A.9.1)"),
+        "n_pairs_entered": len(records),
+        "availability": {
+            "note": ("Amendment 6: unavailable style-control cells are genuine holes -- "
+                     "no realization was built, so no fork layer exists. They are "
+                     "excluded upstream of the model, never imputed, and counted here. "
+                     "Right-CENSORING is a different thing and is handled inside the "
+                     "model; nothing below was censored by exclusion."),
+            "total_cells_excluded": sum(v["n_excluded"] for v in excluded.values()),
+            "by_condition": excluded,
+        },
         "fit": fit,
         "model_fitted": bool(fit.get("fitted")),
         "secondary_endpoints_note": (
@@ -482,16 +522,26 @@ SECONDARY_STATUS = (
 def analyze_h2_secondary(a, args):
     """Hazard ratio for fork layer, nl_break vs nl_minimal_orth (Amendment 6).
 
-    Both are ONE-TOKEN edits at the SAME quantity anchor; they differ only in whether
-    the value -- and hence the answer -- changes. So unlike the nl_para/formal contrasts,
-    this one is not confounded with surface dissimilarity, which is why no dissimilarity
-    covariates are entered: there is no systematic surface difference between the arms
-    to control for, and entering a control that is constant by construction would only
-    make the design near-singular.
+    The two arms are matched on edit SITE -- both edit the quantity anchor, 95 of 99 the
+    exact same slot -- and differ in whether the value, and hence the answer, changes.
+    They are NOT matched on edit magnitude: Amendment 6's correction of
+    2026-09-07T00:45 measured nl_minimal_orth at ~8x nl_break's edit size (lex_edit
+    means 0.0486 vs 0.0050), because digits-to-words is a multi-character rewrite. The
+    phrase "matched magnitude" must not be used for this contrast.
+
+    That asymmetry makes the pre-committed direction CONSERVATIVE rather than fragile:
+    nl_minimal_orth is the LARGER surface edit, so any surface-driven forking pushes it
+    to fork earlier -- against the prediction that nl_break forks earlier. A confirmed
+    result is therefore not explicable by edit size.
+
+    No dissimilarity covariates are entered. The design is a two-arm contrast at a
+    matched site, the arms' surface distances are what the contrast is about rather than
+    a nuisance measured alongside it, and with one indicator and a dissimilarity control
+    that separates the arms almost perfectly the design would be near-singular.
 
     Same model form as H2's primary: cloglog discrete-time survival, person-period
-    expansion, cluster-robust SE on problem. The two arms come from the same problems,
-    so the problem cluster carries the pairing.
+    expansion, cluster-robust SE on problem. Both arms come from the same problems, so
+    the problem cluster carries the pairing.
     """
     brk, floor = args.break_condition, args.style_floor_upper
     out = {
@@ -500,14 +550,19 @@ def analyze_h2_secondary(a, args):
         "endpoint": ("hazard ratio for fork layer, %s vs %s, in the cloglog discrete-"
                      "time survival model" % (brk, floor)),
         "direction_precommitted": (
-            "%s forks EARLIER than the matched-magnitude style edit %s: coefficient "
-            "POSITIVE, hazard ratio > 1" % (brk, floor)),
+            "%s forks EARLIER than the matched-SITE style edit %s: coefficient POSITIVE, "
+            "hazard ratio > 1" % (brk, floor)),
+        "matching": ("matched on edit SITE (the quantity anchor), NOT on edit magnitude: "
+                     "%s is ~8x the edit size of %s (lex_edit means 0.0486 vs 0.0050, "
+                     "Amendment 6 correction). The pre-committed direction is therefore "
+                     "CONSERVATIVE -- the larger surface edit is the one predicted to "
+                     "fork LATER." % (floor, brk)),
         "replaces_primary": False,
         "covariates_entered": [],
         "covariates_note": (
-            "None, deliberately: the two arms are matched in edit magnitude and edit "
-            "site by construction (Amendment 6), which is the whole point of the "
-            "contrast."),
+            "None, deliberately: the arms are matched on edit site by construction "
+            "(Amendment 6), and a dissimilarity control that separates the two arms "
+            "almost perfectly would only make the design near-singular."),
     }
     missing = [c for c in (args.reference_condition, brk, floor) if c not in a.conditions]
     if missing:
@@ -518,9 +573,19 @@ def analyze_h2_secondary(a, args):
         return out
 
     ref = args.reference_condition
+    # Both arms on the SAME problems: a problem that has no nl_minimal_orth realization
+    # (1 of 100 under Amendment 6) contributes to neither arm, so the contrast stays
+    # within-problem and the excluded count is reported rather than absorbed.
+    common = a.problems_for(ref, brk, floor)
+    excluded = [p for p in a.problems if p not in set(common)]
+    if len(common) < 2:
+        out["available"] = False
+        out["reason"] = ("only %d problem(s) have all of %r, %r and %r"
+                         % (len(common), ref, brk, floor))
+        return out
     records = []
     for cond, is_break in ((brk, 1.0), (floor, 0.0)):
-        for f in M.fork_layers(a, (ref, cond)):
+        for f in M.fork_layers(a, (ref, cond), problems=common):
             records.append({
                 "problem_id": f.problem_id,
                 "condition": cond,
@@ -544,6 +609,14 @@ def analyze_h2_secondary(a, args):
         "reference_condition": ref,
         "n_pairs": len(records),
         "n_censored_pairs": len(records) - _count_fork_events(records),
+        "availability": {
+            "n_problems_in_both_arms": len(common),
+            "n_problems": len(a.problems),
+            "n_problems_excluded_unavailable": len(excluded),
+            "excluded_problems": excluded,
+            "note": ("Amendment 6 unavailable cells are excluded upstream of the model, "
+                     "not entered as missing rows; both arms use the same problems."),
+        },
         "fit": fit,
     })
     if fit.get("fitted"):
@@ -595,6 +668,11 @@ def analyze_snd(a, args):
         by_metric[metric] = by_condition
     out["available"] = True
     out["conditions"] = targets
+    out["availability_note"] = (
+        "Each (condition, floor) SND is computed on the problems where the base, the "
+        "condition and that floor all exist (Amendment 6), so the two floors of one "
+        "range rest on different problem subsets; each carries its own n_problems and "
+        "n_problems_excluded_unavailable.")
     out["by_metric"] = by_metric
     out["n_undefined"] = sum(
         1 for m in by_metric.values() for c in m.values()
@@ -610,10 +688,18 @@ def analyze_snd(a, args):
 def analyze_exploratory(a, args):
     pairs = a.layer_pairs()
     out = {"status": "EXPLORATORY"}
+    ragged = ("Each condition is pooled over the problems where that condition EXISTS "
+              "(Amendment 6: nl_minimal_orth and nl_minimal_lex are ragged), so the "
+              "n_problems below differ by condition and the columns are not pooled over "
+              "an identical corpus. Every cross-condition endpoint elsewhere in this "
+              "file is computed on a common problem set instead; this table is "
+              "descriptive.")
+    n_by_cond = {c: len(a.problems_for(c)) for c in a.conditions}
     out["path_entropy_normalized"] = {
         "status": "EXPLORATORY",
-        "note": "conditional entropy of the transition chain / log k, in [0, 1]",
+        "note": "conditional entropy of the transition chain / log k, in [0, 1]. " + ragged,
         "layer_pairs": list(pairs),
+        "n_problems_by_condition": n_by_cond,
         "by_condition": {
             c: [M.path_entropy(a, p, c, normalized=True) for p in pairs]
             for c in a.conditions
@@ -621,7 +707,9 @@ def analyze_exploratory(a, args):
     }
     out["lambda2_by_condition"] = {
         "status": "EXPLORATORY",
+        "note": ragged,
         "layer_pairs": list(pairs),
+        "n_problems_by_condition": n_by_cond,
         "by_condition": {c: [M.lambda2(a, p, c) for p in pairs] for c in a.conditions},
     }
     corr = {}
@@ -653,6 +741,7 @@ def analyze_exploratory(a, args):
         observed = [f.layer for f in fs if not f.censored]
         fork[c] = {
             "n_pairs": len(fs),
+            "n_problems_excluded_unavailable": len(a.problems) - len(fs),
             "n_forked": len(observed),
             "n_censored": sum(1 for f in fs if f.censored),
             "median_fork_layer_observed_only": (
@@ -730,6 +819,16 @@ def main(argv=None) -> int:
             "numpy": M.HAVE_NUMPY,
             "prereg": "prereg/PRIMARY_ENDPOINTS.md + prereg/DEVIATIONS.md (6 amendments)",
             "n_conditions": len(a.conditions),
+            "availability": {
+                "note": ("Amendment 6: the style-control conditions are ragged. An "
+                         "unavailable problem x condition cell is a genuine hole -- no "
+                         "realization, no prompt, no activation -- and is excluded "
+                         "upstream of every model rather than imputed. Counted here so "
+                         "that availability is a reported number."),
+                "by_condition": {c: a.availability(c) for c in a.conditions},
+                "total_cells_unavailable": sum(
+                    len(a.problems) - len(a.problems_for(c)) for c in a.conditions),
+            },
         },
         "primary_endpoints": {
             "count": 2,

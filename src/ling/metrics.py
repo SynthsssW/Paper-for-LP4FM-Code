@@ -275,6 +275,38 @@ class Assignments:
     def rows_for(self, problem_id: str, condition: str) -> tuple:
         return self.index_by_pc.get((problem_id, condition), ())
 
+    def problems_for(self, *conditions) -> tuple:
+        """Problems that have rows for EVERY named condition.
+
+        DEVIATIONS Amendment 6 makes the corpus RAGGED: `nl_minimal_orth` exists for
+        99/100 problems (one has no digit-rendered integer quantity) and
+        `nl_minimal_lex` for 70/100 (30 problems contain no proper name). Those 31
+        problem x condition cells are genuine holes -- no prompt was built, so no
+        activation was extracted and no row exists here. They are never invented.
+
+        Every cross-condition quantity must therefore be computed on the problems where
+        BOTH sides exist, and the count that was excluded must be reported. A pooled
+        lambda2 for `nl_minimal_lex` over its 70 problems compared against an `nl_base`
+        pooled over 100 would be part condition difference and part corpus difference,
+        which is exactly the kind of silent contamination §A.11 is about.
+        """
+        if not conditions:
+            raise ValueError("problems_for needs at least one condition")
+        return tuple(p for p in self.problems
+                     if all((p, c) in self.index_by_pc for c in conditions))
+
+    def availability(self, condition: str) -> dict:
+        """Per-condition availability report (Amendment 6): a number, never hidden."""
+        have = self.problems_for(condition)
+        missing = [p for p in self.problems if p not in set(have)]
+        return {
+            "condition": condition,
+            "n_available": len(have),
+            "n_problems": len(self.problems),
+            "n_unavailable": len(missing),
+            "unavailable_problems": missing,
+        }
+
     def clusters_at(self, layer: int) -> tuple:
         if layer not in self.clusters:
             raise InvariantViolation("layer %d is not present in %s" % (layer, self.source or "assignments"))
@@ -366,6 +398,11 @@ def transition_graph(
     this layer-pair is absence of data, not a disconnected region of the routing graph;
     keeping it would force lambda2 = 0 for every condition at every layer-pair and
     destroy the metric. This is a judgment call and it is stated in the paper.
+
+    `problems=None` defaults to the problems for which THIS condition exists
+    (`Assignments.problems_for`), because Amendment 6's corpus is ragged. Passing
+    `problems` explicitly is strict: a problem with no rows for this condition raises,
+    since a caller that names a problem set means it.
     """
     a = Assignments.coerce(assignments)
     p = layer_pair
@@ -375,7 +412,7 @@ def transition_graph(
             % (p, p, p + 1, a.layers))
 
     if problems is None:
-        problems = a.problems
+        problems = a.problems_for(condition) if isinstance(condition, str) else a.problems
     problems = list(problems)
     if not problems:
         raise ValueError("cannot build a pooled graph from zero problems")
@@ -589,7 +626,7 @@ def path_entropy(
     if p not in a.clusters or (p + 1) not in a.clusters:
         raise InvariantViolation("layer-pair %d not available; layers present: %r" % (p, a.layers))
     if problems is None:
-        problems = a.problems
+        problems = a.problems_for(condition) if isinstance(condition, str) else a.problems
     problems = list(problems)
     if not problems:
         raise ValueError("cannot compute pooled path entropy from zero problems")
@@ -720,7 +757,19 @@ def style_normalized_displacement(
     pairs = tuple(layer_pairs) if layer_pairs is not None else a.layer_pairs()
     if not pairs:
         raise ValueError("no layer-pairs available")
-    ids = sorted(a.problems) if problems is None else sorted(set(problems))
+    # Amendment 6's corpus is ragged (nl_minimal_orth 99/100, nl_minimal_lex 70/100), so
+    # numerator and denominator are computed on the problems where ALL THREE of base,
+    # condition and floor exist. Letting the denominator rest on 70 problems while the
+    # numerator rests on 100 would make the ratio part condition effect and part corpus
+    # difference. The exclusion is counted and reported, never silent.
+    available = set(a.problems_for(base_condition, condition, floor_condition))
+    requested = sorted(a.problems) if problems is None else sorted(set(problems))
+    ids = [p for p in requested if p in available]
+    n_excluded = len(requested) - len(ids)
+    if len(ids) < 2:
+        raise InvariantViolation(
+            "only %d problem(s) have all of %r, %r and %r; SND is not computable"
+            % (len(ids), base_condition, condition, floor_condition))
 
     def numerator(problem_multiset):
         return _mean_displacement(a, metric, condition, base_condition, pairs,
@@ -803,6 +852,13 @@ def style_normalized_displacement(
         "undefined_reason": reason,
         "n_layer_pairs": len(pairs),
         "n_problems": len(ids),
+        "n_problems_excluded_unavailable": n_excluded,
+        "availability_note": (
+            "numerator and denominator are computed on the %d problem(s) where all of "
+            "%s, %s and %s exist; %d were excluded as unavailable style-control cells "
+            "(Amendment 6). Different floors therefore rest on different problem "
+            "subsets, which is why each floor reports its own n."
+            % (len(ids), base_condition, condition, floor_condition, n_excluded)),
         "n_boot": n_boot,
         "alpha": alpha,
         "seed": seed,
@@ -842,16 +898,24 @@ def snd_range(
     so gives a floor that is likely too LOW. They BRACKET the true style floor, which is
     the reason both exist. A single-floor SND must never be quoted as "the" SND.
 
+    Neither control is matched on both edit site and edit size, and each is matched on
+    one and off on the other in opposite directions (Amendment 6, correction of
+    2026-09-07T00:45): `nl_minimal_orth` is matched on SITE but is roughly an order of
+    magnitude LARGER an edit (digits-to-words is a multi-character rewrite; measured
+    lex_edit means 0.0486 vs `nl_break`'s 0.0050), and `nl_minimal_lex` is the
+    closer-in-size control but off-anchor. That asymmetry is the reason for the range.
+
     A floor whose guard fires contributes no endpoint of the range; the range is
     reported only when BOTH floors pass, and the surviving one-sided value is still
     shown per-floor with its reason. Which floor gives the higher SND is read off the
     numbers, not assumed.
     """
-    floors = [(upper_floor, "upper bracket (likely too HIGH a floor: on-anchor "
-                            "orthographic re-rendering may be genuinely differently "
-                            "encoded)", precommitted_upper),
-              (lower_floor, "lower bracket (likely too LOW a floor: semantically null "
-                            "but OFF-anchor)", None)]
+    floors = [(upper_floor, "upper bracket: matched on edit SITE (on-anchor), but a "
+                            "LARGER edit than nl_break by roughly an order of magnitude, "
+                            "and digits vs number-words may be genuinely differently "
+                            "encoded -- likely too HIGH a floor", precommitted_upper),
+              (lower_floor, "lower bracket: closer in edit SIZE but OFF-anchor and "
+                            "semantically null -- likely too LOW a floor", None)]
     by_floor = {}
     for name, role, pre in floors:
         block = style_normalized_displacement(
@@ -875,6 +939,7 @@ def snd_range(
         "condition": condition,
         "base_condition": base_condition,
         "by_floor": by_floor,
+        "n_problems_by_floor": {n: b["n_problems"] for n, b in by_floor.items()},
         "range": rng,
         "range_available": rng is not None,
         "range_unavailable_reason": None if rng is not None else (
@@ -941,10 +1006,18 @@ def fork_layer(assignments, problem_id: str, condition_pair, layers=None) -> For
 
 
 def fork_layers(assignments, condition_pair, problems=None, layers=None) -> list:
-    """`fork_layer` for every problem; the input to the discrete-time survival model."""
+    """`fork_layer` for every problem; the input to the discrete-time survival model.
+
+    `problems=None` defaults to the problems where BOTH conditions exist. Under
+    Amendment 6 that is not all of them: `nl_minimal_orth` is missing for 1 problem and
+    `nl_minimal_lex` for 30, and a fork layer between a condition and a realization that
+    was never built does not exist. Those cells are EXCLUDED here, upstream of the
+    survival model, rather than entering it as rows with missing covariates -- and the
+    caller reports how many, because availability is a number, not a silence.
+    """
     a = Assignments.coerce(assignments)
     if problems is None:
-        problems = a.problems
+        problems = a.problems_for(*condition_pair)
     return [fork_layer(a, pid, condition_pair, layers=layers) for pid in problems]
 
 
@@ -1012,8 +1085,9 @@ def metric_correlation_matrix(
     metric set, not a test of anything.
     """
     a = Assignments.coerce(assignments)
+    n_all = len(a.problems)
     if problems is None:
-        problems = a.problems
+        problems = a.problems_for(condition, reference_condition)
     problems = list(problems)
     pairs = tuple(layer_pairs) if layer_pairs is not None else a.layer_pairs()
     if len(pairs) < 3:
@@ -1039,6 +1113,7 @@ def metric_correlation_matrix(
         "matrix": matrix,
         "n_layer_pairs": len(pairs),
         "n_problems": len(problems),
+        "n_problems_excluded_unavailable": n_all - len(problems),
         "condition": condition,
         "reference_condition": reference_condition,
         "n_censored_pairs": sum(1 for f in forks if f.censored),
