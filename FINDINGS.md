@@ -54,11 +54,29 @@ Across all 469 comparisons, predicting whether the measure fires:
 - Adding **whether the answer broke**: adds **2.6%**, and the effect can't even be estimated,
   because the answer-breaking group has zero events
 
-Between the two surface measures, *syntactic* difference beats *lexical* difference (0.395 vs
-0.251). The cleanest evidence for that isn't the statistics — it's two of our conditions:
-the paraphrase is **more** lexically different than the formal version but fires 35% of the
-time, while the formal version is more **syntactically** different and fires 100% of the time.
-The two explanations predict opposite orderings, and syntax wins.
+**What we could NOT determine: which surface property is responsible.** We tried three
+answers in ninety minutes and retracted the first two.
+
+- Syntactic difference looked like the driver — until token-count difference was tested and
+  beat it (0.525 vs 0.395).
+- Token length looked like the driver — until we refit without the `formal` condition, and
+  it collapsed from 0.525 to **0.050**. `formal` is 54% longer than the original and fires
+  100% of the time; it was carrying the whole result single-handedly.
+- Among the four conditions that are matched for length, no surface measure explains much
+  (best 0.17) and the ordering reverses.
+
+So the honest statement is: **among length-matched conditions we cannot separate lexical,
+syntactic, and length contributions.** Answering that needs a condition set designed for it,
+with length varied independently of syntactic distance. Ours wasn't.
+
+One oddity worth a sentence, not a claim: two conditions are identical on every surface
+measure we have (zero token change, one-character edits) yet fire at 5.7% and 0%. Fisher
+exact p = 0.027 — but on 4 events with no multiplicity correction, so it is suggestive at
+most. If real, it means the measure fires *more* on the version that preserves the answer
+than the one that breaks it.
+
+**None of this touches the main result**, which is a contrast between conditions, not a
+regression coefficient.
 
 ## Two supporting results
 
