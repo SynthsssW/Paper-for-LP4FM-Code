@@ -664,3 +664,54 @@ exact McNemar two-sided **p = 0.0066**. Formal rewriting **harms** accuracy by 1
 paper is the dissociation result: formal rewriting restructures the geometry and does NOT
 improve accuracy — it degrades it. Per DESIGN.md §B.8 this decision was made by the
 measurement, before the geometry was interpreted.
+
+### Observation 5c — RETRACTION of the syntactic claim: token-count difference dominates
+
+Observation 5b concluded that syntactic dissimilarity is the stronger predictor of fork
+occurrence. **That is retracted.** Token-count difference was never tested, and it beats both
+surface measures.
+
+Univariate McFadden R2 on fork occurrence (k=8, n=469, 147 forked):
+
+| single predictor | R2 |
+|---|---|
+| lexical edit distance | 0.2507 |
+| syntactic (dep-bag TV) | 0.3946 |
+| **token-count difference (relative)** | **0.5254** |
+| token-count difference (absolute) | 0.5079 |
+| char-length difference (relative) | 0.4914 |
+| token length ratio | 0.4531 |
+| syn + token-count | 0.5364 |
+| syn + lex + token-count | 0.5488 |
+
+Syntax adds ~0.011 on top of token-count difference. The condition table shows the mechanism:
+
+| condition | fork | token length ratio | mean abs token delta |
+|---|---|---|---|
+| `formal` | 100% | **1.54** | **23.0** |
+| `nl_para` | 35% | 0.97 | 3.7 |
+| `nl_minimal_orth` | 8% | 1.02 | 0.9 |
+| `nl_minimal_lex` | 6% | 1.00 | 0.0 |
+| `nl_break` | 0% | 1.00 | 0.0 |
+
+`formal` forks on every problem because it is **54% longer**, not because it is formal.
+The Observation 5b contrast (`nl_para` lexically farther than `formal` yet forking less) is
+equally explained by `formal` being 23 tokens longer, and that explanation is simpler and
+fits better.
+
+**Corrected characterization, to be used in the paper:** fork occurrence is primarily a
+readout of **how much the token sequence changed in length**. Not meaning, and not
+specifically syntax. This is exactly the confound DESIGN.md §A.6 was written to guard
+against — here confirmed as the DOMINANT effect on the fork metric rather than merely
+controlled for in the geometry.
+
+**The headline is unaffected and arguably sharpened.** `nl_break` changes zero tokens in
+count and one character; the model's answer changes in 100/100 cases; the measure fires in
+0/100. A divergence measure that tracks prompt-length change and misses a computation change
+is a cleaner and more deflationary claim than one about syntax.
+
+**Methodological note for the write-up:** this correction was prompted by asking whether
+token distance had been measured. It had not. Three surface measures were in the
+pre-registered covariate set (lexical, syntactic) and the one that dominates was absent from
+it. That omission is worth stating plainly as a limitation of the pre-registered covariate
+specification.
