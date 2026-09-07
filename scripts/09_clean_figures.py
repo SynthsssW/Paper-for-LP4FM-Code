@@ -153,60 +153,80 @@ def fig1_headline():
     """Fork rate by condition against whether the model's answer changed.
 
     Fork rates: forced-k=8 run (DEVIATIONS Obs. 4). Behavioural rates: gate G2.
+
+    Colour encodes ONE thing: whether the edit changed the answer. The four
+    answer-preserving conditions share a colour because they are one category;
+    giving each its own hue would be decoration, and it would bury the contrast
+    the figure exists to make.
     """
-    # condition, forked, n_pairs  (DEVIATIONS Obs. 4, forced k=8, vs nl_base)
+    PRESERVE = "#3B6DB3"   # answer preserved
+    BREAK    = "#D1660F"   # answer changed -- the only row that differs
+
     rows = [
-        ("formal",           100, 100),
-        ("nl_para",           35, 100),
-        ("nl_minimal_orth",    8,  99),
-        ("nl_minimal_lex",     4,  70),
-        ("nl_break",           0, 100),
+        ("formal notation",              "quantities as symbols, given/goal frame", 100, 100),
+        ("paraphrase",                   "reworded, same numbers",                   35, 100),
+        ("minimal edit: digits\u2192words", "one number respelled",                    8,  99),
+        ("minimal edit: name swap",      "one proper name changed",                   4,  70),
+        ("minimal edit: one digit",      "answer is now different",                   0, 100),
     ]
-    fig, ax = plt.subplots(figsize=(5.5, 2.85))
+
+    fig, ax = plt.subplots(figsize=(5.6, 2.95))
     ys = np.arange(len(rows))[::-1]
+    XCOL = 116.0          # right-hand column
+    BAR = 0.46
 
-    for y, (cond, k, n) in zip(ys, rows):
+    for y, (name, gloss, k, n) in zip(ys, rows):
+        brk = (k == 0)
+        c = BREAK if brk else PRESERVE
         rate = 100.0 * k / n
-        brk = cond == "nl_break"
-        c = COLOR[cond]
-        if brk:
-            ax.axhspan(y - 0.44, y + 0.44, color=c, alpha=0.10, zorder=0)
-        ax.hlines(y, 0, max(rate, 0.6), color=c, lw=3.2 if not brk else 2.4,
-                  zorder=2, alpha=0.9)
-        ax.plot(rate, y, "o", ms=7, color=c, zorder=3,
-                markeredgecolor="white", markeredgewidth=0.8)
-        lbl = f"{k}/{n}" + ("  ·  never detected" if brk else "")
-        ax.annotate(lbl, (rate, y), xytext=(7, 0), textcoords="offset points",
-                    va="center", ha="left", fontsize=7.8,
-                    color=c if brk else INK_SOFT,
-                    fontweight="bold" if brk else "normal")
-        ax.text(-3, y, PRETTY[cond], ha="right", va="center", fontsize=8,
-                color=c if brk else INK, fontweight="bold" if brk else "normal")
-        # right-hand column: did the answer change?
-        changed = "YES  (100/100)" if brk else "no"
-        ax.text(114, y, changed, ha="left", va="center", fontsize=7.8,
-                color=c if brk else INK_SOFT, fontweight="bold" if brk else "normal")
 
-    ax.text(0, len(rows) - 0.35, "Divergence measure fires (fork rate vs. NL base)",
-            fontsize=8.3, fontweight="bold", color=INK, ha="left", va="bottom")
-    ax.text(114, len(rows) - 0.35, "Answer changed?", fontsize=8.3, fontweight="bold",
-            color=INK, ha="left", va="bottom")
+        if brk:
+            ax.add_patch(plt.Rectangle((0, y - 0.5), XCOL + 26, 1.0,
+                                       color=c, alpha=0.075, lw=0, zorder=0,
+                                       clip_on=False))
+            ax.hlines(y, 0, 1.1, color=c, lw=6, zorder=3)   # visible zero stub
+        else:
+            ax.barh(y, rate, height=BAR, color=c, zorder=2, lw=0)
+
+        ax.text(rate + 2.2 if not brk else 3.6, y, f"{k}/{n}",
+                va="center", ha="left", fontsize=8.2, zorder=4,
+                color=INK if not brk else c,
+                fontweight="bold" if brk else "normal")
+
+        ax.text(-3.5, y + 0.17, name, ha="right", va="center", fontsize=8.4,
+                color=INK if not brk else c,
+                fontweight="bold" if brk else "normal")
+        ax.text(-3.5, y - 0.21, gloss, ha="right", va="center", fontsize=6.9,
+                color=INK_SOFT, style="italic")
+
+        ax.text(XCOL, y, "Yes (100/100)" if brk else "No",
+                ha="left", va="center", fontsize=8.4, clip_on=False,
+                color=c if brk else INK_SOFT,
+                fontweight="bold" if brk else "normal")
+
+    top = len(rows) - 0.34
+    ax.text(0, top, "Divergence measure fires", fontsize=8.6,
+            fontweight="bold", color=INK, ha="left", va="bottom")
+    ax.text(XCOL, top, "Answer changed?", fontsize=8.6, fontweight="bold",
+            color=INK, ha="left", va="bottom", clip_on=False)
 
     ax.set_xlim(0, 108)
-    ax.set_ylim(-0.7, len(rows) - 0.15)
+    ax.set_ylim(-0.62, len(rows) - 0.12)
     ax.set_xticks([0, 25, 50, 75, 100])
-    ax.set_xlabel("% of 100 problems")
+    ax.set_xticklabels(["0", "25", "50", "75", "100%"])
+    ax.set_xlabel("% of problems")
     ax.set_yticks([])
     sns.despine(ax=ax, left=True)
-    ax.tick_params(axis="x", length=3)
+    ax.tick_params(axis="x", length=3, labelsize=7.6)
 
-    fig.text(0.5, -0.06,
-             "Rewrites of 100 GSM-style problems vs. the original. Fork rate: first "
-             "layer at which anchor-cluster sets\ndiverge from NL base, forced k=8. "
-             "NL answer-breaking is one digit changed: the model returns the old "
-             "answer 0/100\ntimes and its new answer at 67% accuracy (NL base: 70%), "
-             "yet the measure never fires.",
-             ha="center", va="top", fontsize=6.4, color=INK_SOFT, linespacing=1.4)
+    fig.text(0.012, -0.10,
+             "100 GSM-style problems, each rewritten five ways and compared with the "
+             "original. The measure is the first layer at which\n"
+             "the two prompts' anchor-state clusters separate (forced $k$=8). Only the "
+             "one-digit edit changes the answer: the model\n"
+             "returns the old answer 0/100 times and its new answer at 67% accuracy "
+             "(70% on the originals). It is never detected.",
+             ha="left", va="top", fontsize=6.6, color=INK_SOFT, linespacing=1.55)
     _save(fig, "fig1_headline")
 
 
