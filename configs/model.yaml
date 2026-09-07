@@ -33,8 +33,8 @@
 #     needs to be the language_model path and that MUST be re-checked, because
 #     hooking the wrong module list silently produces plausible garbage (§A.11).
 
-model_id: "google/gemma-4-12b-it"
-checkpoint_verified: false
+model_id: "google/gemma-4-12B-it"   # verified: downloaded 2026-09-07, snapshot 707f0a3b
+checkpoint_verified: true
 
 # bf16, unquantized. §A.2: quantization is an unforced error in a paper whose
 # entire claim is about activation geometry.
