@@ -624,3 +624,43 @@ and the syntactic one wins. No regression, no collinearity, a designed compariso
 **The abstract number is unaffected by any of this:** surface dissimilarity accounts for
 McFadden R2 = 0.397 of fork occurrence; adding answer-breaking status adds 0.026 and its
 coefficient is unidentifiable (0/100 events in that arm).
+
+### Observation 6 — GATE G2 PASSED, and it makes the headline airtight
+
+`google/gemma-4-12B-it`, 100 problems, 569 cells, greedy, thinking OFF, sdpa/batched
+(non-deterministic fast kernels, deliberately separate from G1's regime).
+
+| condition | n | accuracy | Wilson 95% | scored against |
+|---|---|---|---|---|
+| `nl_base` | 100 | 70.0% | [60.4, 78.1] | ground truth |
+| `nl_para` | 100 | 69.0% | [59.4, 77.2] | ground truth |
+| `formal` | 100 | **56.0%** | [46.2, 65.3] | ground truth |
+| `nl_break` | 100 | 67.0% | [57.3, 75.4] | **its OWN perturbed answer** |
+| `nl_minimal_orth` | 99 | 69.7% | [60.0, 77.9] | ground truth |
+| `nl_minimal_lex` | 70 | 70.0% | [58.5, 79.5] | ground truth |
+
+**The gate on the headline: `nl_break` returned the UNperturbed answer 0/100 times.** The
+model follows the one-character edit every single time and computes the NEW answer (correctly
+67% of the time, matching `nl_base`'s own 70% competence). The perturbation demonstrably
+changes what the model computes, in 100 of 100 cases.
+
+**The fork diagnostic detected that in 0 of 100 cases** (Observation 4, at k=2 AND k=8).
+
+| | |
+|---|---|
+| model's output changed by the edit | **100/100** |
+| internal divergence detected | **0/100** |
+| answer-preserving style rewrite (`formal`) | forks **100/100** |
+
+The claim "the only answer-breaking condition never forks" is now established behaviourally,
+not merely by construction. This was the gate; it passed.
+
+**Style controls validated:** `nl_para`, `nl_minimal_orth`, `nl_minimal_lex` are all within
+1pp of `nl_base`. They alter surface form without altering the computation, as designed.
+
+**H3's accuracy half is CUT, with a real effect rather than a null.** `formal` 56.0% vs
+`nl_base` 70.0%, paired on 100 problems (both 51, neither 25, formal-only 5, base-only 19),
+exact McNemar two-sided **p = 0.0066**. Formal rewriting **harms** accuracy by 14pp. The
+paper is the dissociation result: formal rewriting restructures the geometry and does NOT
+improve accuracy — it degrades it. Per DESIGN.md §B.8 this decision was made by the
+measurement, before the geometry was interpreted.
