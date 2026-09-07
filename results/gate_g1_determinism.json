@@ -1,0 +1,160 @@
+{
+  "gate": "G1",
+  "passed": true,
+  "summary": "G1 determinism gate: 8 probe prompts x 2 passes, 48 layers each; max |delta residual| = 0.0 and max |delta next-token logit| = 0.0 (bitwise identical, not merely within tolerance); greedy next token identical in 8/8 probes; results invariant to prompt ordering. Determinism: torch 2.8.0+cu128 (CUDA 12.8), NVIDIA A40, torch.bfloat16, attention implementation eager (read back from model.config._attn_implementation; requested eager), batch size 1, no padding; deterministic algorithms on, cuDNN deterministic, cuDNN benchmark off, TF32 off for matmul, TF32 off for cuDNN, bf16 reduced-precision reductions off, fp16 reduced-precision reductions off, float32 matmul precision=highest, SDPA restricted to the math backend, CUBLAS_WORKSPACE_CONFIG=:4096:8, seed=20260906.",
+  "elapsed_s": 22.5,
+  "model": {
+    "model_id": "google/gemma-4-12B-it",
+    "checkpoint_verified": true,
+    "dtype": "torch.bfloat16",
+    "device": "cuda",
+    "attn_implementation_requested": "eager",
+    "attn_implementation_effective": "eager",
+    "attn_implementation_subconfigs": {
+      "text_config": "eager",
+      "vision_config": "eager",
+      "audio_config": "eager"
+    },
+    "attn_implementation": "eager",
+    "n_layers": 48,
+    "d_model": 3840,
+    "layers_path": "model.language_model.layers",
+    "n_params": 11959730176,
+    "thinking_disabled": true,
+    "determinism": {
+      "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+      "cublas_config_set_by_ling": true,
+      "cuda_initialized_before_enforce": false,
+      "torch_imported_before_ling_determinism": false,
+      "PYTHONHASHSEED": "0",
+      "seed": 20260906,
+      "numpy_seeded": true,
+      "use_deterministic_algorithms": true,
+      "cudnn.deterministic": true,
+      "cudnn.benchmark": false,
+      "cuda.matmul.allow_tf32": false,
+      "cudnn.allow_tf32": false,
+      "cuda.matmul.allow_bf16_reduced_precision_reduction": false,
+      "cuda.matmul.allow_fp16_reduced_precision_reduction": false,
+      "float32_matmul_precision": "highest",
+      "sdpa_backend": "math_only",
+      "torch_version": "2.8.0+cu128",
+      "cuda_available": true,
+      "cuda_device_name": "NVIDIA A40",
+      "cuda_version": "12.8",
+      "cudnn_version": 91002,
+      "problems": []
+    }
+  },
+  "determinism_controls": {
+    "ok": true,
+    "missing": [],
+    "unavailable": [],
+    "wrong": [],
+    "problems": [],
+    "detail": "all named controls in force"
+  },
+  "attn_implementation_effective": "eager",
+  "attn_implementation_subconfigs": {
+    "text_config": "eager",
+    "vision_config": "eager",
+    "audio_config": "eager"
+  },
+  "n_probes": 8,
+  "max_abs_residual_diff": 0.0,
+  "max_abs_logit_diff": 0.0,
+  "greedy_match": "8/8",
+  "order_invariant": true,
+  "per_prompt": [
+    {
+      "index": 0,
+      "n_tokens": 4,
+      "preview": "The cat sat.",
+      "max_abs_residual_diff": 0.0,
+      "max_abs_logit_diff": 0.0,
+      "greedy_token_match": true,
+      "layers_checked": 48,
+      "greedy_token_id": 236770,
+      "greedy_token": "1"
+    },
+    {
+      "index": 1,
+      "n_tokens": 37,
+      "preview": "Natalia sold clips to 48 of her friends in April, and then s",
+      "max_abs_residual_diff": 0.0,
+      "max_abs_logit_diff": 0.0,
+      "greedy_token_match": true,
+      "layers_checked": 48,
+      "greedy_token_id": 2088,
+      "greedy_token": " How"
+    },
+    {
+      "index": 2,
+      "n_tokens": 25,
+      "preview": "A robe takes 2 bolts of blue fiber and half that much white ",
+      "max_abs_residual_diff": 0.0,
+      "max_abs_logit_diff": 0.0,
+      "greedy_token_match": true,
+      "layers_checked": 48,
+      "greedy_token_id": 236770,
+      "greedy_token": "1"
+    },
+    {
+      "index": 3,
+      "n_tokens": 31,
+      "preview": "Weng earns $12 an hour for babysitting. Yesterday, she just ",
+      "max_abs_residual_diff": 0.0,
+      "max_abs_logit_diff": 0.0,
+      "greedy_token_match": true,
+      "layers_checked": 48,
+      "greedy_token_id": 236761,
+      "greedy_token": "."
+    },
+    {
+      "index": 4,
+      "n_tokens": 60,
+      "preview": "Betty is saving money for a new wallet which costs $100. Bet",
+      "max_abs_residual_diff": 0.0,
+      "max_abs_logit_diff": 0.0,
+      "greedy_token_match": true,
+      "layers_checked": 48,
+      "greedy_token_id": 236881,
+      "greedy_token": "?"
+    },
+    {
+      "index": 5,
+      "n_tokens": 26,
+      "preview": "James writes a 3-page letter to 2 different friends twice a ",
+      "max_abs_residual_diff": 0.0,
+      "max_abs_logit_diff": 0.0,
+      "greedy_token_match": true,
+      "layers_checked": 48,
+      "greedy_token_id": 236770,
+      "greedy_token": "1"
+    },
+    {
+      "index": 6,
+      "n_tokens": 43,
+      "preview": "num_clips_april = 48\\nnum_clips_may = num_clips_april / 2\\nt",
+      "max_abs_residual_diff": 0.0,
+      "max_abs_logit_diff": 0.0,
+      "greedy_token_match": true,
+      "layers_checked": 48,
+      "greedy_token_id": 236770,
+      "greedy_token": "1"
+    },
+    {
+      "index": 7,
+      "n_tokens": 33,
+      "preview": "def solve():\\n    bolts_blue = 2\\n    bolts_white = bolts_bl",
+      "max_abs_residual_diff": 0.0,
+      "max_abs_logit_diff": 0.0,
+      "greedy_token_match": true,
+      "layers_checked": 48,
+      "greedy_token_id": 236772,
+      "greedy_token": "-"
+    }
+  ],
+  "failures": [],
+  "utc": "2026-09-07T02:13:09Z"
+}

@@ -348,3 +348,60 @@ surface-driven forking would push it to fork earlier, against the predicted dire
 digit-rendered integer). `nl_minimal_lex` 70/100 (**30 problems contain no proper name**).
 Unavailable cells are recorded as genuine holes, never invented, and must be excluded
 upstream of the survival model rather than entering it as missing covariate rows.
+
+---
+
+## POST-DATA RECORD — everything below this line was written AFTER seeing results
+
+**This boundary is the point of the document.** Amendments 1-6 were all made before any
+model was loaded. What follows was not. Nothing below can become a primary endpoint, and
+nothing below revises a pre-committed direction.
+
+### Observation 1 — the pre-registered analysis returned a degenerate measurement
+
+Run `main`, executed exactly as pre-registered (eigengap k on nl_base, cosine affinity,
+pooled lambda2, cloglog survival):
+
+- **H3 primary:** mean paired d(lambda2) = **+0.3602** over 47 layer-pairs, bootstrap CI
+  **[0.211, 0.385]**, Wilcoxon(less) p = 1. The pre-committed direction was NEGATIVE.
+  The observed effect is confidently POSITIVE — not merely null.
+- **H2 primary:** 469 pairs, **25 fork events, 444 right-censored (94.7%)**. The reported
+  coefficient (+16.37, se 0.64, p = 1.5e-144) is **perfect separation on 25 events, not a
+  finding.** It must not be reported as an effect.
+- **H2 pre-registered secondary:** UNFITTABLE — 0 fork events; every pair right-censored.
+
+**Diagnosed mechanism.** Eigengap selected **k = 2 on 40 of 48 layers** (k=3 on 7, k=20 on
+the one flat-spectrum layer). At k=2, **457 of 569 cells occupy BOTH clusters**, so two
+conditions' cluster sets can essentially never be disjoint. Fork therefore almost never
+fires, which produces the 94.7% censoring directly. It also floors lambda2's resolution: a
+k=2 transition graph has four nodes and lambda2 can take only a handful of values, and path
+entropy is capped at log 2.
+
+This is not an implementation bug. It is the documented failure mode of the eigengap
+heuristic on a normalized Laplacian, whose largest spectral gap typically sits immediately
+after lambda_1. The pre-registered procedure ran correctly and returned k=2.
+
+### Consequence for what may be claimed
+
+**The pre-registered H3 result stands as reported: the effect is in the opposite direction
+to the pre-commitment.** It is NOT reframed as a null, and it is NOT explained away.
+
+**H2's primary is reported as NOT IDENTIFIED** (25 events, 94.7% censoring, separation),
+not as a significant coefficient. Reporting p = 1.5e-144 as an effect would be false.
+
+### Exploratory sensitivity run (labeled BEFORE its results were seen)
+
+Run `fixedk8`: identical pipeline, k forced to 8 at every layer, to test whether the k=2
+collapse drives the degeneracy.
+
+**This run is EXPLORATORY and can never be promoted to primary**, whatever it shows. If it
+reverses H3's sign, that is a finding about the sensitivity of the construct to k, reported
+as such — it does not rescue the pre-registered prediction. If it identifies H2, the
+identified coefficient is exploratory and is reported alongside, never instead of, the
+non-identified primary.
+
+The honest framing either way: **the pre-registered operationalization of "routing
+modularity" did not survive contact with the data, and the metric's resolution depends
+critically on a k-selection step the design treated as incidental.** That is a reportable
+negative result about the construct, and the pre-registration is what makes it reportable
+rather than quietly re-specifiable.

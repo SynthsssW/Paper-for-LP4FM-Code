@@ -1,0 +1,249 @@
+{
+  "availability_by_condition": {
+    "formal": 100,
+    "nl_base": 100,
+    "nl_break": 100,
+    "nl_minimal_lex": 70,
+    "nl_minimal_orth": 99,
+    "nl_para": 100
+  },
+  "conditions": [
+    "formal",
+    "nl_base",
+    "nl_break",
+    "nl_minimal_lex",
+    "nl_minimal_orth",
+    "nl_para"
+  ],
+  "corpus": "/workspace/linguistics/data/corpus/problems.jsonl",
+  "d_model": 3840,
+  "declared_holes": [
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0001",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0003",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0007",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0008",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0010",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0024",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0025",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0026",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0028",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0032",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0034",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0038",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0039",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0041",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0044",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0046",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_orth",
+      "note": "no integer quantity rendered in digits that a number word could replace",
+      "problem_id": "gsms_0055",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0058",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0059",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0062",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0063",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0070",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0074",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0075",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0081",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0082",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0083",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0087",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0094",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0095",
+      "reason": "unavailable"
+    },
+    {
+      "condition": "nl_minimal_lex",
+      "note": "the template instantiates no proper name",
+      "problem_id": "gsms_0098",
+      "reason": "unavailable"
+    }
+  ],
+  "declared_holes_by_condition": {
+    "nl_minimal_lex": 30,
+    "nl_minimal_orth": 1
+  },
+  "determinism": {
+    "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+    "PYTHONHASHSEED": "0",
+    "cublas_config_set_by_ling": false,
+    "cuda.matmul.allow_bf16_reduced_precision_reduction": false,
+    "cuda.matmul.allow_fp16_reduced_precision_reduction": false,
+    "cuda.matmul.allow_tf32": false,
+    "cuda_available": true,
+    "cuda_device_name": "NVIDIA A40",
+    "cuda_initialized_before_enforce": false,
+    "cuda_version": "12.8",
+    "cudnn.allow_tf32": false,
+    "cudnn.benchmark": false,
+    "cudnn.deterministic": true,
+    "cudnn_version": 91002,
+    "float32_matmul_precision": "highest",
+    "numpy_seeded": true,
+    "problems": [],
+    "sdpa_backend": "math_only",
+    "seed": 20260906,
+    "torch_imported_before_ling_determinism": false,
+    "torch_version": "2.8.0+cu128",
+    "use_deterministic_algorithms": true
+  },
+  "drop_rate": 0.0,
+  "drops": [],
+  "drops_by_reason": {},
+  "gate": "G3",
+  "model_id": "google/gemma-4-12B-it",
+  "n_declared_holes": 31,
+  "n_layers": 48,
+  "n_problems_dropped": 0,
+  "n_problems_in_corpus": 100,
+  "n_problems_kept": 100,
+  "n_token_states": 2852,
+  "note": "Two distinct causes of an empty (problem, condition) cell, counted separately. (1) `declared_holes`: Amendment 6 marks the cell `status: \"unavailable\"` in the corpus; it is SKIPPED, the problem's other conditions extract normally, and the \u00a7A.6 anchor invariant binds the available conditions only. (2) `drops`: a typed AnchorDropError in an AVAILABLE condition drops the problem in every condition (\u00a7A.6) and is what `drop_rate`/G3 measures. Do not add these two numbers together.",
+  "run_id": "main"
+}
