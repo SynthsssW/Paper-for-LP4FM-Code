@@ -584,3 +584,43 @@ is precisely why G2 exists. If the model answers `nl_break` at a rate comparable
 the headline does not stand. The surface-ordering result survives regardless.
 
 **No H2 section may be written before G2 returns.**
+
+### Observation 5b — CORRECTION: b_syn is a scale effect, not separation; use univariate fits and the condition contrast
+
+Observation 5 read the JOINT coefficients (`b_syn` = +21.2, `b_lex` = -1.34) as evidence
+that fork tracks syntax. **The joint coefficients are not interpretable** — lex and syn
+correlate at **r = 0.859**, and in the joint fit `b_lex` flips sign with a CI spanning zero.
+That is textbook collinearity, not a finding.
+
+However, the magnitude concern is resolved: **+21.2 is a SCALE effect, not quasi-separation.**
+`syn_dissim` spans 0-0.21, so the coefficient is a ~4-logit swing across the observed range,
+and the univariate SE is tight (+19.08 +/- 1.63, t ~ 11.7). It is not the `b_break` = -22.1
+case, which genuinely is separation (0/100 events).
+
+**Use the univariate fits (k=8, n=469, 147 forked):**
+
+| model | McFadden R2 |
+|---|---|
+| lexical only | 0.2507 |
+| **syntactic only** | **0.3946** |
+| joint | 0.3966 |
+
+Syntactic alone recovers essentially the whole joint fit; lexical adds 0.002 on top of it.
+Defensible statement: **syntactic dissimilarity is the stronger single predictor and
+subsumes the lexical one.** This is a comparison of univariate fits, NOT a decomposition,
+and the collinearity must be stated alongside it.
+
+**The designed condition contrast is the cleaner evidence — cite this, not a coefficient:**
+
+| condition | lex | syn | fork rate |
+|---|---|---|---|
+| `nl_para` | **0.391** | 0.160 | 35% |
+| `formal` | 0.307 | **0.213** | **100%** |
+
+`nl_para` is lexically FARTHER than `formal` yet forks far less; `formal` is syntactically
+farther and forks 100%. The lexical and syntactic orderings make OPPOSITE predictions here
+and the syntactic one wins. No regression, no collinearity, a designed comparison.
+
+**The abstract number is unaffected by any of this:** surface dissimilarity accounts for
+McFadden R2 = 0.397 of fork occurrence; adding answer-breaking status adds 0.026 and its
+coefficient is unidentifiable (0/100 events in that arm).
