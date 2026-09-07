@@ -123,8 +123,17 @@ p = 0.027 — on **4 events**, uncorrected for multiplicity.
   k**. H2 predicted answer-breaking forks earliest; it never forks. H1 (spectral > K-means)
   is unsupported. Report all three.
 - **Mechanism of the metric's failure:** eigengap selected **k=2 on 40/48 layers**; 10/48
-  layers isolate <1% of states and **5 isolate a single token** — a massive-activation
-  signature. This explains λ₂'s quantization to {0,1,2}, its 2.0 ceiling, and 94.7% censoring.
+  layers isolate <1% of states and **5 isolate a single token**. This accounts for λ₂'s
+  quantization to {0,1,2}, its 2.0 ceiling, and 94.7% censoring.
+
+  **PHRASING — the norm check was NOT run.** A residual-norm probe (`scripts/07_norm_probe.py`)
+  was written to test whether these outliers are the known massive-activation phenomenon, but
+  GPU access ended before it executed. The evidence we have is cluster-size degeneracy, not
+  measured norms.
+  - **SAFE:** "a small number of states dominate the partition; this is *consistent with*
+    massive activations, which we did not measure directly."
+  - **DO NOT WRITE:** "caused by massive activations," or cite a norm ratio. We have none.
+  - The script is in the repo and is a ~2-minute run for anyone with GPU access.
 
 ## 7. Limitations to write explicitly
 

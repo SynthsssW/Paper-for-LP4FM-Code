@@ -763,3 +763,17 @@ The pre-registered covariate set contained neither token-count difference nor su
 cases; the divergence measure fires in **0/100**. A length-preserving style rewrite fires 35%
 and a longer formal rewrite fires 100%. That contrast stands regardless of which surface
 property is responsible.
+
+### Observation 7 — the norm check was NOT run (open item)
+
+`scripts/07_norm_probe.py` was written to test directly whether the outlier states behind the
+k=2 degeneracy (10/48 layers isolating <1% of states, 5 isolating a single token) are the
+known massive-activation phenomenon. **It never executed** — it was chained behind gate G2,
+the chaining failed, and GPU access ended before it could be rerun.
+
+**Therefore the mechanism claim must be stated as an inference from cluster degeneracy, not
+as a measurement.** Safe: "consistent with massive activations, which we did not measure."
+Unsupported: any causal attribution to activation magnitude, or any quoted norm ratio.
+
+The script is committed and is a ~2-minute run on any GPU with the model cached. This is the
+single cheapest open item in the project.
