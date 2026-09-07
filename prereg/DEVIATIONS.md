@@ -439,3 +439,55 @@ not quietly omitted.
 fork layer unusable is exactly what makes this finding legible. Forcing the partition onto a
 single dominant axis destroys cross-condition comparison but is a good instrument for asking
 what that axis encodes. The failure and the finding have the same cause.
+
+### Observation 3 — CORRECTION to Observation 2: the transition is largely DEGENERACY, not linguistics
+
+**Post-data, exploratory.** This corrects the reading in Observation 2, which was written
+before the finer curves and the cluster-balance check were run. Observation 2's AMI numbers
+stand; its interpretation does not.
+
+**Finer linguistic structure is absent at every layer.** AMI between the partition and
+dependency role, computed on quantity anchors ONLY (excluding FINAL, whose `punct` label is
+essentially the token-role split itself):
+
+| | layers 1-11 | layers 12-47 |
+|---|---|---|
+| token role (FINAL vs quantity) | 0.881 | 0.051 |
+| **dependency role, FINAL excluded** | **0.004** | **0.008** |
+| anchor identity, FINAL excluded | 0.002 | 0.030 |
+
+Flat at zero throughout. There is no hierarchy and no handoff from morphosyntax to syntax.
+The dominant axis tracks the single coarsest distinction available and nothing below it.
+`dep(all)` appeared to carry signal only because it is contaminated by `punct` vs `nummod`.
+
+**Cluster balance shows much of the post-L12 partition is DEGENERATE:**
+
+| layers | cluster sizes | reading |
+|---|---|---|
+| 1-11 | ~[2280, 570] | balanced, ~20/80, token-role aligned |
+| 13-15 | **[2847, 5]** | five outlier states isolated |
+| 32, 34, 37-39 | **[2851, 1]** | a SINGLE token alone in its own cluster |
+| 17-31, 40-47 | ~[1900, 950] | balanced, but AMI ~0.05 against every label we have |
+
+**10 of 48 layers put under 1% of states in a cluster.** This is the massive-activation
+signature: a few states of enormous norm, which spectral clustering at k=2 correctly
+isolates as their own component.
+
+**One mechanism explains every pre-registered failure:** lambda2 quantized to {0,1,2};
+lambda2 reaching 2.0 (the normalized-Laplacian ceiling, produced by a near-isolated node);
+fork layer never firing (everything else in one giant cluster, so cluster sets can never be
+disjoint); and the AMI collapse (a singleton cluster is uninformative about any label).
+
+**What may NOT be claimed:** that layer 12 is where linguistic organization changes. The
+norm check has not been run. Until it is, the honest statement is that the dominant
+bipartition after L12 is substantially driven by outlier states, not by linguistic
+structure.
+
+**What remains genuinely unexplained:** layers 17-31 and 40-47 are BALANCED (~30/70) with
+AMI ~0.05 against token role, dependency role, and anchor identity alike. Those partitions
+are not degenerate and are not linguistic by any label available here. That is an open
+question, stated as open.
+
+**Semantic-frame AMI was NOT computed** — the corpus carries no FrameNet/PropBank labels
+(DESIGN.md §B.3 defers this to the archival version). Its absence is a limitation, not a
+null result, and must not be reported as one.
