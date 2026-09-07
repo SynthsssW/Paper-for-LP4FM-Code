@@ -1,0 +1,69 @@
+# Model configuration — DESIGN.md §A.2
+#
+# =====================================================================
+#  !! VERIFY `model_id` ON HUGGINGFACE BEFORE THE RUN !!
+# =====================================================================
+# DESIGN.md §A.2: "Verify checkpoint strings on HuggingFace before pulling.
+# The open-weights frontier churned monthly through 2026."
+#
+# The string below is the checkpoint DESIGN.md §A.2 names as primary
+# (Gemma 4 12B, dense, bf16). It has NOT been verified against the Hub by the
+# code author — there is no network model access in the authoring environment.
+# Before the run:
+#
+#   1. Confirm the repo exists and is the *dense* 12B instruct checkpoint:
+#        huggingface-cli repo info <model_id>          (or open the model page)
+#   2. Accept the Gemma licence terms on the model page with the run account.
+#   3. Confirm the installed `transformers` release knows the architecture:
+#        python -c "from transformers import AutoConfig; \
+#                   print(AutoConfig.from_pretrained('<model_id>').model_type)"
+#      If it errors with "does not recognize this architecture", install
+#      transformers from git — do not fall back to a quantized or older model
+#      (§A.2: quantization is an unforced error in a paper about geometry).
+#   4. Flip `checkpoint_verified: true` below. Until you do, ling.model prints a
+#      loud warning on every load (it does not block the run).
+#
+# Fallbacks, in DESIGN.md §A.2 priority order:
+#   - Phi-4 14B (MIT). Weakness at a linguistics venue: heavily synthetic
+#     training makes its NL distribution unusual. Record the swap as a deviation.
+#   - Qwen3.6-27B (Apache-2.0) — ONLY on >=80GB. 27B bf16 is ~54GB and does not
+#     fit an A40 48GB. Do NOT quantize to make it fit.
+#   - `google/gemma-3-12b-it` existed as of early 2026 and is dense-decoder +
+#     multimodal-wrapper; if you use it, `layers_path` below almost certainly
+#     needs to be the language_model path and that MUST be re-checked, because
+#     hooking the wrong module list silently produces plausible garbage (§A.11).
+
+model_id: "google/gemma-4-12B-it"   # verified: downloaded 2026-09-07, snapshot 707f0a3b
+checkpoint_verified: true
+
+# bf16, unquantized. §A.2: quantization is an unforced error in a paper whose
+# entire claim is about activation geometry.
+dtype: bfloat16
+device: cuda
+
+# §A.4 / A.11: SDPA and flash kernels are not bitwise reproducible across shapes
+# (reduction order depends on sequence length / head tiling). Eager attention is
+# a real slowdown and is worth it — the G1 gate depends on it.
+attn_implementation: eager
+
+# §A.2: thinking/reasoning off. The framework measures geometry in a
+# prompt-encoding forward pass; reasoning models do the work in generated
+# tokens. We never generate during extraction, and we never apply a chat
+# template (see ling.model.load_model docstring), so no reasoning tokens exist.
+# These settings additionally neuter the checkpoint's generation defaults for
+# the behavioural check (G2), which does generate.
+thinking: false
+
+# Path from the top-level model object to the nn.ModuleList of decoder blocks.
+# null -> autodetect (tries model.model.layers, then the multimodal nestings).
+# Set it explicitly once you have confirmed it; autodetection asserts that the
+# list length equals config.num_hidden_layers, but an explicit path is better.
+layers_path: null
+
+# Master seed. Used by enforce_determinism and by every downstream sampler.
+seed: 20260906
+
+# Local HF cache. Overridden by HF_HOME / HF_HUB_CACHE if those are exported.
+# §A.1 rule 2: model download is billed time — put this on a network volume or
+# a cached template if you expect to restart pods.
+hf_cache_dir: null

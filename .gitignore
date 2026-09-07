@@ -1,0 +1,30 @@
+# Secrets — never commit. Token lives in the pod env, not the repo.
+.env
+.env.*
+*.token
+*token*.txt
+.huggingface/
+secrets/
+
+# Raw activations are NEVER persisted (DESIGN.md §A.1). Belt-and-braces.
+*.npy
+*.npz
+*.pt
+*.safetensors
+activations/
+results/checkpoints/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+
+# local spaCy venv (149MB) - not part of the repo
+.venv-nlp/

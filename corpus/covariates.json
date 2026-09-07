@@ -1,0 +1,2086 @@
+{
+  "_source": {
+    "family": "primary",
+    "measures": {
+      "lex_dissim": "lex_edit",
+      "syn_dissim": "syn_dep_bag"
+    },
+    "note": "which measure fills each covariate key. The primary and robustness files share key NAMES so either drops into --covariates unchanged; this tag is the only thing that distinguishes them, and it is echoed into analysis.json so a robustness refit can never be read as the pre-registered primary."
+  },
+  "gsms_0000": {
+    "formal": {
+      "lex_dissim": 0.3125,
+      "syn_dissim": 0.24070897655803317
+    },
+    "nl_break": {
+      "lex_dissim": 0.006666666666666667,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.013333333333333334,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.06962025316455696,
+      "syn_dissim": 0.029411764705882363
+    },
+    "nl_para": {
+      "lex_dissim": 0.6384180790960452,
+      "syn_dissim": 0.21294021294021293
+    }
+  },
+  "gsms_0001": {
+    "formal": {
+      "lex_dissim": 0.21630094043887146,
+      "syn_dissim": 0.1821396993810787
+    },
+    "nl_break": {
+      "lex_dissim": 0.0038314176245210726,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.08185053380782918,
+      "syn_dissim": 0.06048615036743925
+    },
+    "nl_para": {
+      "lex_dissim": 0.6973180076628352,
+      "syn_dissim": 0.2053291536050157
+    }
+  },
+  "gsms_0002": {
+    "formal": {
+      "lex_dissim": 0.3261802575107296,
+      "syn_dissim": 0.19318181818181818
+    },
+    "nl_break": {
+      "lex_dissim": 0.005780346820809248,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.017341040462427744,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.017142857142857144,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.44808743169398907,
+      "syn_dissim": 0.275
+    }
+  },
+  "gsms_0003": {
+    "formal": {
+      "lex_dissim": 0.2508361204013378,
+      "syn_dissim": 0.22148577740955538
+    },
+    "nl_break": {
+      "lex_dissim": 0.004291845493562232,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.09803921568627451,
+      "syn_dissim": 0.05555555555555557
+    },
+    "nl_para": {
+      "lex_dissim": 0.35271317829457366,
+      "syn_dissim": 0.15170278637770898
+    }
+  },
+  "gsms_0004": {
+    "formal": {
+      "lex_dissim": 0.13798449612403102,
+      "syn_dissim": 0.19228199131306384
+    },
+    "nl_break": {
+      "lex_dissim": 0.0017301038062283738,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.015570934256055362,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.008605851979345954,
+      "syn_dissim": 0.008130081300813004
+    },
+    "nl_para": {
+      "lex_dissim": 0.4740484429065744,
+      "syn_dissim": 0.11297278190173207
+    }
+  },
+  "gsms_0005": {
+    "formal": {
+      "lex_dissim": 0.2681992337164751,
+      "syn_dissim": 0.19047619047619047
+    },
+    "nl_break": {
+      "lex_dissim": 0.0049261083743842365,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.019704433497536946,
+      "syn_dissim": 0.023809523809523808
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.1031390134529148,
+      "syn_dissim": 0.06507936507936504
+    },
+    "nl_para": {
+      "lex_dissim": 0.3103448275862069,
+      "syn_dissim": 0.21138211382113822
+    }
+  },
+  "gsms_0006": {
+    "formal": {
+      "lex_dissim": 0.27896995708154504,
+      "syn_dissim": 0.23214285714285712
+    },
+    "nl_break": {
+      "lex_dissim": 0.005714285714285714,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.08571428571428572,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.059782608695652176,
+      "syn_dissim": 0.026276276276276225
+    },
+    "nl_para": {
+      "lex_dissim": 0.5078534031413613,
+      "syn_dissim": 0.22425474254742547
+    }
+  },
+  "gsms_0007": {
+    "formal": {
+      "lex_dissim": 0.2375,
+      "syn_dissim": 0.1465223399355136
+    },
+    "nl_break": {
+      "lex_dissim": 0.0018450184501845018,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.02,
+      "syn_dissim": 0.007281268349970662
+    },
+    "nl_para": {
+      "lex_dissim": 0.4944649446494465,
+      "syn_dissim": 0.11488020176544766
+    }
+  },
+  "gsms_0008": {
+    "formal": {
+      "lex_dissim": 0.45121951219512196,
+      "syn_dissim": 0.2659352142110763
+    },
+    "nl_break": {
+      "lex_dissim": 0.006622516556291391,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.11377245508982035,
+      "syn_dissim": 0.051948051948051965
+    },
+    "nl_para": {
+      "lex_dissim": 0.26282051282051283,
+      "syn_dissim": 0.13246753246753248
+    }
+  },
+  "gsms_0009": {
+    "formal": {
+      "lex_dissim": 0.18625277161862527,
+      "syn_dissim": 0.1557454890788224
+    },
+    "nl_break": {
+      "lex_dissim": 0.002638522427440633,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.015748031496062992,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.028350515463917526,
+      "syn_dissim": 0.011592893706714822
+    },
+    "nl_para": {
+      "lex_dissim": 0.45646437994722955,
+      "syn_dissim": 0.2053872053872054
+    }
+  },
+  "gsms_0010": {
+    "formal": {
+      "lex_dissim": 0.41724137931034483,
+      "syn_dissim": 0.22462462462462462
+    },
+    "nl_break": {
+      "lex_dissim": 0.0055248618784530384,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.016483516483516484,
+      "syn_dissim": 0.022222222222222216
+    },
+    "nl_para": {
+      "lex_dissim": 0.292817679558011,
+      "syn_dissim": 0.1829059829059829
+    }
+  },
+  "gsms_0011": {
+    "formal": {
+      "lex_dissim": 0.3022113022113022,
+      "syn_dissim": 0.17161621930325527
+    },
+    "nl_break": {
+      "lex_dissim": 0.0033112582781456954,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.006622516556291391,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.07430340557275542,
+      "syn_dissim": 0.0403893951946976
+    },
+    "nl_para": {
+      "lex_dissim": 0.39072847682119205,
+      "syn_dissim": 0.1516544117647059
+    }
+  },
+  "gsms_0012": {
+    "formal": {
+      "lex_dissim": 0.3165137614678899,
+      "syn_dissim": 0.26410621147463254
+    },
+    "nl_break": {
+      "lex_dissim": 0.00625,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.03125,
+      "syn_dissim": 0.02702702702702703
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.07058823529411765,
+      "syn_dissim": 0.026315789473684265
+    },
+    "nl_para": {
+      "lex_dissim": 0.56875,
+      "syn_dissim": 0.2796257796257796
+    }
+  },
+  "gsms_0013": {
+    "formal": {
+      "lex_dissim": 0.17330210772833723,
+      "syn_dissim": 0.16564327485380118
+    },
+    "nl_break": {
+      "lex_dissim": 0.0027548209366391185,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.01652892561983471,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.01366120218579235,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.39669421487603307,
+      "syn_dissim": 0.1380718954248366
+    }
+  },
+  "gsms_0014": {
+    "formal": {
+      "lex_dissim": 0.2247557003257329,
+      "syn_dissim": 0.18618618618618615
+    },
+    "nl_break": {
+      "lex_dissim": 0.004081632653061225,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.004081632653061225,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.04330708661417323,
+      "syn_dissim": 0.01818181818181816
+    },
+    "nl_para": {
+      "lex_dissim": 0.34782608695652173,
+      "syn_dissim": 0.1566951566951567
+    }
+  },
+  "gsms_0015": {
+    "formal": {
+      "lex_dissim": 0.388646288209607,
+      "syn_dissim": 0.23645320197044334
+    },
+    "nl_break": {
+      "lex_dissim": 0.006369426751592357,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.025477707006369428,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.11560693641618497,
+      "syn_dissim": 0.05096525096525093
+    },
+    "nl_para": {
+      "lex_dissim": 0.49044585987261147,
+      "syn_dissim": 0.13730158730158729
+    }
+  },
+  "gsms_0016": {
+    "formal": {
+      "lex_dissim": 0.24449877750611246,
+      "syn_dissim": 0.17564102564102563
+    },
+    "nl_break": {
+      "lex_dissim": 0.003115264797507788,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.018691588785046728,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.030395136778115502,
+      "syn_dissim": 0.01245614035087723
+    },
+    "nl_para": {
+      "lex_dissim": 0.2672413793103448,
+      "syn_dissim": 0.1394871794871795
+    }
+  },
+  "gsms_0017": {
+    "formal": {
+      "lex_dissim": 0.22823529411764706,
+      "syn_dissim": 0.1630561378989052
+    },
+    "nl_break": {
+      "lex_dissim": 0.022222222222222223,
+      "syn_dissim": 0.023919753086419783
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.016666666666666666,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.06315789473684211,
+      "syn_dissim": 0.021716495612077908
+    },
+    "nl_para": {
+      "lex_dissim": 0.46111111111111114,
+      "syn_dissim": 0.16196793808734106
+    }
+  },
+  "gsms_0018": {
+    "formal": {
+      "lex_dissim": 0.33454545454545453,
+      "syn_dissim": 0.23442879499217528
+    },
+    "nl_break": {
+      "lex_dissim": 0.005128205128205128,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.03076923076923077,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.02512562814070352,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.40512820512820513,
+      "syn_dissim": 0.30158730158730157
+    }
+  },
+  "gsms_0019": {
+    "formal": {
+      "lex_dissim": 0.26740947075208915,
+      "syn_dissim": 0.17745098039215687
+    },
+    "nl_break": {
+      "lex_dissim": 0.0035971223021582736,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.017985611510791366,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.02127659574468085,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.3614864864864865,
+      "syn_dissim": 0.15402298850574714
+    }
+  },
+  "gsms_0020": {
+    "formal": {
+      "lex_dissim": 0.30158730158730157,
+      "syn_dissim": 0.16026552868658134
+    },
+    "nl_break": {
+      "lex_dissim": 0.005291005291005291,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.031746031746031744,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.11848341232227488,
+      "syn_dissim": 0.07500000000000001
+    },
+    "nl_para": {
+      "lex_dissim": 0.37566137566137564,
+      "syn_dissim": 0.1891891891891892
+    }
+  },
+  "gsms_0021": {
+    "formal": {
+      "lex_dissim": 0.20689655172413793,
+      "syn_dissim": 0.14052309554225778
+    },
+    "nl_break": {
+      "lex_dissim": 0.0022123893805309734,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.006622516556291391,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.006607929515418502,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.3938053097345133,
+      "syn_dissim": 0.12336448598130842
+    }
+  },
+  "gsms_0022": {
+    "formal": {
+      "lex_dissim": 0.14130434782608695,
+      "syn_dissim": 0.09142857142857143
+    },
+    "nl_break": {
+      "lex_dissim": 0.00205761316872428,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.024691358024691357,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.016260162601626018,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.3950617283950617,
+      "syn_dissim": 0.10984848484848483
+    }
+  },
+  "gsms_0023": {
+    "formal": {
+      "lex_dissim": 0.2680851063829787,
+      "syn_dissim": 0.2268548611755966
+    },
+    "nl_break": {
+      "lex_dissim": 0.00273224043715847,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.00546448087431694,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.021505376344086023,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.3989071038251366,
+      "syn_dissim": 0.1987274942466495
+    }
+  },
+  "gsms_0024": {
+    "formal": {
+      "lex_dissim": 0.34365325077399383,
+      "syn_dissim": 0.21557971014492752
+    },
+    "nl_break": {
+      "lex_dissim": 0.004405286343612335,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.05485232067510549,
+      "syn_dissim": 0.020351526364477332
+    },
+    "nl_para": {
+      "lex_dissim": 0.5470085470085471,
+      "syn_dissim": 0.10821256038647345
+    }
+  },
+  "gsms_0025": {
+    "formal": {
+      "lex_dissim": 0.21388888888888888,
+      "syn_dissim": 0.16331994645247655
+    },
+    "nl_break": {
+      "lex_dissim": 0.0034482758620689655,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.07119741100323625,
+      "syn_dissim": 0.04256854256854254
+    },
+    "nl_para": {
+      "lex_dissim": 0.27241379310344827,
+      "syn_dissim": 0.15079365079365079
+    }
+  },
+  "gsms_0026": {
+    "formal": {
+      "lex_dissim": 0.30454545454545456,
+      "syn_dissim": 0.251984126984127
+    },
+    "nl_break": {
+      "lex_dissim": 0.00641025641025641,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.03125,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.41025641025641024,
+      "syn_dissim": 0.16428571428571428
+    }
+  },
+  "gsms_0027": {
+    "formal": {
+      "lex_dissim": 0.2863247863247863,
+      "syn_dissim": 0.23347457627118645
+    },
+    "nl_break": {
+      "lex_dissim": 0.005681818181818182,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.05113636363636364,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.11282051282051282,
+      "syn_dissim": 0.06627906976744188
+    },
+    "nl_para": {
+      "lex_dissim": 0.5170454545454546,
+      "syn_dissim": 0.21944444444444444
+    }
+  },
+  "gsms_0028": {
+    "formal": {
+      "lex_dissim": 0.3667711598746082,
+      "syn_dissim": 0.273109243697479
+    },
+    "nl_break": {
+      "lex_dissim": 0.0047169811320754715,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.10344827586206896,
+      "syn_dissim": 0.06666666666666662
+    },
+    "nl_para": {
+      "lex_dissim": 0.589622641509434,
+      "syn_dissim": 0.22023809523809523
+    }
+  },
+  "gsms_0029": {
+    "formal": {
+      "lex_dissim": 0.422680412371134,
+      "syn_dissim": 0.25333333333333335
+    },
+    "nl_break": {
+      "lex_dissim": 0.008620689655172414,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.034482758620689655,
+      "syn_dissim": 0.09999999999999999
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.08064516129032258,
+      "syn_dissim": 0.032258064516129045
+    },
+    "nl_para": {
+      "lex_dissim": 0.48905109489051096,
+      "syn_dissim": 0.18888888888888888
+    }
+  },
+  "gsms_0030": {
+    "formal": {
+      "lex_dissim": 0.4432624113475177,
+      "syn_dissim": 0.20235934664246824
+    },
+    "nl_break": {
+      "lex_dissim": 0.006024096385542169,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.024096385542168676,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.06285714285714286,
+      "syn_dissim": 0.024291497975708478
+    },
+    "nl_para": {
+      "lex_dissim": 0.5428571428571428,
+      "syn_dissim": 0.14377406931964054
+    }
+  },
+  "gsms_0031": {
+    "formal": {
+      "lex_dissim": 0.34545454545454546,
+      "syn_dissim": 0.2393939393939394
+    },
+    "nl_break": {
+      "lex_dissim": 0.006756756756756757,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.05405405405405406,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.0641025641025641,
+      "syn_dissim": 0.029411764705882363
+    },
+    "nl_para": {
+      "lex_dissim": 0.5878378378378378,
+      "syn_dissim": 0.08199643493761141
+    }
+  },
+  "gsms_0032": {
+    "formal": {
+      "lex_dissim": 0.2987551867219917,
+      "syn_dissim": 0.13651432630831162
+    },
+    "nl_break": {
+      "lex_dissim": 0.002824858757062147,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.07692307692307693,
+      "syn_dissim": 0.044045911047345766
+    },
+    "nl_para": {
+      "lex_dissim": 0.3644067796610169,
+      "syn_dissim": 0.1408857509627728
+    }
+  },
+  "gsms_0033": {
+    "formal": {
+      "lex_dissim": 0.1373134328358209,
+      "syn_dissim": 0.13112219801841052
+    },
+    "nl_break": {
+      "lex_dissim": 0.0017064846416382253,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.025597269624573378,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.020134228187919462,
+      "syn_dissim": 0.008999653859466949
+    },
+    "nl_para": {
+      "lex_dissim": 0.3412969283276451,
+      "syn_dissim": 0.13470834676119883
+    }
+  },
+  "gsms_0034": {
+    "formal": {
+      "lex_dissim": 0.3262411347517731,
+      "syn_dissim": 0.12225705329153605
+    },
+    "nl_break": {
+      "lex_dissim": 0.0033222591362126247,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.08950617283950617,
+      "syn_dissim": 0.05335968379446641
+    },
+    "nl_para": {
+      "lex_dissim": 0.3920265780730897,
+      "syn_dissim": 0.1727272727272727
+    }
+  },
+  "gsms_0035": {
+    "formal": {
+      "lex_dissim": 0.3216374269005848,
+      "syn_dissim": 0.20945945945945948
+    },
+    "nl_break": {
+      "lex_dissim": 0.00411522633744856,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.024691358024691357,
+      "syn_dissim": 0.038461538461538464
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.024291497975708502,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.49382716049382713,
+      "syn_dissim": 0.2435897435897436
+    }
+  },
+  "gsms_0036": {
+    "formal": {
+      "lex_dissim": 0.30914826498422715,
+      "syn_dissim": 0.2181372549019608
+    },
+    "nl_break": {
+      "lex_dissim": 0.004366812227074236,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.013100436681222707,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.012987012987012988,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.2445414847161572,
+      "syn_dissim": 0.25620915032679736
+    }
+  },
+  "gsms_0037": {
+    "formal": {
+      "lex_dissim": 0.37037037037037035,
+      "syn_dissim": 0.24666666666666667
+    },
+    "nl_break": {
+      "lex_dissim": 0.007751937984496124,
+      "syn_dissim": 0.03333333333333333
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.031007751937984496,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.03759398496240601,
+      "syn_dissim": 0.09999999999999999
+    },
+    "nl_para": {
+      "lex_dissim": 0.582089552238806,
+      "syn_dissim": 0.16666666666666666
+    }
+  },
+  "gsms_0038": {
+    "formal": {
+      "lex_dissim": 0.44878048780487806,
+      "syn_dissim": 0.24276729559748428
+    },
+    "nl_break": {
+      "lex_dissim": 0.008547008547008548,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.03333333333333333,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.4676258992805755,
+      "syn_dissim": 0.22222222222222224
+    }
+  },
+  "gsms_0039": {
+    "formal": {
+      "lex_dissim": 0.26666666666666666,
+      "syn_dissim": 0.25315068493150683
+    },
+    "nl_break": {
+      "lex_dissim": 0.004524886877828055,
+      "syn_dissim": 0.02
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.013452914798206279,
+      "syn_dissim": 0.02
+    },
+    "nl_para": {
+      "lex_dissim": 0.4889867841409692,
+      "syn_dissim": 0.2346938775510204
+    }
+  },
+  "gsms_0040": {
+    "formal": {
+      "lex_dissim": 0.342,
+      "syn_dissim": 0.18694131364166341
+    },
+    "nl_break": {
+      "lex_dissim": 0.0028011204481792717,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.011204481792717087,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.06860158311345646,
+      "syn_dissim": 0.04314934155225554
+    },
+    "nl_para": {
+      "lex_dissim": 0.226890756302521,
+      "syn_dissim": 0.10711137231854245
+    }
+  },
+  "gsms_0041": {
+    "formal": {
+      "lex_dissim": 0.30952380952380953,
+      "syn_dissim": 0.1989247311827957
+    },
+    "nl_break": {
+      "lex_dissim": 0.00546448087431694,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.026737967914438502,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.4644808743169399,
+      "syn_dissim": 0.22807017543859648
+    }
+  },
+  "gsms_0042": {
+    "formal": {
+      "lex_dissim": 0.2554112554112554,
+      "syn_dissim": 0.1296904315196998
+    },
+    "nl_break": {
+      "lex_dissim": 0.002857142857142857,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.005714285714285714,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.01694915254237288,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.5,
+      "syn_dissim": 0.20404077175100108
+    }
+  },
+  "gsms_0043": {
+    "formal": {
+      "lex_dissim": 0.2851851851851852,
+      "syn_dissim": 0.249407302038881
+    },
+    "nl_break": {
+      "lex_dissim": 0.004975124378109453,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.014925373134328358,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.10407239819004525,
+      "syn_dissim": 0.07500000000000001
+    },
+    "nl_para": {
+      "lex_dissim": 0.3681592039800995,
+      "syn_dissim": 0.20495495495495497
+    }
+  },
+  "gsms_0044": {
+    "formal": {
+      "lex_dissim": 0.3772455089820359,
+      "syn_dissim": 0.2833333333333333
+    },
+    "nl_break": {
+      "lex_dissim": 0.008849557522123894,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.02631578947368421,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.3805309734513274,
+      "syn_dissim": 0.3385093167701863
+    }
+  },
+  "gsms_0045": {
+    "formal": {
+      "lex_dissim": 0.2945054945054945,
+      "syn_dissim": 0.15957601277769712
+    },
+    "nl_break": {
+      "lex_dissim": 0.003003003003003003,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.03003003003003003,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.020710059171597635,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.2552552552552553,
+      "syn_dissim": 0.10849471830985916
+    }
+  },
+  "gsms_0046": {
+    "formal": {
+      "lex_dissim": 0.26329113924050634,
+      "syn_dissim": 0.1708451796329801
+    },
+    "nl_break": {
+      "lex_dissim": 0.0033222591362126247,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.03870967741935484,
+      "syn_dissim": 0.017470300489168436
+    },
+    "nl_para": {
+      "lex_dissim": 0.5260115606936416,
+      "syn_dissim": 0.1266846361185984
+    }
+  },
+  "gsms_0047": {
+    "formal": {
+      "lex_dissim": 0.34069400630914826,
+      "syn_dissim": 0.22106430155210643
+    },
+    "nl_break": {
+      "lex_dissim": 0.00425531914893617,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.02127659574468085,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.012658227848101266,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.14227642276422764,
+      "syn_dissim": 0.10015948963317385
+    }
+  },
+  "gsms_0048": {
+    "formal": {
+      "lex_dissim": 0.4029126213592233,
+      "syn_dissim": 0.4026610644257703
+    },
+    "nl_break": {
+      "lex_dissim": 0.007692307692307693,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.015267175572519083,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.03731343283582089,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.3356164383561644,
+      "syn_dissim": 0.24553571428571427
+    }
+  },
+  "gsms_0049": {
+    "formal": {
+      "lex_dissim": 0.2781954887218045,
+      "syn_dissim": 0.203584229390681
+    },
+    "nl_break": {
+      "lex_dissim": 0.003278688524590164,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.019672131147540985,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.05625,
+      "syn_dissim": 0.04385080645161289
+    },
+    "nl_para": {
+      "lex_dissim": 0.24918032786885247,
+      "syn_dissim": 0.07965260545905706
+    }
+  },
+  "gsms_0050": {
+    "formal": {
+      "lex_dissim": 0.34951456310679613,
+      "syn_dissim": 0.23150510204081634
+    },
+    "nl_break": {
+      "lex_dissim": 0.007246376811594203,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.014388489208633094,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.1509433962264151,
+      "syn_dissim": 0.08571428571428572
+    },
+    "nl_para": {
+      "lex_dissim": 0.3115942028985507,
+      "syn_dissim": 0.14919354838709675
+    }
+  },
+  "gsms_0051": {
+    "formal": {
+      "lex_dissim": 0.21764705882352942,
+      "syn_dissim": 0.09111721611721613
+    },
+    "nl_break": {
+      "lex_dissim": 0.002369668246445498,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.014218009478672985,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.009411764705882352,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.30969267139479906,
+      "syn_dissim": 0.08791208791208792
+    }
+  },
+  "gsms_0052": {
+    "formal": {
+      "lex_dissim": 0.4144144144144144,
+      "syn_dissim": 0.30479183032207385
+    },
+    "nl_break": {
+      "lex_dissim": 0.007352941176470588,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.014705882352941176,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.02877697841726619,
+      "syn_dissim": 0.02631578947368421
+    },
+    "nl_para": {
+      "lex_dissim": 0.4172661870503597,
+      "syn_dissim": 0.20483641536273117
+    }
+  },
+  "gsms_0053": {
+    "formal": {
+      "lex_dissim": 0.37606837606837606,
+      "syn_dissim": 0.35389610389610393
+    },
+    "nl_break": {
+      "lex_dissim": 0.00641025641025641,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.057692307692307696,
+      "syn_dissim": 0.030303030303030304
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.13068181818181818,
+      "syn_dissim": 0.10606060606060609
+    },
+    "nl_para": {
+      "lex_dissim": 0.35625,
+      "syn_dissim": 0.10606060606060608
+    }
+  },
+  "gsms_0054": {
+    "formal": {
+      "lex_dissim": 0.3178294573643411,
+      "syn_dissim": 0.2542124542124542
+    },
+    "nl_break": {
+      "lex_dissim": 0.005555555555555556,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.016574585635359115,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.02185792349726776,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.19895287958115182,
+      "syn_dissim": 0.11111111111111108
+    }
+  },
+  "gsms_0055": {
+    "formal": {
+      "lex_dissim": 0.39184952978056425,
+      "syn_dissim": 0.16811726981218506
+    },
+    "nl_break": {
+      "lex_dissim": 0.01107011070110701,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.02214022140221402,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.1956521739130435,
+      "syn_dissim": 0.11186440677966103
+    }
+  },
+  "gsms_0056": {
+    "formal": {
+      "lex_dissim": 0.37628865979381443,
+      "syn_dissim": 0.25173940543959517
+    },
+    "nl_break": {
+      "lex_dissim": 0.008064516129032258,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.016129032258064516,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.023809523809523808,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.25,
+      "syn_dissim": 0.15806451612903227
+    }
+  },
+  "gsms_0057": {
+    "formal": {
+      "lex_dissim": 0.34812286689419797,
+      "syn_dissim": 0.2071256038647343
+    },
+    "nl_break": {
+      "lex_dissim": 0.0049261083743842365,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.059113300492610835,
+      "syn_dissim": 0.021739130434782608
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.03365384615384615,
+      "syn_dissim": 0.021739130434782615
+    },
+    "nl_para": {
+      "lex_dissim": 0.43842364532019706,
+      "syn_dissim": 0.04106280193236715
+    }
+  },
+  "gsms_0058": {
+    "formal": {
+      "lex_dissim": 0.300561797752809,
+      "syn_dissim": 0.27689706193193825
+    },
+    "nl_break": {
+      "lex_dissim": 0.0038022813688212928,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.03690036900369004,
+      "syn_dissim": 0.01663641863278884
+    },
+    "nl_para": {
+      "lex_dissim": 0.45185185185185184,
+      "syn_dissim": 0.18636755823986192
+    }
+  },
+  "gsms_0059": {
+    "formal": {
+      "lex_dissim": 0.41359773371104813,
+      "syn_dissim": 0.2585763293310463
+    },
+    "nl_break": {
+      "lex_dissim": 0.004545454545454545,
+      "syn_dissim": 0.018867924528301893
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.026785714285714284,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.2727272727272727,
+      "syn_dissim": 0.1994080651128376
+    }
+  },
+  "gsms_0060": {
+    "formal": {
+      "lex_dissim": 0.2576271186440678,
+      "syn_dissim": 0.19528619528619526
+    },
+    "nl_break": {
+      "lex_dissim": 0.004329004329004329,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.017316017316017316,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.02553191489361702,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.6122448979591837,
+      "syn_dissim": 0.13742690058479531
+    }
+  },
+  "gsms_0061": {
+    "formal": {
+      "lex_dissim": 0.24242424242424243,
+      "syn_dissim": 0.18092691622103388
+    },
+    "nl_break": {
+      "lex_dissim": 0.0029498525073746312,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.017699115044247787,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.020348837209302327,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.4749262536873156,
+      "syn_dissim": 0.1508885850991114
+    }
+  },
+  "gsms_0062": {
+    "formal": {
+      "lex_dissim": 0.24583333333333332,
+      "syn_dissim": 0.17595628415300546
+    },
+    "nl_break": {
+      "lex_dissim": 0.005376344086021506,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.031578947368421054,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.2893401015228426,
+      "syn_dissim": 0.1917312661498708
+    }
+  },
+  "gsms_0063": {
+    "formal": {
+      "lex_dissim": 0.3783783783783784,
+      "syn_dissim": 0.2693089430894309
+    },
+    "nl_break": {
+      "lex_dissim": 0.010416666666666666,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.0784313725490196,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.2916666666666667,
+      "syn_dissim": 0.15942028985507245
+    }
+  },
+  "gsms_0064": {
+    "formal": {
+      "lex_dissim": 0.22259136212624583,
+      "syn_dissim": 0.16818558409279205
+    },
+    "nl_break": {
+      "lex_dissim": 0.00411522633744856,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.04938271604938271,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.028225806451612902,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.29218106995884774,
+      "syn_dissim": 0.11764705882352941
+    }
+  },
+  "gsms_0065": {
+    "formal": {
+      "lex_dissim": 0.1994535519125683,
+      "syn_dissim": 0.13530655391120508
+    },
+    "nl_break": {
+      "lex_dissim": 0.003355704697986577,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.013422818791946308,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.013289036544850499,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.36156351791530944,
+      "syn_dissim": 0.1827956989247312
+    }
+  },
+  "gsms_0066": {
+    "formal": {
+      "lex_dissim": 0.3127413127413127,
+      "syn_dissim": 0.18858560794044663
+    },
+    "nl_break": {
+      "lex_dissim": 0.0053475935828877,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0106951871657754,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.05128205128205128,
+      "syn_dissim": 0.02243589743589741
+    },
+    "nl_para": {
+      "lex_dissim": 0.48663101604278075,
+      "syn_dissim": 0.23717948717948717
+    }
+  },
+  "gsms_0067": {
+    "formal": {
+      "lex_dissim": 0.45695364238410596,
+      "syn_dissim": 0.21711780404117423
+    },
+    "nl_break": {
+      "lex_dissim": 0.0038910505836575876,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.007782101167315175,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.11228070175438597,
+      "syn_dissim": 0.061538461538461514
+    },
+    "nl_para": {
+      "lex_dissim": 0.30739299610894943,
+      "syn_dissim": 0.11159045153868277
+    }
+  },
+  "gsms_0068": {
+    "formal": {
+      "lex_dissim": 0.2831541218637993,
+      "syn_dissim": 0.22344322344322343
+    },
+    "nl_break": {
+      "lex_dissim": 0.004830917874396135,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.014492753623188406,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.055299539170506916,
+      "syn_dissim": 0.021040974529346605
+    },
+    "nl_para": {
+      "lex_dissim": 0.4057971014492754,
+      "syn_dissim": 0.07142857142857142
+    }
+  },
+  "gsms_0069": {
+    "formal": {
+      "lex_dissim": 0.24213836477987422,
+      "syn_dissim": 0.21305031446540879
+    },
+    "nl_break": {
+      "lex_dissim": 0.003861003861003861,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.015444015444015444,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.022813688212927757,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.5135135135135135,
+      "syn_dissim": 0.14037735849056604
+    }
+  },
+  "gsms_0070": {
+    "formal": {
+      "lex_dissim": 0.3088235294117647,
+      "syn_dissim": 0.2777777777777778
+    },
+    "nl_break": {
+      "lex_dissim": 0.00684931506849315,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.026845637583892617,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.3904109589041096,
+      "syn_dissim": 0.16666666666666666
+    }
+  },
+  "gsms_0071": {
+    "formal": {
+      "lex_dissim": 0.2826086956521739,
+      "syn_dissim": 0.21014492753623187
+    },
+    "nl_break": {
+      "lex_dissim": 0.004901960784313725,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.029411764705882353,
+      "syn_dissim": 0.021739130434782608
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.02403846153846154,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.46568627450980393,
+      "syn_dissim": 0.16666666666666666
+    }
+  },
+  "gsms_0072": {
+    "formal": {
+      "lex_dissim": 0.2645161290322581,
+      "syn_dissim": 0.2074074074074074
+    },
+    "nl_break": {
+      "lex_dissim": 0.00423728813559322,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.01694915254237288,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.012658227848101266,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.2288135593220339,
+      "syn_dissim": 0.10909090909090909
+    }
+  },
+  "gsms_0073": {
+    "formal": {
+      "lex_dissim": 0.3380281690140845,
+      "syn_dissim": 0.1816601477618427
+    },
+    "nl_break": {
+      "lex_dissim": 0.004032258064516129,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.024193548387096774,
+      "syn_dissim": 0.016949152542372878
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.0390625,
+      "syn_dissim": 0.01638418079096047
+    },
+    "nl_para": {
+      "lex_dissim": 0.328,
+      "syn_dissim": 0.09830508474576273
+    }
+  },
+  "gsms_0074": {
+    "formal": {
+      "lex_dissim": 0.4114114114114114,
+      "syn_dissim": 0.15835866261398177
+    },
+    "nl_break": {
+      "lex_dissim": 0.0049261083743842365,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.08256880733944955,
+      "syn_dissim": 0.03473729917498916
+    },
+    "nl_para": {
+      "lex_dissim": 0.31527093596059114,
+      "syn_dissim": 0.11331024245423059
+    }
+  },
+  "gsms_0075": {
+    "formal": {
+      "lex_dissim": 0.30793650793650795,
+      "syn_dissim": 0.17236467236467237
+    },
+    "nl_break": {
+      "lex_dissim": 0.004405286343612335,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.017391304347826087,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.2026431718061674,
+      "syn_dissim": 0.1269956458635704
+    }
+  },
+  "gsms_0076": {
+    "formal": {
+      "lex_dissim": 0.25132275132275134,
+      "syn_dissim": 0.2639573070607553
+    },
+    "nl_break": {
+      "lex_dissim": 0.003401360544217687,
+      "syn_dissim": 0.017241379310344827
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.006779661016949152,
+      "syn_dissim": 0.017241379310344827
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.016778523489932886,
+      "syn_dissim": 0.017241379310344827
+    },
+    "nl_para": {
+      "lex_dissim": 0.41496598639455784,
+      "syn_dissim": 0.24578136463683053
+    }
+  },
+  "gsms_0077": {
+    "formal": {
+      "lex_dissim": 0.37799043062200954,
+      "syn_dissim": 0.2864516129032258
+    },
+    "nl_break": {
+      "lex_dissim": 0.00684931506849315,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0410958904109589,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.07692307692307693,
+      "syn_dissim": 0.030241935483870955
+    },
+    "nl_para": {
+      "lex_dissim": 0.3767123287671233,
+      "syn_dissim": 0.0903225806451613
+    }
+  },
+  "gsms_0078": {
+    "formal": {
+      "lex_dissim": 0.25839793281653745,
+      "syn_dissim": 0.18183306055646484
+    },
+    "nl_break": {
+      "lex_dissim": 0.003367003367003367,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.006734006734006734,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.010033444816053512,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.25333333333333335,
+      "syn_dissim": 0.12398190045248869
+    }
+  },
+  "gsms_0079": {
+    "formal": {
+      "lex_dissim": 0.3617886178861789,
+      "syn_dissim": 0.23268398268398272
+    },
+    "nl_break": {
+      "lex_dissim": 0.005988023952095809,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.03550295857988166,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.13227513227513227,
+      "syn_dissim": 0.07323232323232326
+    },
+    "nl_para": {
+      "lex_dissim": 0.26785714285714285,
+      "syn_dissim": 0.02673796791443851
+    }
+  },
+  "gsms_0080": {
+    "formal": {
+      "lex_dissim": 0.3854166666666667,
+      "syn_dissim": 0.2722103766879886
+    },
+    "nl_break": {
+      "lex_dissim": 0.005319148936170213,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.015957446808510637,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.06060606060606061,
+      "syn_dissim": 0.02325581395348835
+    },
+    "nl_para": {
+      "lex_dissim": 0.32673267326732675,
+      "syn_dissim": 0.20952380952380953
+    }
+  },
+  "gsms_0081": {
+    "formal": {
+      "lex_dissim": 0.3070539419087137,
+      "syn_dissim": 0.1607142857142857
+    },
+    "nl_break": {
+      "lex_dissim": 0.005714285714285714,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.0335195530726257,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.47619047619047616,
+      "syn_dissim": 0.10087719298245613
+    }
+  },
+  "gsms_0082": {
+    "formal": {
+      "lex_dissim": 0.3591549295774648,
+      "syn_dissim": 0.2500910083727703
+    },
+    "nl_break": {
+      "lex_dissim": 0.0051813471502590676,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.04975124378109453,
+      "syn_dissim": 0.023809523809523832
+    },
+    "nl_para": {
+      "lex_dissim": 0.49740932642487046,
+      "syn_dissim": 0.10151615029663809
+    }
+  },
+  "gsms_0083": {
+    "formal": {
+      "lex_dissim": 0.31272727272727274,
+      "syn_dissim": 0.16666666666666666
+    },
+    "nl_break": {
+      "lex_dissim": 0.004878048780487805,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.16942148760330578,
+      "syn_dissim": 0.09722222222222221
+    },
+    "nl_para": {
+      "lex_dissim": 0.35609756097560974,
+      "syn_dissim": 0.18333333333333335
+    }
+  },
+  "gsms_0084": {
+    "formal": {
+      "lex_dissim": 0.29343629343629346,
+      "syn_dissim": 0.23366013071895425
+    },
+    "nl_break": {
+      "lex_dissim": 0.005235602094240838,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.06282722513089005,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.02564102564102564,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.3612565445026178,
+      "syn_dissim": 0.10969267139479906
+    }
+  },
+  "gsms_0085": {
+    "formal": {
+      "lex_dissim": 0.273542600896861,
+      "syn_dissim": 0.29795918367346935
+    },
+    "nl_break": {
+      "lex_dissim": 0.005952380952380952,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.05357142857142857,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.09340659340659341,
+      "syn_dissim": 0.054054054054054015
+    },
+    "nl_para": {
+      "lex_dissim": 0.39285714285714285,
+      "syn_dissim": 0.19243697478991598
+    }
+  },
+  "gsms_0086": {
+    "formal": {
+      "lex_dissim": 0.21764705882352942,
+      "syn_dissim": 0.18386491557223267
+    },
+    "nl_break": {
+      "lex_dissim": 0.0024390243902439024,
+      "syn_dissim": 0.010989010989010988
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.004878048780487805,
+      "syn_dissim": 0.021978021978021983
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.02857142857142857,
+      "syn_dissim": 0.031892021022455815
+    },
+    "nl_para": {
+      "lex_dissim": 0.32195121951219513,
+      "syn_dissim": 0.11594023953574514
+    }
+  },
+  "gsms_0087": {
+    "formal": {
+      "lex_dissim": 0.22641509433962265,
+      "syn_dissim": 0.1990632318501171
+    },
+    "nl_break": {
+      "lex_dissim": 0.0033444816053511705,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.019801980198019802,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.42524916943521596,
+      "syn_dissim": 0.10946589106292968
+    }
+  },
+  "gsms_0088": {
+    "formal": {
+      "lex_dissim": 0.4559139784946237,
+      "syn_dissim": 0.28929455445544555
+    },
+    "nl_break": {
+      "lex_dissim": 0.003663003663003663,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.01098901098901099,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.018050541516245487,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.5787545787545788,
+      "syn_dissim": 0.27823464912280704
+    }
+  },
+  "gsms_0089": {
+    "formal": {
+      "lex_dissim": 0.525,
+      "syn_dissim": 0.3159090909090909
+    },
+    "nl_break": {
+      "lex_dissim": 0.006289308176100629,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.031446540880503145,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.024691358024691357,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.15555555555555556,
+      "syn_dissim": 0.1181818181818182
+    }
+  },
+  "gsms_0090": {
+    "formal": {
+      "lex_dissim": 0.3401639344262295,
+      "syn_dissim": 0.17543859649122806
+    },
+    "nl_break": {
+      "lex_dissim": 0.005434782608695652,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.03260869565217391,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.05699481865284974,
+      "syn_dissim": 0.025641025641025616
+    },
+    "nl_para": {
+      "lex_dissim": 0.31336405529953915,
+      "syn_dissim": 0.24401913875598083
+    }
+  },
+  "gsms_0091": {
+    "formal": {
+      "lex_dissim": 0.2551928783382789,
+      "syn_dissim": 0.2018566067548884
+    },
+    "nl_break": {
+      "lex_dissim": 0.0036101083032490976,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.03214285714285714,
+      "syn_dissim": 0.03278688524590164
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.041811846689895474,
+      "syn_dissim": 0.016129032258064523
+    },
+    "nl_para": {
+      "lex_dissim": 0.2490974729241877,
+      "syn_dissim": 0.08335648791330923
+    }
+  },
+  "gsms_0092": {
+    "formal": {
+      "lex_dissim": 0.31873479318734793,
+      "syn_dissim": 0.2377025036818851
+    },
+    "nl_break": {
+      "lex_dissim": 0.0031746031746031746,
+      "syn_dissim": 0.014285714285714287
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.012698412698412698,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.04,
+      "syn_dissim": 0.013480885311871206
+    },
+    "nl_para": {
+      "lex_dissim": 0.4447852760736196,
+      "syn_dissim": 0.15791505791505792
+    }
+  },
+  "gsms_0093": {
+    "formal": {
+      "lex_dissim": 0.2730496453900709,
+      "syn_dissim": 0.21835616438356165
+    },
+    "nl_break": {
+      "lex_dissim": 0.004651162790697674,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.05581395348837209,
+      "syn_dissim": 0.04000000000000001
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.031818181818181815,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.4511627906976744,
+      "syn_dissim": 0.15636363636363637
+    }
+  },
+  "gsms_0094": {
+    "formal": {
+      "lex_dissim": 0.2737752161383285,
+      "syn_dissim": 0.21479019526381388
+    },
+    "nl_break": {
+      "lex_dissim": 0.0037593984962406013,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.04710144927536232,
+      "syn_dissim": 0.01636469900642898
+    },
+    "nl_para": {
+      "lex_dissim": 0.5037593984962406,
+      "syn_dissim": 0.1564736499674691
+    }
+  },
+  "gsms_0095": {
+    "formal": {
+      "lex_dissim": 0.28865979381443296,
+      "syn_dissim": 0.18292682926829268
+    },
+    "nl_break": {
+      "lex_dissim": 0.004545454545454545,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.035398230088495575,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.12272727272727273,
+      "syn_dissim": 0.16688061617458277
+    }
+  },
+  "gsms_0096": {
+    "formal": {
+      "lex_dissim": 0.29584352078239606,
+      "syn_dissim": 0.1924179260031266
+    },
+    "nl_break": {
+      "lex_dissim": 0.003289473684210526,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.006578947368421052,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.041401273885350316,
+      "syn_dissim": 0.025290498974709467
+    },
+    "nl_para": {
+      "lex_dissim": 0.32894736842105265,
+      "syn_dissim": 0.13446286950252342
+    }
+  },
+  "gsms_0097": {
+    "formal": {
+      "lex_dissim": 0.250936329588015,
+      "syn_dissim": 0.17855735120220734
+    },
+    "nl_break": {
+      "lex_dissim": 0.0045871559633027525,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.013761467889908258,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.04,
+      "syn_dissim": 0.021670190274841444
+    },
+    "nl_para": {
+      "lex_dissim": 0.42792792792792794,
+      "syn_dissim": 0.10387596899224806
+    }
+  },
+  "gsms_0098": {
+    "formal": {
+      "lex_dissim": 0.34972677595628415,
+      "syn_dissim": 0.2692307692307693
+    },
+    "nl_break": {
+      "lex_dissim": 0.008130081300813009,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.0546875,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.5190839694656488,
+      "syn_dissim": 0.13461538461538464
+    }
+  },
+  "gsms_0099": {
+    "formal": {
+      "lex_dissim": 0.37209302325581395,
+      "syn_dissim": 0.3167487684729064
+    },
+    "nl_break": {
+      "lex_dissim": 0.00684931506849315,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_lex": {
+      "lex_dissim": 0.0410958904109589,
+      "syn_dissim": 0.0
+    },
+    "nl_minimal_orth": {
+      "lex_dissim": 0.026845637583892617,
+      "syn_dissim": 0.0
+    },
+    "nl_para": {
+      "lex_dissim": 0.40476190476190477,
+      "syn_dissim": 0.1857142857142857
+    }
+  }
+}

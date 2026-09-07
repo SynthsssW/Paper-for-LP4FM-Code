@@ -1,0 +1,32 @@
+# Runtime dependencies of the corpus generator
+# (src/ling/templates.py, src/ling/corpus.py, scripts/02_generate_corpus.py)
+#
+# ===========================================================================
+#   NONE. Python >= 3.8 standard library only.
+# ===========================================================================
+#
+# Not numpy, not requests, not PyYAML, not jinja2. Deliberately:
+#
+#   * DESIGN.md A.1 rule 2 -- pod setup is billed time. The corpus step must
+#     never be what makes `pip install` fail on a fresh pod.
+#   * The generator must be runnable on any machine at any time to reproduce
+#     the corpus byte-for-byte from the seed alone. A dependency whose version
+#     resolution can drift is a reproducibility hazard for a file that is an
+#     experimental input.
+#
+# NO NETWORK AT RUN TIME. The 100 GSM-Symbolic templates were fetched once at
+# authoring time and are vendored in `data/templates/gsm_symbolic_templates.json`.
+# Nothing in the generate path opens a socket.
+#
+# Two things the template DSL nominally references are shimmed in stdlib rather
+# than pulled in:
+#   * `np.arange` / `np.random.randint` appear in a handful of `#init:` blocks.
+#     They are only ever used to build a *candidate pool* that is then sampled
+#     from, so `ling.templates._frange` and `_NpRandomShim` reproduce the pool
+#     exactly without importing numpy.
+#   * configs/model.yaml is read for the master seed with a one-line regex
+#     (`scripts/02_generate_corpus.py:seed_from_model_yaml`) rather than PyYAML.
+#
+# If a later pass (e.g. the nl_para paraphrase writer, or the G3 round-trip
+# verifier, which needs a second model) does require packages, add them BELOW
+# this line and keep the generator itself dependency-free.

@@ -1,0 +1,20 @@
+file: PRIMARY_ENDPOINTS.md
+sha256: d138968eab9b6b57e1e27b7239722d3a9ccbe5a0e56f21347233f8cfcd5f9501
+sealed_utc: 2026-09-06T20:47:45.458806+00:00
+bytes: 5579
+
+file: DEVIATIONS.md
+sha256: 9053def8e51516c72ae56efed43bc365bb6c9c0f95c62c851c711c3a85fd942d
+sealed_utc: 2026-09-06T21:09:56.935515+00:00
+bytes: 5314
+amendments: 2 (H1 demoted; H3 lambda2 pooled)
+
+file: DEVIATIONS.md (revised, +Amendment 3)
+sha256: ae5c54d587967aff1d3196af8da36fb274e09b613df5c540b05a08154094faf6
+sealed_utc: 2026-09-06T21:22:12.706715+00:00
+bytes: 7139
+amendments: 3
+
+file: DEVIATIONS.md (+POST-DATA RECORD)
+sha256: a2c0c12a98f4b63290f80506e5aa8fbd2f6ef12e0192dac3a4c898046c4e495e
+sealed_utc: 2026-09-07T02:47:33.242334+00:00
