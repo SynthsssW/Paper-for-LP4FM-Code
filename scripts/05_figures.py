@@ -185,7 +185,11 @@ def fork_layers_from_assignments(layers, key0, ref, other):
         i1 = idx.get((pid, ref))
         i2 = idx.get((pid, other))
         if i1 is None or i2 is None:
-            raise SystemExit("problem %r lacks rows for %r or %r" % (pid, ref, other))
+            # Amendment 6 declared hole: nl_minimal_lex exists for 70/100 problems,
+            # nl_minimal_orth for 99/100. A hole is an expected per-condition
+            # absence, not an error -- skip the pair, never fabricate a fork layer
+            # and never drop the problem from the OTHER conditions' curves.
+            continue
         fork = None
         for d in layers:
             cl = [r["cluster"] for r in d["rows"]]

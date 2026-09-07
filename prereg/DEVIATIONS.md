@@ -405,3 +405,37 @@ modularity" did not survive contact with the data, and the metric's resolution d
 critically on a k-selection step the design treated as incidental.** That is a reportable
 negative result about the construct, and the pre-registration is what makes it reportable
 rather than quietly re-specifiable.
+
+### Observation 2 — EXPLORATORY positive finding: a one-layer transition at layer 12
+
+**Post-data, exploratory, NOT pre-registered.** No primary endpoint. Reported as exploratory
+in any write-up, with this label attached.
+
+AMI between the pooled k=2 partition and the FINAL-vs-quantity anchor distinction:
+
+| layers | mean AMI |
+|---|---|
+| 1-11 | **0.881** (peak **0.9795** at layer 5) |
+| 12-47 | **0.051** |
+
+Ratio 17.4x. The collapse happens **in a single layer**: 0.880 at layer 11, 0.005 at
+layer 12. It is not a gradual decay.
+
+**The eigengap does NOT collapse at layer 12** (0.204 at L11, 0.299 at L12, 0.592 at L13).
+The partition remains equally strong; it stops tracking token role and begins tracking
+something else. The correct claim is therefore *the dominant axis changes what it encodes*,
+NOT *structure disappears*. What it encodes after layer 12 is unresolved and is the obvious
+follow-up.
+
+**Negative control passed:** AMI(cluster, condition) is ~0.00-0.03 at every layer, so the
+partition is not sorting states by which realization they came from.
+
+**H1 does NOT hold, even descriptively.** Spectral vs K-means AMI against dependency labels
+is mixed across layers (L2: 0.235 vs 0.328 kmeans; L18: 0.246 vs 0.036 spectral; L42: 0.023
+vs 0.059 kmeans). There is no reliable spectral advantage. H1 is reported as unsupported,
+not quietly omitted.
+
+**Methodological irony worth stating plainly:** the k=2 degeneracy that made lambda2 and
+fork layer unusable is exactly what makes this finding legible. Forcing the partition onto a
+single dominant axis destroys cross-condition comparison but is a good instrument for asking
+what that axis encodes. The failure and the finding have the same cause.
