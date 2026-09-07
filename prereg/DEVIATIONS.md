@@ -491,3 +491,44 @@ question, stated as open.
 **Semantic-frame AMI was NOT computed** — the corpus carries no FrameNet/PropBank labels
 (DESIGN.md §B.3 defers this to the archival version). Its absence is a limitation, not a
 null result, and must not be reported as one.
+
+### Observation 4 — fork layer tracks SURFACE DISSIMILARITY, not answer-breaking
+
+**This is the substantive result.** H2's "non-identification" is not a fitting failure; the
+zero-event arm IS the finding.
+
+Fork events vs `nl_base`, both runs:
+
+| condition | lex_edit | k=2 events | k=8 events | k=8 median fork layer |
+|---|---|---|---|---|
+| `formal` | 0.307 | 19/100 | **100/100** | **3** |
+| `nl_para` | 0.391 | 5/100 | 35/100 | 25 |
+| `nl_minimal_orth` | 0.049 | 0/99 | 8/99 | 29 |
+| `nl_minimal_lex` | 0.024 | 1/70 | 4/70 | 40 |
+| **`nl_break`** | **0.005** | **0/100** | **0/100** | **never** |
+
+**`nl_break` — the ONLY answer-breaking condition — has zero fork events at BOTH k=2 and
+k=8.** H2 pre-committed to answer-breaking pairs forking EARLIEST. They fork LAST, which is
+to say never. The pre-committed direction is refuted, not merely unsupported.
+
+The conditions that do fork are ordered by surface distance (`formal` additionally has the
+largest syntactic distance, 0.213, which is consistent with it forking first). **Fork layer
+is a monotone readout of surface dissimilarity.**
+
+**Why this matters beyond this paper.** Han, Rizk & Santosh (arXiv 2604.01639) compare
+flipped against non-flipped samples with NO surface-dissimilarity control, so a
+surface-driven signal and an answer-driven signal are not separable in that design. Adding a
+minimal-edit answer-breaking condition separates them, and the signal goes entirely to
+surface. This is a falsifying result about the standing first-divergence-layer diagnostic,
+obtained by the control the pre-registration required.
+
+**Stated limitation, not to be omitted:** our `nl_break` is a one-character edit, a far more
+minimal perturbation than the flipped samples in prior work. The claim is NOT that prior
+results are wrong. The claim is that when surface magnitude is held near-constant, the fork
+signal follows surface and not answer-preservation — which means the diagnostic cannot be
+read as indicating answer-breaking without such a control.
+
+**Sensitivity of H3 to k (exploratory):** mean paired d(lambda2) = +0.3602 (CI [0.211,
+0.385]) at eigengap k, versus +0.0942 (Wilcoxon p = 0.56) at forced k=8. A 4x shrink and
+loss of significance from changing a parameter the design treated as incidental. The
+pre-registered H3 result is not robust to k.
