@@ -226,6 +226,7 @@ class OutputSchema(unittest.TestCase):
     @staticmethod
     def replay_04_analyze(cov):
         """Verbatim replay of scripts/04_analyze.py's `analyze_h2` covariate block."""
+        cov = {k: v for k, v in cov.items() if k != D.SOURCE_KEY}  # main() pops it
         cov_names, seen = [], set()
         for per_cond in cov.values():
             for vals in per_cond.values():
@@ -268,8 +269,10 @@ class OutputSchema(unittest.TestCase):
         measures, _, _ = COV.build(self.CORPUS, _ANALYZER, "nl_base",
                                    ["nl_para", "formal", "nl_break"])
         keys = list(D.PRIMARY_KEYS) if _ANALYZER.available else ["lex_dissim"]
-        for source in (D.PRIMARY_SOURCE, D.ROBUSTNESS_SOURCE):
+        for family, source in ((D.SOURCE_PRIMARY, D.PRIMARY_SOURCE),
+                               (D.SOURCE_ROBUSTNESS, D.ROBUSTNESS_SOURCE)):
             cov, _ = COV.project(measures, source, keys)
+            cov[D.SOURCE_KEY] = D.source_tag(family, keys)   # as main() does
             self.assertEqual(COV.check_consumer_shape(cov, keys), [])
             names, rows = self.replay_04_analyze(cov)
             self.assertEqual(names, sorted(keys))
@@ -299,7 +302,15 @@ class OutputSchema(unittest.TestCase):
         names, rows = self.replay_04_analyze(cov)
         self.assertTrue(rows)
         self.assertTrue(set(names) <= set(D.PRIMARY_KEYS))
+        # `_source` is the ONE reserved key, and it must name the primary family --
+        # the robustness file is shape-identical, so this tag is the only thing that
+        # stops it being fitted and reported as H2's pre-registered primary.
+        self.assertEqual(cov[D.SOURCE_KEY]["family"], D.SOURCE_PRIMARY)
+        self.assertEqual(cov[D.SOURCE_KEY]["measures"],
+                         {k: D.PRIMARY_SOURCE[k] for k in names})
         for pid, per_cond in cov.items():
+            if pid == D.SOURCE_KEY:
+                continue
             self.assertTrue(pid.startswith("gsms_"), pid)
             self.assertNotIn(D.REFERENCE_CONDITION, per_cond,
                              "the reference condition has no covariate row of its own")

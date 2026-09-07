@@ -627,7 +627,7 @@ class TestSurvival(unittest.TestCase):
         fit = S.discrete_time_survival(recs, layers=layers, covariates=["lex_dissim"])
         self.assertEqual(fit["link"], "cloglog")
         self.assertTrue(fit["converged"])
-        prim = fit["primary"]
+        prim = fit["survival_term"]
         self.assertLess(prim["coef"], 0.0)             # surviving pairs fork LATER
         self.assertTrue(prim["consistent_with_precommitted_direction"])
         self.assertLess(prim["p"], 0.01)
@@ -638,7 +638,7 @@ class TestSurvival(unittest.TestCase):
     def test_cluster_robust_se_differs_from_model_based(self):
         recs, layers = self.make_records()
         fit = S.discrete_time_survival(recs, layers=layers)
-        prim = fit["primary"]
+        prim = fit["survival_term"]
         self.assertNotAlmostEqual(prim["se"], prim["se_model"], places=6)
         self.assertEqual(fit["se_type"], "cluster-robust (problem)")
 
@@ -656,14 +656,14 @@ class TestSurvival(unittest.TestCase):
         self.assertGreater(fit_all["n_rows"], fit_dropped["n_rows"])
         self.assertGreater(fit_all["n_censored"], 0)
         # dropping the censored pairs biases the coefficient -- the §A.9.1 point
-        self.assertNotAlmostEqual(fit_all["primary"]["coef"],
-                                  fit_dropped["primary"]["coef"], places=3)
+        self.assertNotAlmostEqual(fit_all["survival_term"]["coef"],
+                                  fit_dropped["survival_term"]["coef"], places=3)
 
     def test_baseline_hazard_variants_run(self):
         recs, layers = self.make_records(n=20, seed=2)
         for baseline in ("linear", "log", "none"):
             fit = S.discrete_time_survival(recs, layers=layers, baseline=baseline)
-            self.assertLess(fit["primary"]["coef"], 0.0)
+            self.assertLess(fit["survival_term"]["coef"], 0.0)
 
 
 class TestMetricCorrelation(unittest.TestCase):
@@ -1093,7 +1093,7 @@ class TestH2SecondaryHazardContrast(unittest.TestCase):
         self.assertTrue(sec["available"])
         self.assertTrue(sec["model_fitted"])
         self.assertGreater(sec["hazard_ratio"], 1.0)
-        self.assertGreater(sec["fit"]["primary"]["coef"], 0.0)
+        self.assertGreater(sec["fit"]["survival_term"]["coef"], 0.0)
         self.assertTrue(sec["consistent_with_precommitted_direction"])
         self.assertLess(sec["p"], 0.01)
         self.assertEqual(sec["fit"]["link"], "cloglog")
@@ -1201,7 +1201,12 @@ class TestSurvivalWithNoForkEvents(unittest.TestCase):
 
 
 class TestUnavailableCovariateCells(unittest.TestCase):
-    """The corpus builder omits unavailable cells from covariates.json entirely."""
+    """Amendment 6 holes have no fork layer, so they never reach the covariate lookup.
+
+    A pair that HAS a fork layer and no covariate entry is therefore a
+    covariates/assignments mismatch, not a hole, and must stop the run rather than be
+    silently dropped from H2's PRIMARY fit.
+    """
 
     def _run(self, covariates):
         mod = _load_analyze("analyze04_cov")
@@ -1234,18 +1239,25 @@ class TestUnavailableCovariateCells(unittest.TestCase):
                                                  "syn_dissim": rng.random()}
         return out
 
-    def test_a_missing_covariate_entry_is_an_excluded_hole_not_a_crash(self):
-        omit = {("nl_minimal_lex", i) for i in range(5)} | {("nl_minimal_orth", 7)}
-        res = self._run(self._covariates(omit))
+    def test_the_complete_file_fits_every_pair(self):
+        res = self._run(self._covariates())
         h2 = res["primary_endpoints"]["h2"]
         self.assertTrue(h2["model_fitted"])
         self.assertEqual(h2["covariates_entered"], ["lex_dissim", "syn_dissim"])
         self.assertTrue(h2["primary_endpoint_complete"])
         by_cond = h2["availability"]["by_condition"]
-        self.assertEqual(by_cond["nl_minimal_lex"]["n_excluded_no_covariate_entry"], 5)
-        self.assertEqual(by_cond["nl_minimal_orth"]["n_excluded_no_covariate_entry"], 1)
-        self.assertEqual(h2["availability"]["total_cells_excluded"], 6)
-        self.assertEqual(h2["n_pairs_entered"], 24 * 5 - 6)
+        for cond in ("nl_minimal_lex", "nl_minimal_orth"):
+            self.assertEqual(by_cond[cond]["n_excluded_no_covariate_entry"], 0)
+        self.assertEqual(h2["availability"]["total_cells_excluded"], 0)
+        self.assertEqual(h2["n_pairs_entered"], 24 * 5)
+
+    def test_a_missing_entry_for_a_pair_that_forked_stops_the_run(self):
+        # These pairs exist in the assignments and have a fork layer, so they are NOT
+        # Amendment 6 holes -- dropping them would fit the PRIMARY coefficient on fewer
+        # pairs than exist.
+        omit = {("nl_minimal_lex", i) for i in range(5)} | {("nl_minimal_orth", 7)}
+        with self.assertRaises(SystemExit):
+            self._run(self._covariates(omit))
 
     def test_a_partial_covariate_entry_is_still_refused(self):
         cov = self._covariates()

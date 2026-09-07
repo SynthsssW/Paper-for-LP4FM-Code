@@ -1,4 +1,12 @@
 {
+  "_source": {
+    "family": "robustness",
+    "measures": {
+      "lex_dissim": "lex_jaccard",
+      "syn_dissim": "syn_pos_seq"
+    },
+    "note": "which measure fills each covariate key. The primary and robustness files share key NAMES so either drops into --covariates unchanged; this tag is the only thing that distinguishes them, and it is echoed into analysis.json so a robustness refit can never be read as the pre-registered primary."
+  },
   "gsms_0000": {
     "formal": {
       "lex_dissim": 0.23333333333333328,

@@ -1260,6 +1260,13 @@ def cluster_layer(states: Any, conditions: Sequence[str], layer: int, *,
     The two steps are separate calls on purpose, and the k-selection call is
     handed a strict subset of the rows. §A.11 item 4 is the checklist entry this
     function exists to make unfailable.
+
+    The BANDWIDTH is not split the same way. Amendment 5 pre-commits a single
+    ``sigma`` computed on the POOLED set across all conditions, so it is computed
+    here once and passed to both calls. Letting each derive its own would give the
+    eigengap a wider bandwidth (nl_base is ~5x sparser than the pooled set) than
+    the clustering actually runs at, and would put two disagreeing values into the
+    layer record under ``sigma`` and ``k_selection.sigma``.
     """
     conds = list(conditions)
     X = as_matrix(states)
@@ -1267,18 +1274,39 @@ def cluster_layer(states: Any, conditions: Sequence[str], layer: int, *,
     if len(conds) != n:
         raise ClusterError("got %d rows and %d condition labels" % (n, len(conds)))
 
+    # ---- ONE bandwidth per layer, on the POOLED rows (Amendment 5) -------------------
+    # Amendment 5 pre-commits sigma as the median knn reference distance "computed on
+    # the POOLED set across all conditions". Letting select_k and apply_clustering each
+    # derive their own would give TWO bandwidths per layer: select_k sees only the
+    # nl_base rows, which are ~5x sparser than the pooled set, so its sigma comes out
+    # larger. The eigengap that picks k would then be evaluated at a bandwidth the
+    # clustering never runs at, and `k_selection.sigma` would disagree with the
+    # record-level `sigma`. It is computed here, once, and passed to both.
+    #
+    # The reference set is ALL pooled rows, not the Nystrom landmarks: that makes sigma
+    # deterministic and independent of the landmark draw, and it is the literal reading
+    # of "computed on the pooled set". A per-condition bandwidth is forbidden for the
+    # same reason a per-condition landmark set is (§A.11 item 6).
+    sigma = choose_sigma(prepare_states(X, affinity), range(n), knn_sigma=knn_sigma)
+
     base_idx = nl_base_subset(conds, base_condition)
     selection = select_k(
         take_rows(X, base_idx), [conds[i] for i in base_idx],
         base_condition=base_condition, affinity=affinity, kernel=kernel,
-        k_min=k_min, k_max=k_max, seed=seed, knn_sigma=knn_sigma,
+        k_min=k_min, k_max=k_max, seed=seed, knn_sigma=knn_sigma, sigma=sigma,
         exact_max_rows=exact_max_rows)
 
     result = apply_clustering(
         X, selection.k, affinity=affinity, kernel=kernel, seed=seed,
         landmark_idx=landmark_idx, conditions=conds, n_landmarks=n_landmarks,
-        exact_max_rows=exact_max_rows, knn_sigma=knn_sigma, n_init=n_init,
+        exact_max_rows=exact_max_rows, knn_sigma=knn_sigma, sigma=sigma, n_init=n_init,
         with_kmeans=with_kmeans)
+
+    if abs(selection.sigma - result.sigma) > 1e-12:
+        raise ClusterError(
+            "layer %d ended up with two bandwidths (k-selection %r, clustering %r); "
+            "Amendment 5 pre-commits ONE sigma on the pooled set"
+            % (layer, selection.sigma, result.sigma))
 
     used: Dict[str, set] = {}
     for lab, cond in zip(result.labels, conds):

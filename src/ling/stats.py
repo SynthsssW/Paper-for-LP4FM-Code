@@ -208,6 +208,12 @@ def discrete_time_survival(
     counts as consistent with the pre-commitment; it does not change the model, and it
     does not make the secondary a primary. `direction_note` overrides the reported text.
 
+    The `survival_key` coefficient block is returned under the key
+    `survival_term`, NOT `primary`: this same function fits the Amendment 6
+    SECONDARY contrast, where a key named `primary` would emit
+    `secondary_endpoints....fit.primary` and invite exactly the promotion the
+    pre-registration exists to prevent.
+
     `baseline` is the discrete-time baseline hazard in the layer index t:
         "linear" (default; t), "log" (log t), "dummy" (t indicators, first dropped),
         "none".
@@ -376,7 +382,7 @@ def discrete_time_survival(
         "model": "discrete-time survival, person-period expansion",
         "terms": terms,
         "coefficients": coefs,
-        "primary": prim,
+        "survival_term": prim,
         "n_rows": n,
         "n_pairs": len(records),
         "n_events": n_events,

@@ -307,8 +307,39 @@ def load_syntactic_analyzer(model_name: str = "en_core_web_sm") -> SyntacticAnal
 PRIMARY_KEYS = ("lex_dissim", "syn_dissim")
 
 #: which measure fills each primary key, and which fills the robustness file.
+#: Both families land on the SAME two key names, by design -- the robustness file has
+#: to drop into `04_analyze.py --covariates` unchanged. That also means the two files
+#: are indistinguishable from their contents, so a robustness file passed by mistake
+#: would be fitted and reported as H2's PRIMARY endpoint. `SOURCE_KEY` below is the
+#: reserved top-level tag that makes the two tellable apart: the builder writes it and
+#: the analysis echoes it under `h2.covariates_source`.
 PRIMARY_SOURCE = {"lex_dissim": "lex_edit", "syn_dissim": "syn_dep_bag"}
 ROBUSTNESS_SOURCE = {"lex_dissim": "lex_jaccard", "syn_dissim": "syn_pos_seq"}
+
+#: Reserved top-level key in a covariates file. Its value is a dict, NOT a
+#: {condition: {...}} block, and consumers must strip it before taking the union of
+#: covariate names -- an unstripped tag would be entered as a covariate.
+SOURCE_KEY = "_source"
+
+#: `family` values written into SOURCE_KEY.
+SOURCE_PRIMARY = "primary"
+SOURCE_ROBUSTNESS = "robustness"
+
+
+def source_tag(family: str, keys) -> dict:
+    """The SOURCE_KEY payload for a covariates file of the given family."""
+    table = {SOURCE_PRIMARY: PRIMARY_SOURCE, SOURCE_ROBUSTNESS: ROBUSTNESS_SOURCE}
+    if family not in table:
+        raise ValueError("family must be one of %r, got %r" % (sorted(table), family))
+    return {
+        "family": family,
+        "measures": {k: table[family][k] for k in keys},
+        "note": ("which measure fills each covariate key. The primary and robustness "
+                 "files share key NAMES so either drops into --covariates unchanged; "
+                 "this tag is the only thing that distinguishes them, and it is echoed "
+                 "into analysis.json so a robustness refit can never be read as the "
+                 "pre-registered primary."),
+    }
 
 
 def pair_measures(text_ref: str, text_other: str, analyzer: SyntacticAnalyzer = None,

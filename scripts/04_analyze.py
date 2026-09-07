@@ -28,10 +28,16 @@ SECONDARY endpoints (Amendment 6), under the top-level "secondary_endpoints" key
 are reported ALONGSIDE the two primaries and never in place of them:
 
   H2 secondary, PRE-REGISTERED: hazard ratio for fork layer, nl_break vs
-      nl_minimal_orth, in the same cloglog model. Both arms are one-token edits at the
-      same quantity anchor and differ only in whether the value changes, so the
-      contrast is not confounded with surface dissimilarity. Pre-committed direction:
-      nl_break forks EARLIER (hazard ratio > 1).
+      nl_minimal_orth, in the same cloglog model. The arms are matched on edit SITE
+      -- both edit the quantity anchor, 95 of 99 the exact same slot -- and differ in
+      whether the value, and hence the answer, changes. They are NOT matched on edit
+      MAGNITUDE: Amendment 6's correction measured nl_minimal_orth at ~8x nl_break's
+      edit size (lex_edit means 0.0486 vs 0.0050), because digits-to-words is a
+      multi-character rewrite. The phrase "matched magnitude" must not be used for this
+      contrast. Pre-committed direction, unchanged: nl_break forks EARLIER (hazard
+      ratio > 1) -- and that direction is now CONSERVATIVE, since nl_minimal_orth is
+      the LARGER surface edit, so surface-driven forking would push it to fork earlier,
+      against the prediction.
 
   SND, INTERPRETIVE SECONDARY: style-normalized displacement of lambda2 and path
       entropy against BOTH style floors, reported as a RANGE. The raw difference with a
@@ -46,10 +52,18 @@ Optional inputs (never fabricated when absent):
                       Absent -> H2 is fitted WITHOUT controls and flagged
                       "primary_endpoint_complete": false. The uncontrolled coefficient is
                       NOT the pre-registered endpoint and is labelled as such.
-                      A wholly absent (problem, condition) entry is an Amendment 6
-                      unavailable cell: it is EXCLUDED upstream of the model and counted
-                      under h2.availability, never imputed. An entry that exists but is
-                      missing one control is an inconsistency and still stops the run.
+                      Amendment 6 unavailable cells have no realization and hence no
+                      fork layer, so they are EXCLUDED upstream of the model (by
+                      fork_layers' problems_for restriction) and counted under
+                      h2.availability, never imputed. A pair that DOES have a fork
+                      layer but no covariate entry is a covariates/assignments
+                      mismatch, not a hole, and stops the run -- as does an entry that
+                      exists but is missing one control. Neither is silently dropped:
+                      fitting the primary coefficient on fewer pairs than exist is
+                      biased whenever the gap is non-random.
+                      The file also carries a reserved "_source" tag naming which
+                      measures fill lex_dissim/syn_dissim; it is echoed under
+                      h2.covariates_source and is never entered as a covariate.
   H1 needs per-row "linguistic_label" and "kmeans_cluster" fields at the max-eigengap
   layer. Absent -> H1 reports status "unavailable" with the reason. It is never faked.
 
@@ -70,6 +84,7 @@ import sys
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(_REPO, "src"))
 
+from ling import dissimilarity as D  # noqa: E402
 from ling import metrics as M  # noqa: E402
 from ling import stats as S  # noqa: E402
 
@@ -287,7 +302,7 @@ def _fit_survival_or_report(records, layers, **kw):
         }
 
 
-def analyze_h2(a, args, covariates):
+def analyze_h2(a, args, covariates, covariates_source=None):
     breaking = set(args.breaking_conditions)
     ref = args.reference_condition
     others = [c for c in a.conditions if c != ref]
@@ -318,8 +333,15 @@ def analyze_h2(a, args, covariates):
         for f in avail:
             vals = (covariates.get(f.problem_id, {}) or {}).get(cond) if cov_names else {}
             if cov_names and not vals:
-                # The covariates builder skips unavailable realizations the same way, so
-                # an absent ENTRY is the same hole, not an inconsistency.
+                # NOT a hole. `avail` above is M.fork_layers(a, (ref, cond)), which is
+                # already restricted to problems_for(ref, cond), so an Amendment 6
+                # unavailable cell -- no realization, no activation, no fork layer --
+                # never reaches this loop; it is counted in `no_rows`. A pair that has
+                # activations AND a fork layer AND no covariate entry is a
+                # covariates/assignments MISMATCH (stale covariates build, a condition
+                # re-run without rebuilding them), and silently dropping it would fit
+                # H2's PRIMARY coefficient on fewer pairs than exist -- biased whenever
+                # the gap is non-random. It stops the run, exactly like a partial entry.
                 no_covariate.append(f.problem_id)
                 continue
             rec = {
@@ -334,12 +356,25 @@ def analyze_h2(a, args, covariates):
                     raise SystemExit(
                         "covariates file has an entry for (%s, %s) but it is missing %r; "
                         "a control that is present for some pairs and absent for others "
-                        "cannot be entered as a covariate. (A wholly absent entry is an "
-                        "Amendment 6 unavailable cell and is excluded instead.)"
+                        "cannot be entered as a covariate. (A wholly absent entry for "
+                        "a pair that HAS a fork layer is refused too, just below.)"
                         % (f.problem_id, cond, name))
                 rec[name] = float(vals[name])
             records.append(rec)
             censored += 1 if f.censored else 0
+        if no_covariate:
+            shown = sorted(set(no_covariate))
+            raise SystemExit(
+                "covariates file has NO entry for %d (problem, %s) pair(s) that DO have "
+                "a fork layer in the assignments: %s%s. These are not Amendment 6 "
+                "unavailable cells -- an unavailable cell has no realization and hence "
+                "no fork layer, so it never reaches here (it is counted under "
+                "n_excluded_no_realization). This is a covariates/assignments mismatch: "
+                "rebuild the controls against the corpus this run used "
+                "(scripts/025_covariates.py). Excluding these pairs would fit H2's "
+                "PRIMARY coefficient on fewer pairs than exist."
+                % (len(shown), cond, ", ".join(shown[:20]),
+                   " ..." if len(shown) > 20 else ""))
         excluded[cond] = {
             "n_problems": len(a.problems),
             "n_entered": sum(1 for r in records if r["condition"] == cond),
@@ -369,6 +404,11 @@ def analyze_h2(a, args, covariates):
         "available": True,
         "primary_endpoint_complete": complete,
         "covariates_entered": cov_names,
+        "covariates_source": covariates_source or {
+            "tag_present": False,
+            "family": "NONE",
+            "note": "no --covariates file was given; see `caveat` below.",
+        },
         "condition_pairs": [[ref, c] for c in others],
         "answer_breaking_conditions": sorted(breaking),
         "n_censored_pairs": censored,
@@ -423,14 +463,19 @@ def analyze_h3(a, args):
         return {"status": "PRIMARY", "hypothesis": "H3", "available": False,
                 "reason": "only %d layer-pairs available" % len(pairs)}
 
-    l2_formal = [M.lambda2(a, p, formal) for p in pairs]
-    l2_base = [M.lambda2(a, p, ref) for p in pairs]
+    # Both arms are pooled over the SAME problems. Letting each M.lambda2 call fall
+    # back to its own problems_for() would build the two graphs from different corpora
+    # whenever either condition is ragged; that it happens to be 100/100 for both today
+    # is incidental, and the common set makes it structural.
+    common = a.problems_for(ref, formal)
+    l2_formal = [M.lambda2(a, p, formal, problems=common) for p in pairs]
+    l2_base = [M.lambda2(a, p, ref, problems=common) for p in pairs]
     diffs = [f - b for f, b in zip(l2_formal, l2_base)]
     mean_diff = sum(diffs) / len(diffs)
 
     wil = S.wilcoxon_paired(l2_formal, l2_base, alternative="less")
 
-    problems = list(a.problems)
+    problems = list(common)
     boot = None
     if args.n_boot > 0:
         def stat(problem_multiset):
@@ -454,7 +499,12 @@ def analyze_h3(a, args):
         perm = S.permutation_null(problems, perm_stat, n_perm=args.n_perm,
                                  alternative="less", seed=args.seed + 1)
         # The same permutation draws give the layer-wise family for free.
-        draws = perm_vectors[1:] if len(perm_vectors) > args.n_perm else perm_vectors
+        # permutation_null ALWAYS evaluates the observed statistic first, so
+        # perm_vectors[0] is the OBSERVED vector, never a null draw. Strip it
+        # unconditionally: a length test fails whenever any draw raised (failed draws
+        # never append), and counting the observed vector as a null makes every
+        # layer-pair look extreme against itself.
+        draws = perm_vectors[1:]
         if draws:
             pvals = []
             for i in range(len(pairs)):
@@ -620,7 +670,7 @@ def analyze_h2_secondary(a, args):
         "fit": fit,
     })
     if fit.get("fitted"):
-        prim = fit["primary"]
+        prim = fit["survival_term"]
         out["hazard_ratio"] = prim["hazard_ratio"]
         out["hazard_ratio_ci95"] = prim["hazard_ratio_ci95"]
         out["p"] = prim["p"]
@@ -705,13 +755,40 @@ def analyze_exploratory(a, args):
             for c in a.conditions
         },
     }
-    out["lambda2_by_condition"] = {
-        "status": "EXPLORATORY",
-        "note": ragged,
-        "layer_pairs": list(pairs),
-        "n_problems_by_condition": n_by_cond,
-        "by_condition": {c: [M.lambda2(a, p, c) for p in pairs] for c in a.conditions},
-    }
+    # Computed on the COMMON problem set, not each condition's own. A six-column table
+    # is read as a comparison whatever the label says, and lambda2 of a pooled
+    # transition graph grows with the number of visited nodes, so pooling
+    # nl_minimal_lex over its 70 problems beside nl_base over 100 is the §A.6
+    # graph-size confound rather than a condition difference.
+    common = a.problems_for(*a.conditions)
+    if not common:
+        out["lambda2_by_condition"] = {
+            "status": "EXPLORATORY",
+            "available": False,
+            "reason": ("no problem has rows for all %d conditions, so there is no "
+                       "common set to compute a comparable table on; a per-condition "
+                       "table would confound the condition with graph size"
+                       % len(a.conditions)),
+            "n_problems_by_condition_available": n_by_cond,
+        }
+    else:
+        out["lambda2_by_condition"] = {
+            "status": "EXPLORATORY",
+            "note": ("computed on the COMMON problem set -- the %d problems where ALL %d "
+                     "conditions exist (Amendment 6: nl_minimal_orth 99/100, "
+                     "nl_minimal_lex 70/100) -- so the columns are comparable. Pooling each "
+                     "condition over its own problems would confound the condition with "
+                     "graph size, since lambda2 of the pooled transition graph depends on "
+                     "how many problems were pooled into it."
+                     % (len(common), len(a.conditions))),
+            "problem_set": "common to all conditions",
+            "n_problems_common": len(common),
+            "layer_pairs": list(pairs),
+            "n_problems_by_condition": {c: len(common) for c in a.conditions},
+            "n_problems_by_condition_available": n_by_cond,
+            "by_condition": {c: [M.lambda2(a, p, c, problems=common) for p in pairs]
+                             for c in a.conditions},
+        }
     corr = {}
     for c in a.conditions:
         if c == args.reference_condition:
@@ -795,9 +872,31 @@ def main(argv=None) -> int:
     a = M.load_assignments(path)
 
     covariates = None
+    covariates_source = None
     if args.covariates:
         with open(args.covariates, "r", encoding="utf-8") as fh:
             covariates = json.load(fh)
+        # The primary and robustness covariate files carry the SAME key names, so
+        # nothing in their contents says which one was passed and a robustness file
+        # handed over by mistake would be fitted and reported as H2's PRIMARY endpoint.
+        # scripts/025_covariates.py stamps a reserved top-level tag; strip it here (it
+        # is not a problem_id and must never enter the `cov_names` union) and echo it
+        # into the output.
+        tag = covariates.pop(D.SOURCE_KEY, None) if isinstance(covariates, dict) else None
+        covariates_source = {
+            "file": os.path.abspath(args.covariates),
+            "tag_present": tag is not None,
+            "family": (tag or {}).get("family", "UNKNOWN"),
+            "measures": (tag or {}).get("measures"),
+            "is_preregistered_primary_family": (
+                (tag or {}).get("family") == D.SOURCE_PRIMARY),
+            "note": ((tag or {}).get("note") if tag else
+                     "the covariates file carries no %r tag, so which measures fill "
+                     "lex_dissim/syn_dissim cannot be established from it. Rebuild it "
+                     "with scripts/025_covariates.py. If this is the robustness file, "
+                     "the coefficient below is a ROBUSTNESS refit and NOT the "
+                     "pre-registered primary endpoint." % D.SOURCE_KEY),
+        }
 
     affinities = sorted({v for v in a.affinity_by_layer.values() if v is not None})
     result = {
@@ -834,7 +933,7 @@ def main(argv=None) -> int:
             "count": 2,
             "note": ("Two primary endpoints only. Amendment 1 demoted H1; it has no "
                      "primary endpoint and no directional pre-commitment."),
-            "h2": analyze_h2(a, args, covariates),
+            "h2": analyze_h2(a, args, covariates, covariates_source),
             "h3": analyze_h3(a, args),
         },
         "secondary_endpoints": {
@@ -863,10 +962,16 @@ def main(argv=None) -> int:
     h2 = result["primary_endpoints"]["h2"]
     print("wrote %s" % args.out)
     if h2.get("available") and h2["fit"].get("fitted"):
-        pr = h2["fit"]["primary"]
+        pr = h2["fit"]["survival_term"]
+        src = h2.get("covariates_source") or {}
         print("H2 PRIMARY  coef(answer_survival) = %+.4f  se %.4f  p %.4g  %s"
               % (pr["coef"], pr["se"], pr["p"],
                  "controlled" if h2["primary_endpoint_complete"] else "UNCONTROLLED"))
+        if h2["primary_endpoint_complete"] and not src.get(
+                "is_preregistered_primary_family"):
+            print("            !! covariate source family is %r, NOT the pre-registered "
+                  "primary measures. This is a ROBUSTNESS refit, not H2's primary "
+                  "endpoint." % src.get("family"))
     elif h2.get("available"):
         print("H2 PRIMARY  UNFITTABLE (%d fork events of %d pairs): %s"
               % (h2["fit"].get("n_events", 0), h2["fit"].get("n_pairs", 0),

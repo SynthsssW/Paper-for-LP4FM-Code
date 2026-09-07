@@ -11,7 +11,7 @@
       "nl_minimal_lex"
     ],
     "corpus": "data/corpus/problems.jsonl",
-    "generated_utc": "2026-09-06T23:06:54Z",
+    "generated_utc": "2026-09-07T01:29:04Z",
     "lex_dissim_method": "normalized character Levenshtein distance, dist / max(len_a, len_b)",
     "lex_dissim_robustness_method": "token-type Jaccard distance, lowercased [A-Za-z0-9_]+ runs, numerals retained",
     "n_pairs_with_covariates": 469,

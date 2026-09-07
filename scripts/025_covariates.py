@@ -15,17 +15,26 @@ OUTPUTS (all under --out-dir, default data/corpus/)
 
   covariates.json             model-ready, exactly the two pre-registered controls:
                                 {problem_id: {condition: {lex_dissim, syn_dissim}}}
+                              plus a reserved top-level "_source" tag (see below).
                               lex_dissim = normalized character Levenshtein
                               syn_dissim = dependency-label bag TV distance
                               `04_analyze.py` enters EVERY key it finds as a covariate
                               (see its `cov_names` union), so this file carries the two
                               controls and nothing else -- extra keys would silently add
-                              collinear terms to the primary model.
+                              collinear terms to the primary model. The consumer strips
+                              "_source" explicitly before taking that union.
 
   covariates_robustness.json  same shape and same key names, different measures:
                               lex_dissim = token-type Jaccard, syn_dissim = POS-sequence
                               normalized Levenshtein. Drops into `--covariates` unchanged
                               as the robustness refit.
+
+  "_source" TAG. Both model-ready files use the SAME key names, so they are
+  indistinguishable from their contents and a robustness file passed to --covariates by
+  mistake would be fitted and reported as H2's PRIMARY endpoint. Each file therefore
+  carries a reserved top-level `_source` = {family: "primary" | "robustness",
+  measures: {key: measure}}, which `04_analyze.py` echoes under
+  `primary_endpoints.h2.covariates_source`.
 
   covariates_measures.json    the honest complete record: every measure for every pair,
                               plus `_meta` (methods, versions, what was skipped). NOT a
@@ -141,13 +150,20 @@ def check_consumer_shape(cov, keys):
     others is a hard SystemExit mid-analysis. Better to catch it at write time.
     """
     seen = set()
-    for per_cond in cov.values():
+    for pid, per_cond in cov.items():
+        if pid == D.SOURCE_KEY:
+            continue
         for vals in per_cond.values():
             seen.update(vals)
     problems = []
     if seen != set(keys):
         problems.append("key union is %s, expected %s" % (sorted(seen), sorted(keys)))
+    if cov.get(D.SOURCE_KEY, {}).get("family") not in (D.SOURCE_PRIMARY,
+                                                       D.SOURCE_ROBUSTNESS):
+        problems.append("missing or unrecognised %r tag" % D.SOURCE_KEY)
     for pid, per_cond in cov.items():
+        if pid == D.SOURCE_KEY:
+            continue
         for cond, vals in per_cond.items():
             for name in sorted(seen):
                 if name not in vals:
@@ -226,6 +242,13 @@ def main(argv=None):
     primary, dropped_p = project(measures, D.PRIMARY_SOURCE, keys)
     robust, dropped_r = project(measures, D.ROBUSTNESS_SOURCE, keys)
 
+    # The primary and robustness files share key NAMES so either drops into
+    # `04_analyze.py --covariates` unchanged; without this tag they are
+    # indistinguishable from their contents, and a robustness file passed by mistake
+    # would be fitted and reported as H2's PRIMARY endpoint.
+    primary[D.SOURCE_KEY] = D.source_tag(D.SOURCE_PRIMARY, keys)
+    robust[D.SOURCE_KEY] = D.source_tag(D.SOURCE_ROBUSTNESS, keys)
+
     problems = check_consumer_shape(primary, keys) + check_consumer_shape(robust, keys)
     if problems:
         _log("REFUSING TO WRITE -- output would break scripts/04_analyze.py:")
@@ -241,7 +264,8 @@ def main(argv=None):
         "reference_condition": args.reference_condition,
         "conditions": list(args.conditions),
         "n_problems_in_corpus": len(records),
-        "n_pairs_with_covariates": sum(len(v) for v in primary.values()),
+        "n_pairs_with_covariates": sum(len(v) for k, v in primary.items()
+                                       if k != D.SOURCE_KEY),
         "lex_dissim_method": "normalized character Levenshtein distance, "
                              "dist / max(len_a, len_b)",
         "lex_dissim_robustness_method": "token-type Jaccard distance, lowercased "
@@ -290,7 +314,8 @@ def main(argv=None):
     # ---- sanity expectations (reported, never enforced) -------------------------------
     _log("")
     _log("pairs with covariates: %d (%d problems)"
-         % (meta["n_pairs_with_covariates"], len(primary)))
+         % (meta["n_pairs_with_covariates"],
+            sum(1 for k in primary if k != D.SOURCE_KEY)))
     if skipped:
         by_cond = {}
         for s in skipped:
