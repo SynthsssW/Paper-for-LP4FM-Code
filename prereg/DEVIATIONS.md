@@ -715,3 +715,51 @@ token distance had been measured. It had not. Three surface measures were in the
 pre-registered covariate set (lexical, syntactic) and the one that dominates was absent from
 it. That omission is worth stating plainly as a limitation of the pre-registered covariate
 specification.
+
+### Observation 5d — the mechanism is UNIDENTIFIED; 5c's length claim was a `formal` artifact
+
+Two checks, both of which overturn Observation 5c.
+
+**(a) Refit excluding `formal`.** `formal` is an extreme outlier — 54% longer, forks 100/100 —
+and it was carrying the length result:
+
+| single predictor | all 5 conditions | **`formal` excluded (n=369)** |
+|---|---|---|
+| lexical edit distance | 0.2507 | **0.1695** |
+| syntactic (dep-bag TV) | 0.3946 | 0.1215 |
+| **token-count difference** | **0.5254** | **0.0501** |
+
+Token-count difference collapses from 0.525 to **0.050**. Its apparent dominance was
+"the model separates `formal` from everything else," which any `formal`-correlated predictor
+would achieve. Among the four length-matched conditions, no surface measure explains much
+(best 0.17) and the ordering reverses.
+
+**CONCLUSION, superseding 5b and 5c: with five conditions and one extreme outlier, this data
+CANNOT identify which surface property drives fork occurrence.** The claim in the paper is
+the honest one: *among conditions matched for length, lexical, syntactic and length
+contributions cannot be separated.* Neither the syntactic claim (5b) nor the length claim
+(5c) is supported.
+
+**(b) `nl_minimal_lex` vs `nl_break` at ZERO length change.** Both have mean token delta 0.0
+and length ratio 1.00, yet fork 5.7% vs 0.0%.
+
+Fisher exact two-sided, 2x2 = [[4,66],[0,100]]: **p = 0.0273**.
+
+So the measure retains some sensitivity at zero length change, and it fires MORE on the
+answer-PRESERVING condition than the answer-BREAKING one — i.e. anti-correlated with the
+property it is claimed to indicate.
+
+**Fragility that must accompany this number:** 4 events total, no multiplicity correction
+across the several comparisons made in this post-data section, p just under 0.05. It is one
+sentence of suggestive evidence, NOT a claim.
+
+**Three revisions to the mechanism story in ~90 minutes** (5b syntax -> 5c length -> 5d
+unidentified). That instability is itself a limitation worth stating: the surface-attribution
+question needs a condition set designed for it, with length orthogonal to syntactic distance.
+The pre-registered covariate set contained neither token-count difference nor such a design.
+
+**THE HEADLINE IS UNAFFECTED BY ALL OF THIS** and does not depend on the mechanism:
+`nl_break` changes zero tokens and one character; the model's answer changes in **100/100**
+cases; the divergence measure fires in **0/100**. A length-preserving style rewrite fires 35%
+and a longer formal rewrite fires 100%. That contrast stands regardless of which surface
+property is responsible.
