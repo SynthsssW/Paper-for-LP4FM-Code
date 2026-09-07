@@ -532,3 +532,55 @@ read as indicating answer-breaking without such a control.
 0.385]) at eigengap k, versus +0.0942 (Wilcoxon p = 0.56) at forced k=8. A 4x shrink and
 loss of significance from changing a parameter the design treated as incidental. The
 pre-registered H3 result is not robust to k.
+
+### Observation 5 — residual regression (the pre-registered §4.2 test) and a REQUIRED framing correction
+
+**Residual regression**, fork occurrence on surface dissimilarity plus an answer-breaking
+indicator, all 469 pairs, problem-clustered:
+
+| model | k=2 McFadden R2 | k=8 McFadden R2 |
+|---|---|---|
+| surface only (lex + syn) | 0.299 | **0.397** |
+| + answer-breaking indicator | 0.302 | 0.423 |
+| gain from answer-breaking | +0.003 | +0.026 |
+
+`b_break` = -18.7 (k=2) / -22.1 (k=8) is **NOT an effect estimate** — it is complete
+separation (0/100 fork events in the answer-breaking arm). It must be reported as
+unidentifiable, never as a large negative coefficient.
+
+**Surface dissimilarity accounts for ~40% of the deviance in fork occurrence; answer-breaking
+status adds 2.6 percentage points and cannot be identified.**
+
+Refinement: with both covariates entered, `b_syn` = +21.2 while `b_lex` = -1.34 (sign flip).
+Fork tracks **syntactic** dissimilarity primarily. Caveat that must accompany it: lex and syn
+correlate at r = 0.803, so this is "primarily syntactic," not a clean decomposition.
+
+### FRAMING CORRECTION — what may be said about Han, Rizk & Santosh (2604.01639)
+
+Observation 4 as written overclaims and must be corrected before any draft.
+
+Han et al. compare flipped against stable samples **within** a perturbation type. This work
+compares **across** conditions of differing edit magnitude. **Their setup was not rerun.**
+Therefore:
+
+- **MAY NOT say:** "we refute their finding," or that their specific effect is surface-driven.
+- **MAY say:** their design cannot separate a surface-driven from an answer-driven signal;
+  a design with a surface-dissimilarity control can; and in ours the signal goes entirely to
+  surface. That is *consistent with* their effect being confounded and is something their
+  design cannot rule out.
+
+The stronger claim requires the within-condition analogue: inside `nl_para` alone, split
+items by whether the answer actually flipped and compare fork layers with edit distance
+controlled. That is their exact comparison inside this data. **It has not been run** and is
+gated on G2, which determines which items flipped.
+
+### G2 is now a GATE ON THE HEADLINE, not only on H3's accuracy half
+
+The claim "the only answer-breaking condition never forks" presupposes that `nl_break`
+actually breaks answers **in this model**. It is answer-breaking by CONSTRUCTION — the
+recomputed ground truth differs — but construction and behaviour are different things, which
+is precisely why G2 exists. If the model answers `nl_break` at a rate comparable to
+`nl_base`, there is no answer-breaking to detect, the zero-event arm is uninformative, and
+the headline does not stand. The surface-ordering result survives regardless.
+
+**No H2 section may be written before G2 returns.**
