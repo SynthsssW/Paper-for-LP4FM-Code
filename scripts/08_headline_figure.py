@@ -35,7 +35,7 @@ ROWS = [
 ]
 
 fig = plt.figure(figsize=(5.5, 2.9))
-ax = fig.add_axes([0.335, 0.30, 0.50, 0.60])   # leave room left for labels, right for column
+ax = fig.add_axes([0.335, 0.265, 0.50, 0.635])   # leave room left for labels, right for column
 n = len(ROWS)
 ys = list(range(n))[::-1]
 H = 0.62
@@ -48,10 +48,11 @@ for y, (cond, what, k, N, brk) in zip(ys, ROWS):
         ax.add_patch(Rectangle((-2, y - 0.46), 106, 0.92, facecolor=ORANGE, alpha=0.10,
                                edgecolor="none", zorder=0))
         ax.add_patch(Rectangle((-2, y - 0.46), 106, 0.92, facecolor="none",
-                               edgecolor=ORANGE, hatch="////", alpha=0.35, lw=0, zorder=0))
+                               edgecolor=ORANGE, hatch="///", alpha=0.18, lw=0, zorder=0))
         ax.plot([0, 0], [y - H / 2, y + H / 2], color=ORANGE, lw=2.2, solid_capstyle="butt", zorder=3)
         ax.text(2.0, y, f"detected {k}/{N}", va="center", ha="left", fontsize=8,
-                fontweight="bold", color=ORANGE, zorder=4)
+                fontweight="bold", color=ORANGE, zorder=4,
+                bbox=dict(facecolor="white", edgecolor="none", pad=1.5))
     else:
         ax.barh(y, rate, height=H, color=col, edgecolor="none", zorder=2)
         ax.text(rate + 1.8 if rate < 85 else rate - 1.8, y, f"{k}/{N}", va="center",
@@ -59,7 +60,7 @@ for y, (cond, what, k, N, brk) in zip(ys, ROWS):
                 color=INK2 if rate < 85 else "white", zorder=4)
     # left labels: condition (mono-ish) + what changed
     w = "bold" if brk else "normal"
-    ax.text(-3.5, y + 0.15, cond.replace("_", "\\_"), ha="right", va="center", fontsize=8,
+    ax.text(-3.5, y + 0.15, cond, ha="right", va="center", fontsize=8,
             fontweight=w, color=ORANGE if brk else INK, transform=ax.transData)
     ax.text(-3.5, y - 0.20, what, ha="right", va="center", fontsize=6.6,
             color=ORANGE if brk else INK3, style="italic")
@@ -86,19 +87,19 @@ for s in ("top", "right", "left"):
     ax.spines[s].set_visible(False)
 ax.spines["bottom"].set_color(INK3)
 ax.spines["bottom"].set_linewidth(0.6)
-ax.set_xlabel("problems on which the internal divergence measure fired (%)", color=INK2, labelpad=2)
+ax.set_xlabel("% of problems", color=INK2, labelpad=2)
 
 # the claim, drawn on the nl_break row
-ax.annotate("the only edit that changes the answer\nis the only one it never detects",
-            xy=(2.0, ys[-1] - 0.02), xytext=(42, ys[-1]),
-            ha="left", va="center", fontsize=7.6, color=ORANGE, style="italic",
-            arrowprops=dict(arrowstyle="-", color=ORANGE, lw=0.6, shrinkA=0, shrinkB=2))
+ax.text(40, ys[-1], "the only edit that changes the answer\nis the only one it never detects",
+        ha="left", va="center", fontsize=7.6, color=ORANGE, style="italic", zorder=4,
+        bbox=dict(facecolor="white", edgecolor="none", pad=1.5))
 
 fig.text(0.02, 0.025,
-         "Rewrites of 100 GSM-style problems vs. the original; blue = answer preserved, orange/hatched = answer "
-         "changed (one digit).\nFork rate: first-divergence-layer event vs. nl\\_base, forced-k=8 exploratory run. "
-         "Answer-changed and accuracy rates: gate G2 (greedy, thinking off); "
-         "nl\\_break gave the old answer 0/100 times.",
+         "Rewrites of 100 GSM-style problems vs. the original (nl_base). Blue = answer preserved; "
+         "orange, hatched = answer changed by a one-digit edit.\n"
+         "Fork rate: first-divergence-layer event vs. nl_base, forced-k=8 exploratory run. "
+         "Answer-changed rate: gate G2 (greedy, thinking off);\n"
+         "nl_break returned the old answer 0/100 times and its new answer at 67% accuracy (nl_base: 70%).",
          fontsize=6.2, color=INK3, ha="left", va="bottom", linespacing=1.25)
 
 fig.savefig(OUT / "fig_headline.pdf")
