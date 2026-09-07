@@ -25,3 +25,6 @@ venv/
 
 # OS
 .DS_Store
+
+# local spaCy venv (149MB) - not part of the repo
+.venv-nlp/
