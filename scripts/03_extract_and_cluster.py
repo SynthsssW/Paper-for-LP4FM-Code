@@ -3,7 +3,7 @@
 
 DESIGN.md §A.1 (never persist raw activations; checkpoint after every layer),
 §A.4 (batch size 1, no padding), §A.6 (aligned positions; k selected once on
-nl_base and reused across all four realizations), §A.11 items 1-4 and 6,
+nl_base and reused across all six realizations), §A.11 items 1-4 and 6,
 prereg gates G3 (drop rate) and G4 (Nystrom approximation error), and
 prereg/DEVIATIONS.md Amendment 3 (cosine affinity).
 
@@ -16,11 +16,34 @@ prereg/DEVIATIONS.md Amendment 3 (cosine affinity).
 Nothing else leaves the pod. `assignments.jsonl` is a few hundred KB and is the
 only input scripts/04_analyze.py takes (configs/assignments_schema.md).
 
-Extraction is ALL-FOUR-OR-NONE per problem: a typed `AnchorDropError` from any
-one condition drops the whole problem and is tallied into the G3 drop rate.
-Keeping the three conditions that resolved would leave the pooled graphs with
-different node counts per condition, which is the §A.6 graph-size confound
-landing directly on H3's endpoint.
+Two DIFFERENT things can stop a (problem, condition) cell from producing rows,
+and they are counted separately and never summed (see `extraction_report.json`):
+
+  1. DECLARED HOLE (expected, per-condition). prereg/DEVIATIONS.md Amendment 6
+     makes the corpus RAGGED: `nl_minimal_orth` exists for 99/100 problems and
+     `nl_minimal_lex` for 70/100 (30 problems contain no proper name). The
+     corpus records those 31 cells explicitly -- `status: "unavailable"`, empty
+     `text`, no anchors -- rather than inventing a realization. Such a cell is
+     SKIPPED: no rows are emitted for it, and the problem's OTHER conditions
+     extract normally. The §A.6 aligned-position invariant is then enforced
+     across the conditions that are AVAILABLE for that problem: same anchor key
+     set, same canonical order, in every one of them. Dropping the whole problem
+     instead would silently collapse the corpus to 70 problems in EVERY
+     condition, H3's primary included, while leaving assignments.jsonl looking
+     perfectly well-formed.
+
+     The downstream contract is exactly "a hole means NO ROWS for that
+     (problem, condition) pair"; `ling.metrics.Assignments.problems_for()` and
+     `.availability()` are built for it, and every cross-condition quantity is
+     computed on the problems where both sides exist.
+
+  2. REAL DROP (unexpected, whole-problem). A typed `AnchorDropError` -- key
+     mismatch, duplicate anchor position, FINAL failure -- from any AVAILABLE
+     condition drops the whole problem in every condition and is tallied into
+     the G3 drop rate. Keeping the conditions that resolved would leave the
+     pooled graphs with different node counts per condition, which is the §A.6
+     graph-size confound landing directly on H3's endpoint. A declared hole is
+     not that failure and must not inflate G3.
 
 Two fields beyond configs/assignments_schema.md are written on every row,
 because scripts/04_analyze.py needs them and will not fabricate them:
@@ -72,14 +95,19 @@ from ling.hooks import (  # noqa: E402
     AlignedActivationStore,
     AnchorDropError,
     LayerCheckpointWriter,
-    anchor_order,
+    check_anchor_keys_consistent,
     extract_problem,
     stream_layers_with_checkpoints,
 )
 
 DEFAULT_CORPUS = os.path.join(_REPO, "data", "corpus", "problems.jsonl")
 DEFAULT_RESULTS = os.path.join(_REPO, "results")
-CONDITIONS = ("formal", "nl_base", "nl_break", "nl_para")
+#: All six conditions (prereg/DEVIATIONS.md Amendment 6). Two of them are ragged
+#: by construction; see `partition_conditions`.
+CONDITIONS = ("formal", "nl_base", "nl_break", "nl_minimal_lex",
+              "nl_minimal_orth", "nl_para")
+#: `realizations[c]["status"]` for a cell the corpus deliberately did not build.
+UNAVAILABLE = "unavailable"
 
 
 # ======================================================================================
@@ -199,38 +227,124 @@ def linguistic_label(record, condition, anchor, labels_db=None, labels_path=None
 # ======================================================================================
 
 
+def is_declared_hole(real):
+    """True if this realization is a corpus-declared hole, not a prompt.
+
+    Amendment 6: an unsupported style-control cell is written out as
+    ``{"text": "", "anchors": {}, "status": "unavailable", "note": ...}``.
+    Empty text is checked as well as the status flag because an empty prompt
+    cannot be extracted from under any label, and reaching extraction with one
+    raises an `AnchorDropError` that would be miscounted as a G3 drop.
+    """
+    if not isinstance(real, dict):
+        return False
+    status = real.get("status")
+    if isinstance(status, str) and status.strip().lower() == UNAVAILABLE:
+        return True
+    return not (real.get("text") or "").strip()
+
+
+def partition_conditions(rec, conditions):
+    """Split one record's requested conditions into (available, absent, holes).
+
+    * ``available`` -- has a real prompt; extracted, and bound by the §A.6
+      invariant with the other available conditions of the same problem.
+    * ``absent``    -- the key is not in ``realizations`` at all. NOT a declared
+      hole: the corpus writes its holes explicitly, so a missing key means this
+      file is not the corpus this run was configured for. Kept fatal for the
+      problem (``missing_realization``), as before.
+    * ``holes``     -- declared unavailable (Amendment 6). Skipped, per
+      condition, with no rows emitted and no effect on the other conditions.
+    """
+    realizations = rec.get("realizations") or {}
+    available, absent, holes = [], [], []
+    for cond in conditions:
+        if cond not in realizations:
+            absent.append(cond)
+        elif is_declared_hole(realizations[cond]):
+            holes.append(cond)
+        else:
+            available.append(cond)
+    return available, absent, holes
+
+
+def availability_by_problem(records, conditions):
+    """{problem_id: frozenset(conditions the CORPUS says are available)}.
+
+    Derived from the corpus, not from what extraction happened to emit, so that
+    `assert_schema_invariants` cross-checks the written file against an
+    independent source rather than against itself.
+    """
+    out = {}
+    for rec in records:
+        available, _, _ = partition_conditions(rec, conditions)
+        out[rec.get("problem_id")] = frozenset(available)
+    return out
+
+
+def _hole_rows(pid, rec, holes):
+    realizations = rec.get("realizations") or {}
+    return [{"problem_id": pid, "condition": cond, "reason": UNAVAILABLE,
+             "note": (realizations.get(cond) or {}).get("note")}
+            for cond in holes]
+
+
 def extract_all(records, loaded, *, conditions, dtype, spill_dir, log,
                 labels_db=None, labels_path=None):
-    """Fill an AlignedActivationStore, all-four-or-none, tallying G3 drops.
+    """Fill an AlignedActivationStore; skip declared holes, tally G3 drops.
 
-    Returns ``(store, row_meta, drops)`` where ``row_meta`` is one dict per store
-    row carrying the row's identity and its (optional) linguistic label, in the
-    SAME order as ``store.rows``.
+    Returns ``(store, row_meta, drops, holes)``. ``row_meta`` is one dict per
+    store row carrying the row's identity and its (optional) linguistic label,
+    in the SAME order as ``store.rows``. ``drops`` is the G3 tally (whole
+    problems lost to an `AnchorDropError`); ``holes`` is the separate,
+    per-condition tally of Amendment 6 cells the corpus never built. The two are
+    never summed: one is a failure, the other is a documented property of the
+    corpus.
     """
     store = AlignedActivationStore(loaded.n_layers, loaded.d_model, dtype=dtype,
                                    spill_dir=spill_dir)
     row_meta = []
     drops = []
+    holes = []
     kept = 0
     t0 = time.time()
     for rec in records:
         pid = rec.get("problem_id")
-        missing = [c for c in conditions if c not in (rec.get("realizations") or {})]
-        if missing:
-            drops.append({"problem_id": pid, "condition": ",".join(missing),
+        available, absent, declared = partition_conditions(rec, conditions)
+        if absent:
+            drops.append({"problem_id": pid, "condition": ",".join(absent),
                           "reason": "missing_realization"})
-            log("drop %s: missing realization(s) %s" % (pid, missing))
+            log("drop %s: missing realization(s) %s" % (pid, absent))
+            continue
+        if not available:
+            drops.append({"problem_id": pid, "condition": ",".join(declared),
+                          "reason": "no_available_condition"})
+            log("drop %s: every requested condition is a declared hole" % pid)
             continue
         try:
+            # `conditions=available` is what confines the §A.6 invariant to the
+            # conditions this problem actually has: extract_problem intersects
+            # anchor keys over exactly the realizations named here, so a
+            # declared hole neither contributes an empty key set nor forces the
+            # problem out of the other five conditions.
             arrays, metas, names = extract_problem(
-                rec, loaded.tokenizer, loaded, conditions=list(conditions), dtype=dtype)
+                rec, loaded.tokenizer, loaded, conditions=list(available), dtype=dtype)
         except AnchorDropError as exc:
-            # All four conditions go, or none (§A.6). The tally is gate G3.
+            # A real anchor failure in an AVAILABLE condition: all of that
+            # problem's conditions go, or none (§A.6). The tally is gate G3.
             drops.append({"problem_id": exc.problem_id if exc.problem_id is not None else pid,
                           "condition": exc.condition, "reason": exc.reason,
                           "detail": str(exc)})
             log("drop %s: %s (%s)" % (pid, exc.reason, exc.condition))
             continue
+
+        if declared:
+            # Counted only now: a hole in a problem that was dropped outright is
+            # already accounted for by the drop, and counting it twice would
+            # overstate the per-condition availability loss.
+            holes.extend(_hole_rows(pid, rec, declared))
+            log("skip %s: no realization for %s (Amendment 6 declared hole); "
+                "extracting %s" % (pid, declared, available))
 
         for cond in sorted(arrays):
             store.add(pid, cond, names, arrays[cond])
@@ -257,7 +371,7 @@ def extract_all(records, loaded, *, conditions, dtype, spill_dir, log,
             raise SystemExit(
                 "row_meta order does not match the store's row order at %r vs %r"
                 % (meta, row.as_tuple()))
-    return store, row_meta, drops
+    return store, row_meta, drops, holes
 
 
 # ======================================================================================
@@ -269,12 +383,31 @@ class InvariantError(RuntimeError):
     pass
 
 
-def assert_schema_invariants(records):
+def assert_schema_invariants(records, expected_conditions=None):
     """Assert, on write, every invariant configs/assignments_schema.md declares.
 
     These are asserted here as well as in metrics.Assignments on the read side
     because the read side runs on a laptop hours later and the pod is where the
     activations still exist to re-run.
+
+    Ragged corpora (Amendment 6) are legal and both cross-layer invariants still
+    hold on one, unchanged in strength:
+
+    * "stable row order across layers" is a comparison of the FULL row-key
+      tuple, layer against layer -- it never assumed a fixed
+      conditions-per-problem stride, and a ragged corpus does not weaken it.
+    * "identical k across conditions at a layer" is enforced per condition
+      against the layer's single record-level `k`, so a condition present on
+      fewer problems is checked exactly as strictly as a full one.
+
+    What raggedness DOES change is the per-problem condition set, so
+    ``expected_conditions`` (``{problem_id: frozenset(conditions)}``, built from
+    the CORPUS by `availability_by_problem`, not from the rows being checked)
+    replaces the old all-or-none count test: every problem present in the file
+    must carry rows for EXACTLY the conditions the corpus says it has. That is
+    what catches a condition silently lost between extraction and write, which
+    an all-or-none count test can no longer do. When it is None (a caller with
+    no corpus in hand), the weaker structural checks still run.
     """
     if not records:
         raise InvariantError("no layer records to write")
@@ -313,7 +446,7 @@ def assert_schema_invariants(records):
                     # A condition clustered at a different k shows up here first.
                     raise InvariantError(
                         "layer %s row %d: %s=%d outside [0, k=%d). k is selected ONCE on "
-                        "nl_base and reused across all four conditions (§A.6, prereg "
+                        "nl_base and reused across every condition (§A.6, prereg "
                         "decision 1); a per-condition k invalidates every cross-condition "
                         "lambda2 comparison." % (layer, j, fld, v, k))
             if "k" in row and row["k"] != k:
@@ -349,7 +482,8 @@ def assert_schema_invariants(records):
                 "transition graphs are only well-defined if row j is the same (problem, "
                 "condition, anchor) at every layer." % (layer, detail))
 
-    # same anchor set across all four conditions, for every problem
+    # Same anchor set across the conditions a problem HAS (§A.6). A declared
+    # hole contributes no rows, so it is simply not one of them.
     anchors_by_pc = {}
     for pid, cond, anchor in keys:
         anchors_by_pc.setdefault((pid, cond), set()).add(anchor)
@@ -362,12 +496,22 @@ def assert_schema_invariants(records):
                 "problem %r has different anchor sets across conditions: %r. §A.6 requires "
                 "every (problem, condition) to share one anchor set."
                 % (pid, {c: sorted(s) for c, s in per_cond.items()}))
-        conds = set(per_cond)
-        if len(conds) != len(set(c for _, c, _ in keys)):
+        if expected_conditions is None:
+            continue
+        if pid not in expected_conditions:
             raise InvariantError(
-                "problem %r is present in conditions %r but the run has %r. Extraction is "
-                "all-four-or-none (§A.6)." % (pid, sorted(conds),
-                                              sorted(set(c for _, c, _ in keys))))
+                "problem %r has rows but is not in the corpus this run was given. The "
+                "checkpoints belong to a different corpus; use a fresh --run-id." % pid)
+        want = set(expected_conditions[pid])
+        got = set(per_cond)
+        if got != want:
+            raise InvariantError(
+                "problem %r has rows for conditions %r but the corpus says it has %r "
+                "(missing %r, unexpected %r). A condition available in the corpus and "
+                "absent from the file is a SILENT loss of that problem from every "
+                "cross-condition comparison it enters; an Amendment 6 declared hole is "
+                "the only legal absence, and this is not one."
+                % (pid, sorted(got), sorted(want), sorted(want - got), sorted(got - want)))
     return True
 
 
@@ -376,7 +520,8 @@ def assert_schema_invariants(records):
 # ======================================================================================
 
 
-def assemble_assignments(writer, row_meta, n_layers, out_path, *, log):
+def assemble_assignments(writer, row_meta, n_layers, out_path, *, log,
+                         expected_conditions=None):
     """Rebuild assignments.jsonl from the per-layer checkpoints. Resumable by design."""
     done = writer.completed_layers()
     if not done:
@@ -418,7 +563,7 @@ def assemble_assignments(writer, row_meta, n_layers, out_path, *, log):
         records.append(rec)
 
     records.sort(key=lambda r: r["layer"])
-    assert_schema_invariants(records)
+    assert_schema_invariants(records, expected_conditions=expected_conditions)
 
     if all(m["linguistic_label"] is None for m in row_meta):
         log("WARNING: every `linguistic_label` is null — the corpus carries no labels yet. "
@@ -529,23 +674,52 @@ def main(argv=None):
         log("linguistic labels: loaded from %s" % args.linguistic_labels)
 
     if args.assemble_only:
-        # Rebuild row identity from the corpus WITHOUT a model. Anchor order is
-        # hooks.anchor_order, the same order extraction uses.
+        # Rebuild row identity from the corpus WITHOUT a model, mirroring
+        # extract_all exactly: declared holes skipped per condition, anchor
+        # names taken from check_anchor_keys_consistent over the AVAILABLE
+        # realizations (the same shared key list, in the same canonical order,
+        # extract_problem passes to every condition).
         row_meta = []
+        n_holes = 0
         for rec in records:
-            names = anchor_order((rec["realizations"][conditions[0]])["anchors"])
-            for cond in sorted(conditions):
+            pid = rec.get("problem_id")
+            available, absent, declared = partition_conditions(rec, conditions)
+            if absent:
+                log("drop %s: missing realization(s) %s" % (pid, absent))
+                continue
+            if not available:
+                log("drop %s: every requested condition is a declared hole" % pid)
+                continue
+            try:
+                names = check_anchor_keys_consistent(
+                    {c: rec["realizations"][c] for c in available}, problem_id=pid)
+            except AnchorDropError as exc:
+                # Reproduces the key-mismatch half of extraction's G3 drops.
+                # Position-level failures (duplicate anchor position, FINAL) are
+                # tokenizer-dependent and cannot be reproduced without a model;
+                # assemble_assignments catches any resulting row-set mismatch
+                # against the checkpoints and refuses rather than mixing them.
+                log("drop %s: %s (%s)" % (pid, exc.reason, exc.condition))
+                continue
+            n_holes += len(declared)
+            if declared:
+                log("skip %s: no realization for %s (Amendment 6 declared hole)"
+                    % (pid, declared))
+            for cond in sorted(available):
                 for anchor in names:
-                    row_meta.append({"problem_id": rec.get("problem_id"), "condition": cond,
+                    row_meta.append({"problem_id": pid, "condition": cond,
                                      "anchor": anchor,
                                      "linguistic_label": linguistic_label(
                                          rec, cond, anchor, labels_db=labels_db,
                                          labels_path=args.linguistic_labels)})
+        log("declared holes skipped (Amendment 6): %d cells; %d rows over %d problems"
+            % (n_holes, len(row_meta), len({m["problem_id"] for m in row_meta})))
         writer = LayerCheckpointWriter(args.results_root, args.run_id,
                                        d_model=1, prefix="layer")
         n_layers = max(writer.completed_layers()) + 1 if writer.completed_layers() else 0
         assemble_assignments(writer, row_meta, n_layers,
-                             os.path.join(out_dir, "assignments.jsonl"), log=log)
+                             os.path.join(out_dir, "assignments.jsonl"), log=log,
+                             expected_conditions=availability_by_problem(records, conditions))
         return 0
 
     det = enforce_determinism(args.seed, strict=args.strict)
@@ -558,14 +732,22 @@ def main(argv=None):
 
     store = None
     try:
-        store, row_meta, drops = extract_all(
+        store, row_meta, drops, holes = extract_all(
             records, loaded, conditions=conditions, dtype=args.dtype,
             spill_dir=args.spill_dir, log=log, labels_db=labels_db,
             labels_path=args.linguistic_labels)
         kept_problems = sorted({m["problem_id"] for m in row_meta})
+        # G3 counts PROBLEMS LOST TO FAILURE only. Declared holes are a property
+        # of the corpus, are reported separately below, and never enter this
+        # ratio -- adding them would put a documented 31-cell corpus feature into
+        # a gate that exists to catch extraction bugs.
         drop_rate = len(drops) / float(len(records)) if records else 0.0
+        availability = {c: len({m["problem_id"] for m in row_meta if m["condition"] == c})
+                        for c in conditions}
         log("G3 drop rate: %d/%d = %.3f (%d states kept)"
             % (len(drops), len(records), drop_rate, store.n_states))
+        log("Amendment 6 declared holes: %d cells skipped %r; availability %r"
+            % (len(holes), _tally(holes, "condition"), availability))
         with open(os.path.join(out_dir, "extraction_report.json"), "w",
                   encoding="utf-8") as fh:
             json.dump({
@@ -575,17 +757,30 @@ def main(argv=None):
                 "conditions": list(conditions),
                 "n_problems_in_corpus": len(records),
                 "n_problems_kept": len(kept_problems),
+                # --- unexpected: whole-problem failures. This is gate G3. ---
                 "n_problems_dropped": len(drops),
                 "drop_rate": drop_rate,
                 "drops": drops,
                 "drops_by_reason": _tally(drops),
+                # --- expected: per-condition corpus holes (Amendment 6). NOT
+                # part of G3 and deliberately not summed with the drops. ---
+                "n_declared_holes": len(holes),
+                "declared_holes": holes,
+                "declared_holes_by_condition": _tally(holes, "condition"),
+                "availability_by_condition": availability,
                 "n_token_states": store.n_states,
                 "n_layers": loaded.n_layers,
                 "d_model": loaded.d_model,
                 "model_id": loaded.model_id,
                 "determinism": det,
-                "note": ("all-four-or-none per problem (§A.6): a typed AnchorDropError in "
-                         "any condition drops the problem in every condition"),
+                "note": ("Two distinct causes of an empty (problem, condition) cell, "
+                         "counted separately. (1) `declared_holes`: Amendment 6 marks the "
+                         "cell `status: \"unavailable\"` in the corpus; it is SKIPPED, the "
+                         "problem's other conditions extract normally, and the §A.6 anchor "
+                         "invariant binds the available conditions only. (2) `drops`: a "
+                         "typed AnchorDropError in an AVAILABLE condition drops the problem "
+                         "in every condition (§A.6) and is what `drop_rate`/G3 measures. "
+                         "Do not add these two numbers together."),
             }, fh, indent=2, sort_keys=True, default=str)
 
         if store.n_states == 0:
@@ -657,7 +852,11 @@ def main(argv=None):
             % (len(computed), len(writer.completed_layers())))
 
         out_path = os.path.join(out_dir, "assignments.jsonl")
-        assemble_assignments(writer, row_meta, loaded.n_layers, out_path, log=log)
+        assemble_assignments(writer, row_meta, loaded.n_layers, out_path, log=log,
+                             expected_conditions=availability_by_problem(
+                                 [r for r in records
+                                  if r.get("problem_id") in set(kept_problems)],
+                                 conditions))
     finally:
         # §A.1 rule 1: extract -> cluster -> write assignments -> DISCARD. This runs
         # on the exception path too; a crashed run must not leave activations behind
@@ -671,10 +870,11 @@ def main(argv=None):
     return 0
 
 
-def _tally(drops):
+def _tally(entries, field="reason"):
     out = {}
-    for d in drops:
-        out[d.get("reason", "unknown")] = out.get(d.get("reason", "unknown"), 0) + 1
+    for d in entries:
+        key = d.get(field, "unknown")
+        out[key] = out.get(key, 0) + 1
     return out
 
 
