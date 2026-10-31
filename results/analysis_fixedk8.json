@@ -1,7 +1,7 @@
 {
   "meta": {
     "generated_utc": "2026-09-07T03:26:50.981192+00:00",
-    "assignments": "/Users/kundanakommini/linguistics/results/fixedk8/assignments.jsonl",
+    "assignments": "results/fixedk8/assignments.jsonl",
     "n_layers": 48,
     "layers": [
       0,
@@ -125,7 +125,7 @@
         "syn_dissim"
       ],
       "covariates_source": {
-        "file": "/Users/kundanakommini/linguistics/data/corpus/covariates.json",
+        "file": "data/corpus/covariates.json",
         "tag_present": true,
         "family": "primary",
         "measures": {

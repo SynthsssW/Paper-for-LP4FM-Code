@@ -21,8 +21,8 @@ One version, `nl_break`, changes a single digit — so the correct answer is now
 | | |
 |---|---|
 | Times the model's answer actually changed because of that edit | **100 / 100** |
-| Times the divergence measure detected anything | **0 / 100** |
-| Times it fired on a *style rewrite* that did NOT change the answer | **100 / 100** |
+| Times the divergence measure detected anything | **0 / 100** (both eigengap k and forced k=8) |
+| Times it fired on a *style rewrite* that did NOT change the answer | **100 / 100** (forced k=8; 19/100 at eigengap k) |
 
 The model isn't ignoring the edit. It follows it every single time — it never once gave the
 old answer, and it computes the new one correctly 67% of the time, which is the same rate it
@@ -30,7 +30,8 @@ solves the original problems (70%). The change is real and it reaches the output
 just doesn't see it.
 
 Meanwhile, rewriting the same problem in formal notation — same numbers, same answer — makes
-the measure fire on every single problem, at layer 3 of 48.
+the measure fire on every single problem, at layer 3 of 48 (forced k=8; at the pre-registered
+eigengap k it fires on 19/100, median layer 31).
 
 ## Why this hasn't been shown before
 
